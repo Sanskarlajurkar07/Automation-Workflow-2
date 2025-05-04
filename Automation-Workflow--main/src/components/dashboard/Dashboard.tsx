@@ -1,0 +1,404 @@
+import React, { useState, useEffect } from 'react';
+import { DashboardHeader } from './DashboardHeader';
+import { DashboardSidebar } from './DashboardSidebar';
+import { Brain, Workflow, Plus, Clock, ArrowRight, Trash2, Copy, Download, X, Sparkles, AlertCircle, Sun, Moon } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import workflowService from '../../lib/workflowService';
+import { Workflow as WorkflowType } from '../../types/workflow';
+import { useTheme } from '../../utils/themeProvider';
+
+// Create Workflow Modal Component
+const CreateWorkflowModal = ({ isOpen, onClose, onSubmit }: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  onSubmit: (name: string) => void;
+}) => {
+  const [workflowName, setWorkflowName] = useState('');
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-lg flex items-center justify-center z-50">
+      <div className={`${isLight ? 'bg-theme-white border-theme-light' : 'bg-theme-dark border-theme-medium-dark'} rounded-xl p-6 w-full max-w-md shadow-2xl border`}>
+        <div className="flex justify-between items-center mb-5">
+          <h3 className={`text-xl font-semibold ${isLight ? 'text-theme-dark' : 'text-theme-white'} flex items-center`}>
+            <Sparkles className={`w-5 h-5 mr-2 ${isLight ? 'text-theme-medium' : 'text-theme-medium'}`} />
+            Create New Workflow
+          </h3>
+          <button 
+            onClick={onClose} 
+            className={`${isLight ? 'text-theme-medium-dark hover:text-theme-dark hover:bg-theme-light' : 'text-theme-light hover:text-theme-white hover:bg-theme-medium-dark'} transition-colors p-1 rounded-full`}
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          if (workflowName.trim()) {
+            onSubmit(workflowName);
+            setWorkflowName('');
+          }
+        }}>
+          <div className="mb-5">
+            <label className={`block text-sm font-medium ${isLight ? 'text-theme-medium-dark' : 'text-theme-light'} mb-2`}>
+              Workflow Name
+            </label>
+            <input
+              type="text"
+              value={workflowName}
+              onChange={(e) => setWorkflowName(e.target.value)}
+              placeholder="e.g., Customer Support Bot"
+              className={`w-full px-4 py-3 ${
+                isLight 
+                  ? 'bg-theme-white border-theme-light text-theme-dark placeholder-theme-medium-dark/50 focus:ring-theme-medium' 
+                  : 'bg-theme-dark/80 border-theme-medium-dark text-theme-white placeholder-theme-light/50 focus:ring-theme-medium'
+              } rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all border`}
+              autoFocus
+            />
+          </div>
+          <div className="flex justify-end space-x-3 mt-6">
+            <button
+              type="button"
+              onClick={onClose}
+              className={`px-4 py-2 ${
+                isLight 
+                  ? 'bg-theme-light hover:bg-theme-light/80 text-theme-medium-dark border-theme-light' 
+                  : 'bg-theme-dark hover:bg-theme-dark/80 text-theme-light border-theme-medium-dark'
+              } rounded-lg transition-colors border`}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!workflowName.trim()}
+              className={`px-5 py-2 ${
+                isLight 
+                  ? 'bg-theme-medium text-theme-white hover:bg-theme-medium-dark' 
+                  : 'bg-theme-medium text-theme-white hover:bg-theme-medium-dark'
+              } rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md flex items-center`}
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              Create
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export const Dashboard = () => {
+  const navigate = useNavigate();
+  const [savedWorkflows, setSavedWorkflows] = useState<WorkflowType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
+  const isLight = theme === 'light';
+
+  useEffect(() => {
+    fetchWorkflows();
+  }, []);
+
+  const fetchWorkflows = async () => {
+    try {
+      setIsLoading(true);
+      const workflows = await workflowService.getWorkflows();
+      setSavedWorkflows(workflows);
+    } catch (err) {
+      setError('Failed to fetch workflows');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteWorkflow = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this workflow?')) {
+      try {
+        await workflowService.deleteWorkflow(id);
+        setSavedWorkflows(workflows => workflows.filter(w => w.id !== id));
+      } catch (err) {
+        setError('Failed to delete workflow');
+        console.error(err);
+      }
+    }
+  };
+
+  const cloneWorkflow = async (id: string) => {
+    try {
+      const clonedWorkflow = await workflowService.cloneWorkflow(id);
+      setSavedWorkflows(workflows => [...workflows, clonedWorkflow]);
+    } catch (err) {
+      setError('Failed to clone workflow');
+      console.error(err);
+    }
+  };
+
+  const exportWorkflow = async (id: string) => {
+    try {
+      const workflowData = await workflowService.exportWorkflow(id);
+      const blob = new Blob([JSON.stringify(workflowData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `workflow-${id}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError('Failed to export workflow');
+      console.error(err);
+    }
+  };
+
+  const handleCreateWorkflow = async (name: string) => {
+    try {
+      const newWorkflow = await workflowService.createWorkflow({
+        name,
+        status: 'draft',
+        nodes: [],
+        edges: []
+      });
+      
+      // Navigate to the workflow editor with the new workflow ID
+      navigate(`/workflow/edit/${newWorkflow.id}`);
+    } catch (err) {
+      setError('Failed to create workflow');
+      console.error(err);
+    }
+  };
+
+  const renderWorkflowCard = (workflow: WorkflowType) => (
+    <div 
+      key={workflow.id}
+      className={`group ${
+        isLight 
+          ? 'bg-theme-white backdrop-blur-lg border-theme-light hover:shadow-lg hover:shadow-theme-light/50 hover:border-theme-medium/40' 
+          : 'bg-theme-dark/60 backdrop-blur-lg border-theme-medium-dark hover:shadow-lg hover:shadow-theme-medium/10 hover:border-theme-medium/40'
+      } rounded-xl overflow-hidden transition-all duration-300 hover:translate-y-[-2px] border`}
+    >
+      {/* Card Header */}
+      <div className="p-5">
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className={`text-lg font-medium ${
+              isLight 
+                ? 'text-theme-dark group-hover:text-theme-medium' 
+                : 'text-theme-white group-hover:text-theme-medium'
+            } transition-colors`}>{workflow.name}</h3>
+            <p className={`text-xs ${isLight ? 'text-theme-medium-dark' : 'text-theme-light'} mt-1 flex items-center`}>
+              <Clock className={`w-3 h-3 mr-1 ${isLight ? 'text-theme-medium-dark' : 'text-theme-light'}`} />
+              Modified {new Date(workflow.lastModified).toLocaleDateString()}
+            </p>
+          </div>
+          <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex items-center ${
+            workflow.status === 'active' 
+              ? isLight ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+              : isLight ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+          } border`}>
+            <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+              workflow.status === 'active' 
+                ? isLight ? 'bg-emerald-500' : 'bg-emerald-400' 
+                : isLight ? 'bg-amber-500' : 'bg-amber-400'
+            }`}></span>
+            {workflow.status === 'active' ? 'Active' : 'Draft'}
+          </span>
+        </div>
+      </div>
+      
+      {/* Card Body */}
+      <div className="px-5 pb-3">
+        {/* Progress bar for active workflows */}
+        {workflow.status === 'active' && (
+          <div className={`w-full h-1 ${isLight ? 'bg-theme-light' : 'bg-theme-dark'} rounded-full mb-4 overflow-hidden`}>
+            <div 
+              className={`h-full ${
+                isLight 
+                  ? 'bg-gradient-to-r from-theme-medium to-theme-medium-dark' 
+                  : 'bg-gradient-to-r from-theme-medium to-theme-medium-dark'
+              } rounded-full`}
+              style={{ width: '70%' }}
+            ></div>
+          </div>
+        )}
+      </div>
+      
+      {/* Card Footer */}
+      <div className={`flex items-center justify-between px-5 py-4 border-t ${isLight ? 'border-theme-light' : 'border-theme-medium-dark/50'}`}>
+        <div className="flex items-center space-x-2.5">
+          <Link
+            to={`/workflow/edit/${workflow.id}`}
+            className={`flex items-center px-3 py-1.5 ${
+              isLight 
+                ? 'bg-theme-light hover:bg-theme-medium/20 text-theme-medium hover:text-theme-medium-dark' 
+                : 'bg-theme-medium-dark/30 hover:bg-theme-medium-dark/40 text-theme-light hover:text-theme-white'
+            } rounded-lg transition-colors`}
+          >
+            Edit
+            <ArrowRight className="w-4 h-4 ml-1" />
+          </Link>
+          <button
+            onClick={() => cloneWorkflow(workflow.id)}
+            className={`p-1.5 rounded-lg ${
+              isLight 
+                ? 'text-theme-medium-dark hover:text-theme-medium hover:bg-theme-light' 
+                : 'text-theme-light hover:text-theme-white hover:bg-theme-medium-dark/30'
+            } transition-colors`}
+            title="Clone Workflow"
+          >
+            <Copy className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => exportWorkflow(workflow.id)}
+            className={`p-1.5 rounded-lg ${
+              isLight 
+                ? 'text-theme-medium-dark hover:text-theme-medium hover:bg-theme-light' 
+                : 'text-theme-light hover:text-theme-white hover:bg-theme-medium-dark/30'
+            } transition-colors`}
+            title="Export Workflow"
+          >
+            <Download className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => deleteWorkflow(workflow.id)}
+            className={`p-1.5 rounded-lg ${
+              isLight 
+                ? 'text-theme-medium-dark hover:text-rose-600 hover:bg-rose-100' 
+                : 'text-theme-light hover:text-rose-400 hover:bg-rose-500/10'
+            } transition-colors`}
+            title="Delete Workflow"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className={`flex h-screen ${
+      isLight 
+        ? 'bg-theme-white text-theme-dark' 
+        : 'bg-theme-dark text-theme-white'
+    } overflow-hidden`}>
+      <DashboardSidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <DashboardHeader />
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-8 max-w-7xl mx-auto">
+            {/* Dashboard Header Section */}
+            <div className="mb-10 flex items-center justify-between">
+              <div>
+                <h1 className={`text-3xl font-bold ${
+                  isLight 
+                    ? 'text-theme-dark' 
+                    : 'text-theme-white'
+                }`}>
+                  Welcome back, Sanskar
+                </h1>
+                <p className={`${isLight ? 'text-theme-medium-dark' : 'text-theme-light'} mt-2`}>Manage and monitor your AI workflows</p>
+              </div>
+              <div className="flex space-x-4">
+                <button 
+                  onClick={toggleTheme}
+                  className={`p-2.5 rounded-lg ${
+                    isLight 
+                      ? 'bg-theme-light text-theme-medium-dark hover:text-theme-medium' 
+                      : 'bg-theme-medium-dark/30 text-theme-light hover:text-theme-white'
+                  } transition-colors`}
+                  title={isLight ? "Switch to Dark Mode" : "Switch to Light Mode"}
+                >
+                  {isLight ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+                </button>
+                <button 
+                  onClick={() => setIsModalOpen(true)}
+                  className={`px-4 py-2.5 ${
+                    isLight 
+                      ? 'bg-theme-medium hover:bg-theme-medium-dark text-theme-white' 
+                      : 'bg-theme-medium hover:bg-theme-medium-dark text-theme-white'
+                  } rounded-lg shadow-md transition-colors flex items-center`}
+                >
+                  <Plus className="w-4 h-4 mr-1.5" />
+                  New Workflow
+                </button>
+              </div>
+            </div>
+            
+            {/* Workflow Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {savedWorkflows.map(renderWorkflowCard)}
+            </div>
+            
+            {/* Empty State */}
+            {!isLoading && savedWorkflows.length === 0 && (
+              <div className={`mt-12 text-center p-10 ${
+                isLight 
+                  ? 'bg-theme-light border-theme-light' 
+                  : 'bg-theme-dark/60 border-theme-medium-dark/50'
+              } rounded-xl border border-dashed`}>
+                <div className={`w-16 h-16 mx-auto rounded-full ${
+                  isLight 
+                    ? 'bg-theme-light' 
+                    : 'bg-theme-medium-dark/30'
+                } flex items-center justify-center mb-4`}>
+                  <Workflow className={`w-8 h-8 ${isLight ? 'text-theme-medium' : 'text-theme-medium'}`} />
+                </div>
+                <h2 className={`text-xl font-semibold ${isLight ? 'text-theme-dark' : 'text-theme-white'} mb-2`}>
+                  No workflows yet
+                </h2>
+                <p className={`${isLight ? 'text-theme-medium-dark' : 'text-theme-light'} mb-6 max-w-md mx-auto`}>
+                  Create your first workflow to start automating your tasks and processes.
+                </p>
+                <button 
+                  onClick={() => setIsModalOpen(true)}
+                  className={`px-5 py-2.5 ${
+                    isLight 
+                      ? 'bg-theme-medium hover:bg-theme-medium-dark text-theme-white' 
+                      : 'bg-theme-medium hover:bg-theme-medium-dark text-theme-white'
+                  } rounded-lg shadow-md transition-colors flex items-center mx-auto`}
+                >
+                  <Plus className="w-4 h-4 mr-1.5" />
+                  Create Workflow
+                </button>
+              </div>
+            )}
+            
+            {/* Loading state */}
+            {isLoading && (
+              <div className="flex justify-center items-center mt-12">
+                <div className={`w-12 h-12 rounded-full border-2 ${
+                  isLight 
+                    ? 'border-t-theme-medium border-theme-light' 
+                    : 'border-t-theme-medium border-theme-medium-dark/30'
+                } animate-spin`}></div>
+              </div>
+            )}
+            
+            {/* Error state */}
+            {error && (
+              <div className={`mt-8 p-4 ${
+                isLight 
+                  ? 'bg-rose-50 border-rose-200 text-rose-700' 
+                  : 'bg-rose-500/10 border-rose-500/20 text-rose-400'
+              } rounded-lg border flex items-center`}>
+                <AlertCircle className="w-5 h-5 mr-2" />
+                {error}
+              </div>
+            )}
+            
+            {/* Create workflow modal */}
+            <CreateWorkflowModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              onSubmit={handleCreateWorkflow}
+            />
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+};
