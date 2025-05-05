@@ -79,11 +79,11 @@ export const Navigation: React.FC<NavigationProps> = ({
     
     try {
       // Get current nodes and edges from the store
-      const { nodes, edges } = useFlowStore.getState();
+      const { nodes, edges, workflowName } = useFlowStore.getState();
       
       // Prepare workflow data
       const workflowUpdate = {
-        name: workflowName, // Use the workflow name from props
+        name: workflowName || 'Untitled Workflow', // Use the workflow name from store
         description: '', // Add empty description
         nodes,
         edges,
@@ -101,6 +101,9 @@ export const Navigation: React.FC<NavigationProps> = ({
       
       // Make API call to save the workflow
       await workflowService.updateWorkflow(workflowId, workflowUpdate);
+      
+      // Update save status in the flow store
+      useFlowStore.getState().setSaveStatus('saved');
       
       // Show success message
       setSaveSuccess(true);

@@ -68,7 +68,17 @@ export const VariableBuilder: React.FC<VariableBuilderProps> = ({
       // Add more node types and their output fields with types
     };
     
-    return outputFieldMap[nodeType] || [];
+    // Ensure all input-like nodes use 'output' as their output field
+    if (nodeType.toLowerCase().includes('input') || 
+        nodeType === 'number' || 
+        nodeType === 'text' || 
+        nodeType === 'textarea' || 
+        nodeType === 'select' || 
+        nodeType === 'checkbox') {
+      return [{ name: 'output', type: 'Text' }];
+    }
+    
+    return outputFieldMap[nodeType] || [{ name: 'output', type: 'Text' }]; // Default to 'output' if not found
   };
 
   // Filter output fields based on input type compatibility
@@ -127,6 +137,16 @@ export const VariableBuilder: React.FC<VariableBuilderProps> = ({
           to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
+
+      {/* Variable usage help section */}
+      <div className="mb-3 p-2 bg-blue-50 border border-blue-100 rounded-md">
+        <p className="text-xs font-medium text-blue-700 mb-1">Variable Format Guide:</p>
+        <ul className="text-xs text-blue-600 space-y-0.5 list-disc pl-3">
+          <li>Input nodes: <code>nodeName.output</code></li>
+          <li>AI nodes: <code>nodeName.response</code></li>
+          <li>Other nodes: <code>nodeName.output</code></li>
+        </ul>
+      </div>
 
       {/* Title with progress */}
       <div className="flex items-center justify-between mb-3">

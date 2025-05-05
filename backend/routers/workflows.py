@@ -19,6 +19,9 @@ from routers.nodes import (
     handle_aws_query,
     handle_azure_query
 )
+import re
+
+logger = logging.getLogger("workflow_api")
 
 router = APIRouter()
 
@@ -155,11 +158,10 @@ async def execute_workflow(
     current_user: User = Depends(get_current_user)
 ):
     """Execute a workflow with the given inputs"""
-    logger = logging.getLogger("workflow_api")
+    logger.info(f"Starting workflow execution: {workflow_id}")
     
     # Start execution timer
     start_time = time.time()
-    logger.info(f"Starting workflow execution: {workflow_id}")
     
     # Find the workflow
     workflow_collection = await get_workflow_collection(request)
@@ -175,6 +177,16 @@ async def execute_workflow(
     # Extract nodes and edges
     nodes = workflow.get("nodes", [])
     edges = workflow.get("edges", [])
+    
+    # Log input node types for debugging
+    input_nodes = [node for node in nodes if node.get("type") == "input"]
+    for node in input_nodes:
+        node_id = node.get("id", "unknown")
+        node_type = node.get("data", {}).get("params", {}).get("type", "unknown")
+        logger.info(f"Input node {node_id} has type: {node_type}")
+        
+    # Log incoming input values
+    logger.info(f"Execution inputs: {execution_request.inputs}")
     
     # Record execution in the database
     execution_log = {
@@ -210,7 +222,7 @@ async def execute_workflow(
             logger.info(f"Executing node {i+1}/{len(execution_order)}: {node_id} ({node_type})")
             
             # Get inputs for this node
-            node_inputs = get_node_inputs(node_id, edges, node_outputs, execution_request.inputs)
+            node_inputs = get_node_inputs(node_id, edges, node_outputs, execution_request.inputs, nodes)
             
             # Record node execution start
             node_start_time = time.time()
@@ -330,6 +342,74 @@ async def execute_workflow(
             node_results=node_results
         )
 
+@router.post("/{workflow_id}/fix_input_types")
+async def fix_input_types(
+    workflow_id: str,
+    request: Request,
+    current_user: User = Depends(get_current_user)
+):
+    """Fix the input node types in a workflow"""
+    logger.info(f"Fixing input types for workflow: {workflow_id}")
+    
+    workflow_collection = await get_workflow_collection(request)
+    workflow = await workflow_collection.find_one({
+        "_id": ObjectId(workflow_id),
+        "user_id": str(current_user.id)
+    })
+    
+    if not workflow:
+        raise HTTPException(status_code=404, detail="Workflow not found")
+    
+    # Extract nodes 
+    nodes = workflow.get("nodes", [])
+    
+    # Find input nodes and ensure they have a type
+    updated = False
+    fixed_nodes = 0
+    
+    for i, node in enumerate(nodes):
+        if node.get("type") == "input":
+            node_id = node.get("id", f"unknown-{i}")
+            logger.info(f"Processing input node: {node_id}")
+            
+            # Ensure the node has a data.params object
+            if "data" not in node:
+                node["data"] = {}
+                updated = True
+                logger.info(f"Added missing data object to node {node_id}")
+                
+            if "params" not in node["data"]:
+                node["data"]["params"] = {}
+                updated = True
+                logger.info(f"Added missing params object to node {node_id}")
+                
+            # If no type is set, default to Text
+            if "type" not in node["data"]["params"] or not node["data"]["params"]["type"]:
+                node["data"]["params"]["type"] = "Text"
+                updated = True
+                fixed_nodes += 1
+                logger.info(f"Set default type 'Text' for input node {node_id}")
+                
+            # Make sure nodeName is set properly
+            if "nodeName" not in node["data"]["params"] or not node["data"]["params"]["nodeName"]:
+                # Extract node index
+                node_index = node_id.split('-')[1] if '-' in node_id else '0'
+                node["data"]["params"]["nodeName"] = f"Input {node_index}"
+                updated = True
+                logger.info(f"Set default nodeName for input node {node_id}")
+    
+    # If any updates were made, save the workflow
+    if updated:
+        await workflow_collection.update_one(
+            {"_id": ObjectId(workflow_id)},
+            {"$set": {"nodes": nodes, "updated_at": datetime.utcnow()}}
+        )
+        logger.info(f"Fixed {fixed_nodes} input nodes in workflow {workflow_id}")
+        return {"message": f"Fixed {fixed_nodes} input node types", "updated": True, "fixed_count": fixed_nodes}
+    
+    logger.info(f"No input node fixes needed for workflow {workflow_id}")
+    return {"message": "No updates needed", "updated": False, "fixed_count": 0}
+
 # Helper functions for workflow execution
 
 def calculate_execution_order(nodes, edges):
@@ -388,9 +468,10 @@ def calculate_execution_order(nodes, edges):
     remaining = [node for node in nodes if node["id"] not in visited]
     order.extend(remaining)
     
-    return order
+    # Reverse the order to get the correct execution flow (input first, output last)
+    return list(reversed(order))
 
-def get_node_inputs(node_id, edges, node_outputs, initial_inputs):
+def get_node_inputs(node_id, edges, node_outputs, initial_inputs, nodes):
     """Get the inputs for a node from connected nodes"""
     inputs = {}
     
@@ -406,8 +487,19 @@ def get_node_inputs(node_id, edges, node_outputs, initial_inputs):
             output_field = edge.get("sourceHandle", "output")
             input_field = edge.get("targetHandle", "input")
             
+            # Handle special case where .text is used instead of .output
+            if output_field == "text" and "output" in output:
+                output_field = "output"
+            
             if output_field in output:
                 inputs[input_field] = output[output_field]
+                
+                # DISABLED: Special mapping for nodeName.text pattern for backward compatibility
+                # This was causing unintended synchronization between input fields
+                # source_node = next((n for n in nodes if n["id"] == source_id), None)
+                # if source_node and source_node.get("type") == "input" and edge.get("id"):
+                #     node_name = source_node.get("data", {}).get("params", {}).get("nodeName", source_id)
+                #     inputs[f"{node_name}.text"] = output[output_field]
     
     # For input nodes, use the initial inputs
     if not inputs and node_id.startswith("input"):
@@ -452,6 +544,25 @@ async def execute_node(node_type, node_data, inputs, mode):
         for key, value in inputs.items():
             placeholder = f"{{{{{key}}}}}"
             prompt = prompt.replace(placeholder, str(value))
+        
+        # Special handling for {{nodeName.text}} format - replace with correct {{nodeName.output}} format
+        # This pattern might be used by users for input nodes, but we store everything in "output" property
+        text_var_pattern = r"{{([^}]+)\.text}}"
+        matches = re.findall(text_var_pattern, prompt)
+        for node_name in matches:
+            # Check if we have this node output available
+            if f"{node_name}.output" in inputs:
+                text_placeholder = f"{{{{{node_name}.text}}}}"
+                output_value = inputs[f"{node_name}.output"]
+                prompt = prompt.replace(text_placeholder, str(output_value))
+        
+        # Also check system prompt for the same patterns
+        matches = re.findall(text_var_pattern, system)
+        for node_name in matches:
+            if f"{node_name}.output" in inputs:
+                text_placeholder = f"{{{{{node_name}.text}}}}"
+                output_value = inputs[f"{node_name}.output"]
+                system = system.replace(text_placeholder, str(output_value))
         
         # Prepare the request for the OpenAI handler
         messages = [

@@ -9,6 +9,7 @@ import api from '../../lib/axios';
 import workflowService from '../../lib/workflowService';
 import { Workflow } from '../../types/workflow';
 import { useTheme } from '../../utils/themeProvider';
+import { useFlowStore } from '../../store/flowStore';
 
 // Helper function to convert backend node data to FlowNode format
 const mapToFlowNode = (node: any): FlowNode => {
@@ -49,6 +50,9 @@ export const WorkflowBuilder = () => {
   const [error, setError] = useState<string | null>(null);
   const { theme } = useTheme();
   const isLight = theme === 'light';
+  const clearWorkflow = useFlowStore(state => state.clearWorkflow);
+  const setWorkflowId = useFlowStore(state => state.setWorkflowId);
+  const setWorkflowName = useFlowStore(state => state.setWorkflowName);
 
   const categoryMap: Record<string, NodeCategory> = {
     'Core Settings': 'general',
@@ -63,10 +67,26 @@ export const WorkflowBuilder = () => {
 
   // Load workflow data when component mounts or ID changes
   useEffect(() => {
+    // A key issue was missing proper cleanup between workflow changes
+    console.log('WorkflowBuilder - Loading workflow with ID:', id);
+    
+    // First explicitly clear workflow state to avoid state leakage between workflows
+    clearWorkflow();
+    
     if (id) {
+      // Set the workflow ID immediately to mark this as a different workflow
+      setWorkflowId(id);
+      // Then fetch the data
       fetchWorkflowData(id);
     }
-  }, [id]);
+    
+    // Proper cleanup when unmounting or changing workflows
+    return () => {
+      console.log('WorkflowBuilder - Unmounting/changing workflow, cleaning up state');
+      clearWorkflow();
+      setWorkflowId(null);
+    };
+  }, [id, clearWorkflow, setWorkflowId]);
 
   const fetchWorkflowData = async (workflowId: string) => {
     try {
@@ -75,18 +95,31 @@ export const WorkflowBuilder = () => {
       const response = await workflowService.getWorkflow(workflowId);
       setWorkflowData(response);
       
+      // Important: Set workflow name first
+      if (response.name) {
+        document.title = response.name;
+        setWorkflowName(response.name);
+      }
+      
       // Convert backend data to FlowNode/FlowEdge format
       if (response.nodes && Array.isArray(response.nodes)) {
-        setFlowNodes(response.nodes.map(mapToFlowNode));
+        const mappedNodes = response.nodes.map(mapToFlowNode);
+        console.log(`Setting ${mappedNodes.length} nodes for workflow ${workflowId}`);
+        setFlowNodes(mappedNodes);
+      } else {
+        // Explicitly set empty nodes if none exist
+        console.log(`No nodes found for workflow ${workflowId}, setting empty array`);
+        setFlowNodes([]);
       }
       
       if (response.edges && Array.isArray(response.edges)) {
-        setFlowEdges(response.edges.map(mapToFlowEdge));
-      }
-      
-      // Set document title to workflow name for better UX
-      if (response.name) {
-        document.title = response.name;
+        const mappedEdges = response.edges.map(mapToFlowEdge);
+        console.log(`Setting ${mappedEdges.length} edges for workflow ${workflowId}`);
+        setFlowEdges(mappedEdges);
+      } else {
+        // Explicitly set empty edges if none exist
+        console.log(`No edges found for workflow ${workflowId}, setting empty array`);
+        setFlowEdges([]);
       }
     } catch (err) {
       setError('Failed to load workflow data');

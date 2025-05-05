@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import workflowService from '../../lib/workflowService';
 import { Workflow as WorkflowType } from '../../types/workflow';
 import { useTheme } from '../../utils/themeProvider';
+import { useFlowStore } from '../../store/flowStore';
 
 // Create Workflow Modal Component
 const CreateWorkflowModal = ({ isOpen, onClose, onSubmit }: { 
@@ -157,18 +158,32 @@ export const Dashboard = () => {
 
   const handleCreateWorkflow = async (name: string) => {
     try {
-      const newWorkflow = await workflowService.createWorkflow({
+      console.log('Creating new workflow with name:', name);
+      
+      // Make sure we're creating a completely empty workflow
+      const newWorkflowData = {
         name,
-        status: 'draft',
-        nodes: [],
-        edges: []
-      });
+        description: '', // Add a default empty description
+        status: 'draft' as 'draft' | 'active', // Fix type to match WorkflowCreate
+        nodes: [], // Explicitly empty nodes array
+        edges: []  // Explicitly empty edges array
+      };
+      
+      // Create the workflow
+      const newWorkflow = await workflowService.createWorkflow(newWorkflowData);
+      console.log('New workflow created:', newWorkflow.id);
+      
+      // Close the modal
+      setIsModalOpen(false);
+      
+      // Clear any existing workflow state before navigating
+      useFlowStore.getState().clearWorkflow();
       
       // Navigate to the workflow editor with the new workflow ID
       navigate(`/workflow/edit/${newWorkflow.id}`);
     } catch (err) {
       setError('Failed to create workflow');
-      console.error(err);
+      console.error('Error creating workflow:', err);
     }
   };
 

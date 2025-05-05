@@ -175,19 +175,56 @@ export const FlowCanvasContent = ({ workflowId, initialNodes = [], initialEdges 
     onConnect,
     setSelectedNode,
     setEdges,
-    addNode
+    addNode,
+    clearWorkflow,
+    setNodes,
+    setWorkflowId
   } = useFlowStore();
 
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const reactFlowInstance = useReactFlow();
+  const prevWorkflowIdRef = useRef<string | undefined>(workflowId);
+
+  // Reset flow state when workflow ID changes
+  useEffect(() => {
+    if (prevWorkflowIdRef.current !== workflowId) {
+      clearWorkflow();
+      setWorkflowId(workflowId || null);
+      prevWorkflowIdRef.current = workflowId;
+    }
+  }, [workflowId, clearWorkflow, setWorkflowId]);
 
   // Initialize with initial nodes and edges when component mounts or they change
   useLayoutEffect(() => {
     const initializeWorkflow = () => {
       try {
-        // Only initialize if there are actual nodes/edges and we're not already initialized
-        if (initialNodes && initialNodes.length > 0 && nodes.length === 0) {
-          console.log('Initializing nodes:', initialNodes);
+        // Clear existing flow state first to avoid state persistence between workflows
+        console.log('------ WORKFLOW INITIALIZATION START ------');
+        console.log('WorkflowID:', workflowId);
+        console.log('Received initialNodes:', initialNodes.length, 'initialEdges:', initialEdges.length);
+        console.log('Current Flow State before clearing:', { 
+          nodes: useFlowStore.getState().nodes.length, 
+          edges: useFlowStore.getState().edges.length,
+          counters: useFlowStore.getState().nodeCounters 
+        });
+        
+        // Critical: Clear everything first - this is essential to prevent state leakage
+        clearWorkflow();
+        
+        console.log('Flow State after clearing:', { 
+          nodes: useFlowStore.getState().nodes.length, 
+          edges: useFlowStore.getState().edges.length,
+          counters: useFlowStore.getState().nodeCounters 
+        });
+        
+        // Store the new workflow ID first
+        setWorkflowId(workflowId || null);
+        
+        // Only initialize if there are actual nodes/edges
+        if (initialNodes && initialNodes.length > 0) {
+          console.log('Initializing nodes - count:', initialNodes.length);
+          console.log('Node Types:', initialNodes.map(n => n.type).join(', '));
+          console.log('Node IDs:', initialNodes.map(n => n.id).join(', '));
           
           // Ensure nodes have the correct format before setting
           const formattedNodes = initialNodes.map(node => ({
@@ -201,12 +238,17 @@ export const FlowCanvasContent = ({ workflowId, initialNodes = [], initialEdges 
             },
           }));
           
-          // Set nodes using the store's setState to avoid the missing function error
-          useFlowStore.setState({ nodes: formattedNodes });
+          // Set nodes using the store's setNodes function
+          setNodes(formattedNodes);
+          console.log('Nodes set successfully, now in store:', useFlowStore.getState().nodes.length);
+        } else {
+          console.log('No initial nodes to set, setting empty array');
+          setNodes([]);
         }
         
-        if (initialEdges && initialEdges.length > 0 && edges.length === 0) {
-          console.log('Initializing edges:', initialEdges);
+        if (initialEdges && initialEdges.length > 0) {
+          console.log('Initializing edges - count:', initialEdges.length);
+          console.log('Edge IDs:', initialEdges.map(e => e.id).join(', '));
           
           // Ensure edges have the correct format
           const formattedEdges = initialEdges.map(edge => ({
@@ -215,9 +257,15 @@ export const FlowCanvasContent = ({ workflowId, initialNodes = [], initialEdges 
             animated: edge.animated !== undefined ? edge.animated : true,
           }));
           
-          // Set edges using the store's setState
-          useFlowStore.setState({ edges: formattedEdges });
+          // Set edges using the store's setEdges function
+          setEdges(() => formattedEdges);
+          console.log('Edges set successfully, now in store:', useFlowStore.getState().edges.length);
+        } else {
+          console.log('No initial edges to set, setting empty array');
+          setEdges(() => []);
         }
+        
+        console.log('------ WORKFLOW INITIALIZATION COMPLETE ------');
       } catch (error) {
         console.error("Error initializing workflow:", error);
       }
@@ -225,7 +273,16 @@ export const FlowCanvasContent = ({ workflowId, initialNodes = [], initialEdges 
     
     // Call the initialization function
     initializeWorkflow();
-  }, [initialNodes, initialEdges, nodes.length, edges.length]);
+  }, [initialNodes, initialEdges, clearWorkflow, setNodes, setEdges, workflowId, setWorkflowId]);
+
+  // Clean up when component unmounts
+  useEffect(() => {
+    return () => {
+      console.log('FlowCanvas component unmounting, clearing workflow state');
+      clearWorkflow();
+      setWorkflowId(null);
+    };
+  }, [clearWorkflow, setWorkflowId]);
 
   useLayoutEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
@@ -261,14 +318,20 @@ export const FlowCanvasContent = ({ workflowId, initialNodes = [], initialEdges 
       const type = event.dataTransfer.getData('application/reactflow');
       if (!type) return;
 
+      // Make sure we have a workflow ID before adding nodes
+      if (!workflowId) {
+        console.error('Cannot add node: No workflowId available');
+        return;
+      }
+
       const position = reactFlowInstance.project({
         x: event.clientX - reactFlowWrapper.current?.getBoundingClientRect().left!,
         y: event.clientY - reactFlowWrapper.current?.getBoundingClientRect().top!,
       });
 
-      // Create a new node
+      // Create a new node with the current workflow context
       const newNode = addNode(type as NodeType, position);
-      console.log("Added new node:", newNode);
+      console.log(`Added new node ${newNode.id} to workflow ${workflowId}`);
 
       // Auto-connection logic is optional and can be enabled if needed
       /*
@@ -301,7 +364,7 @@ export const FlowCanvasContent = ({ workflowId, initialNodes = [], initialEdges 
       }
       */
     },
-    [reactFlowInstance, addNode, reactFlowWrapper]
+    [reactFlowInstance, addNode, reactFlowWrapper, workflowId]
   );
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {

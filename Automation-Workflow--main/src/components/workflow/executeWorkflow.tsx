@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useFlowStore } from '../../store/flowStore';
-import { Loader2, X, Maximize2, Download, Play, FileAudio, ImageIcon, Upload, Info, AlertTriangle, CheckCircle, ChevronRight } from 'lucide-react';
+import { Loader2, X, Maximize2, Download, Play, FileAudio, ImageIcon, Upload, Info, AlertTriangle, CheckCircle, ChevronRight, Settings } from 'lucide-react';
 import workflowService from '../../lib/workflowService';
 import { toast } from 'react-hot-toast';
 
@@ -12,6 +12,8 @@ interface ExecuteWorkflowProps {
 interface InputValue {
   value: any;
   type: string;
+  nodeId?: string;
+  nodeIndex?: string;
 }
 
 interface ExecutionStats {
@@ -35,6 +37,7 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
   const [executionTime, setExecutionTime] = useState<number | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [showHelp, setShowHelp] = useState(false);
+  const [fixingTypes, setFixingTypes] = useState(false);
 
   // Listen for help toggle event from parent component
   useEffect(() => {
@@ -55,7 +58,36 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
   }, [nodes]);
 
   // Get input and output nodes 
-  const inputNodes = React.useMemo(() => nodes.filter(node => node.type === 'input'), [nodes]);
+  const inputNodes = React.useMemo(() => {
+    const allInputNodes = nodes.filter(node => node.type === 'input');
+    
+    // Check for duplicate node IDs and log them - helps with debugging
+    const nodeIds = allInputNodes.map(node => node.id);
+    const hasDuplicates = nodeIds.length !== new Set(nodeIds).size;
+    
+    if (hasDuplicates) {
+      console.warn('Duplicate input node IDs detected:', 
+        nodeIds.filter((id, index) => nodeIds.indexOf(id) !== index));
+        
+      // Filter to keep only the first occurrence of each node ID
+      const uniqueNodes = [];
+      const seenIds = new Set();
+      
+      for (const node of allInputNodes) {
+        if (!seenIds.has(node.id)) {
+          seenIds.add(node.id);
+          uniqueNodes.push(node);
+        } else {
+          console.warn('Filtering out duplicate node with ID:', node.id);
+        }
+      }
+      
+      return uniqueNodes;
+    }
+    
+    return allInputNodes;
+  }, [nodes]);
+
   const outputNodes = React.useMemo(() => nodes.filter(node => node.type === 'output'), [nodes]);
   
   // Initialize inputs based on input nodes
@@ -65,9 +97,15 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
       // Extract node index more safely
       const nodeIndex = node.id.split('-').length > 1 ? node.id.split('-')[1] : '0';
       const inputId = `input_${nodeIndex}`;
+      const inputType = node.data?.params?.type || 'Text';
+      
+      console.log(`Initializing input ${inputId} with type: ${inputType}`, node.data?.params);
+      
       initialInputs[inputId] = {
         value: '',
-        type: node.data?.params?.type || 'Text'
+        type: inputType,
+        nodeId: node.id,
+        nodeIndex: nodeIndex
       };
     });
     setInputs(initialInputs);
@@ -110,14 +148,30 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
 
   // Memoize handlers to prevent recreation on each render
   const handleInputChange = useCallback((inputId: string, value: any) => {
-    setInputs(prev => ({
-      ...prev,
-      [inputId]: {
-        ...prev[inputId],
-        value
+    console.log(`Changing input value for ${inputId} to:`, value);
+    
+    // Verify we're not updating multiple inputs accidentally
+    if (inputId === 'input_0' || inputId === 'input_1') {
+      console.log('Current inputs state:', inputs);
+    }
+    
+    setInputs(prev => {
+      const updatedInputs = {
+        ...prev,
+        [inputId]: {
+          ...prev[inputId],
+          value
+        }
+      };
+      
+      // Log the updated inputs object
+      if (inputId === 'input_0' || inputId === 'input_1') {
+        console.log('Updated inputs state will be:', updatedInputs);
       }
-    }));
-  }, []);
+      
+      return updatedInputs;
+    });
+  }, [inputs]);
 
   const handleFileInput = useCallback(async (inputId: string, file: File) => {
     if (!inputs[inputId]) return;
@@ -136,7 +190,7 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
     switch (input.type) {
       case 'Image':
         return (
-          <div className="space-y-2" key={`image-input-${inputId}`}>
+          <div className="space-y-2">
             <div className="flex items-center justify-center w-full">
               {input.value ? (
                 <div className="relative w-full aspect-video">
@@ -191,6 +245,7 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
                     <FileAudio className="w-8 h-8 text-gray-400" />
                     <p className="text-sm text-gray-500">Click to upload audio</p>
+                    <span className="text-xs text-gray-400 mt-1">{inputId}</span>
                   </div>
                   <input
                     type="file"
@@ -236,7 +291,6 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
       default:
         return (
           <input
-            key={`text-input-${inputId}`}
             type="text"
             value={input.value || ''}
             onChange={(e) => handleInputChange(inputId, e.target.value)}
@@ -355,6 +409,22 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
     }
   }, [isReadyToRun, workflowId, inputs, activeTab, currentStep, executionStats.length]);
 
+  // Function to fix input types
+  const fixInputTypes = async () => {
+    if (!workflowId) return;
+    
+    try {
+      setFixingTypes(true);
+      await workflowService.fixInputTypes(workflowId);
+      toast.success("Input types fixed. Please refresh the workflow to see changes.");
+    } catch (error) {
+      console.error("Failed to fix input types:", error);
+      toast.error("Failed to fix input types. Please check the console for details.");
+    } finally {
+      setFixingTypes(false);
+    }
+  };
+
   // Render results with improved visualization
   const renderResults = () => {
     if (Object.keys(results).length === 0) return null;
@@ -376,7 +446,7 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
             const type = result.type;
             
             return (
-              <div key={key} className="space-y-2">
+              <div key={`result-${key}`} className="space-y-2">
                 <h5 className="text-sm font-medium text-green-800">
                   {key.replace('output_', 'Output ')}
                 </h5>
@@ -390,11 +460,11 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
                     <source src={output} />
                   </audio>
                 ) : type === 'JSON' ? (
-                  <pre className="bg-white p-3 rounded border text-xs overflow-auto max-h-[200px]">
+                  <pre className="bg-white p-3 rounded border text-xs overflow-auto max-h-[200px] text-black">
                     {typeof output === 'object' ? JSON.stringify(output, null, 2) : output}
                   </pre>
                 ) : (
-                  <div className="bg-white p-3 rounded border text-sm overflow-auto max-h-[300px] whitespace-pre-wrap">
+                  <div className="bg-white p-3 rounded border text-sm overflow-auto max-h-[300px] whitespace-pre-wrap text-black">
                     {output}
                   </div>
                 )}
@@ -512,7 +582,7 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
             
             return (
               <div 
-                key={stat.nodeId} 
+                key={`execution-stat-${stat.nodeId}-${index}`}
                 className={`flex items-center p-2 rounded border ${statusColor} relative`}
               >
                 {/* Timeline node */}
@@ -563,7 +633,7 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
         <div className="flex">
           {['Standard', 'Chatbot', 'Voice'].map((tab) => (
             <button
-              key={tab}
+              key={`tab-${tab.toLowerCase()}`}
               onClick={() => setActiveTab(tab.toLowerCase() as any)}
               className={`px-4 py-2 text-sm font-medium ${
                 activeTab === tab.toLowerCase()
@@ -600,6 +670,24 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
           </div>
         )}
 
+        {/* Fix Input Types Button - Only shown when there's a potential issue */}
+        {inputNodes.length > 0 && inputNodes.some(node => !node.data?.params?.type) && (
+          <div className="flex justify-end">
+            <button
+              onClick={fixInputTypes}
+              disabled={fixingTypes}
+              className="text-xs text-blue-600 hover:text-blue-800 flex items-center"
+            >
+              {fixingTypes ? (
+                <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+              ) : (
+                <Settings className="w-3 h-3 mr-1" />
+              )}
+              Fix input types
+            </button>
+          </div>
+        )}
+
         {/* Inputs */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -609,15 +697,21 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
             )}
           </div>
           <div className="space-y-4">
-            {inputNodes.map((node) => {
+            {inputNodes.map((node, index) => {
               // Extract node index more safely
               const nodeIndex = node.id.split('-').length > 1 ? node.id.split('-')[1] : '0';
               const inputId = `input_${nodeIndex}`;
               const isRequired = node.data?.params?.required === true;
               const inputName = node.data?.params?.nodeName || `Input ${nodeIndex}`;
               
+              // Create a truly unique key using array index + node ID
+              // This ensures uniqueness even with duplicate node IDs, without changing on every render
+              const uniqueKey = `input-node-${index}-${node.id}`;
+              
+              console.log('Creating input node with key:', uniqueKey, 'ID:', node.id, 'Index:', index);
+              
               return (
-                <div key={node.id} className="space-y-2">
+                <div key={uniqueKey} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="flex items-center text-xs text-gray-500">
                       <span>{inputName}</span>
@@ -625,7 +719,11 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
                     </label>
                     <span className="text-xs text-gray-400">{inputId}</span>
                   </div>
-                  {inputs[inputId] && renderInputField(inputId, inputs[inputId])}
+                  {inputs[inputId] && (
+                    <div className="relative">
+                      {renderInputField(inputId, inputs[inputId])}
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -685,7 +783,7 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
                       const outputName = node.data?.params?.nodeName || `Output ${nodeIndex}`;
                       
                       return (
-                        <div key={node.id} className="flex items-center justify-between text-xs text-gray-500 p-2 bg-white rounded border">
+                        <div key={`output-node-${node.id}`} className="flex items-center justify-between text-xs text-gray-500 p-2 bg-white rounded border">
                           <span>{outputName}</span>
                           <span className="text-gray-400">{outputId}</span>
                         </div>

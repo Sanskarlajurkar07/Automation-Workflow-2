@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Handle, Position } from 'reactflow';
 import { Trash2, Settings } from 'lucide-react';
 import { useFlowStore } from '../../../../store/flowStore';
@@ -10,6 +10,7 @@ interface InputNodeProps {
       fieldName?: string;
       type?: string;
       showSettings?: boolean;
+      nodeName?: string;
     };
   };
   selected?: boolean;
@@ -19,12 +20,21 @@ const InputNode: React.FC<InputNodeProps> = ({ id, data, selected }) => {
   const removeNode = useFlowStore((state) => state.removeNode);
   const updateNodeData = useFlowStore((state) => state.updateNodeData);
 
+  // Set default type on mount if not already set
+  useEffect(() => {
+    if (!data.params?.type) {
+      updateNodeData(id, { type: 'Text' });
+    }
+  }, [id, data.params?.type, updateNodeData]);
+
   const handleDelete = () => {
     removeNode(id);
   };
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateNodeData(id, { type: e.target.value });
+    const newType = e.target.value;
+    console.log(`Changing input node ${id} type to: ${newType}`);
+    updateNodeData(id, { type: newType });
   };
 
   const variableName = data.params?.fieldName || id.replace('input-', 'input_');
@@ -74,6 +84,11 @@ const InputNode: React.FC<InputNodeProps> = ({ id, data, selected }) => {
             <option value="JSON">JSON</option>
             <option value="File">File</option>
           </select>
+        </div>
+        
+        {/* Display current type (helpful for debugging) */}
+        <div className="mt-2">
+          <span className="text-xs text-gray-400">Current type: {data.params?.type || 'Text'}</span>
         </div>
       </div>
 

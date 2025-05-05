@@ -172,7 +172,18 @@ export const workflowService = {
       }
       throw error;
     }
-  }
+  },
+
+  // Add the function to fix input types
+  fixInputTypes: async (workflowId: string): Promise<any> => {
+    try {
+      const response = await api.post(`/workflows/${workflowId}/fix_input_types`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fixing input types:', error);
+      throw error;
+    }
+  },
 };
 
 export default workflowService; 

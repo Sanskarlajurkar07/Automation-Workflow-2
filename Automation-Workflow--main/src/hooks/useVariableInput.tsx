@@ -29,8 +29,29 @@ export const useVariableInput = ({ value, onChange }: VariableInputProps) => {
   const insertVariable = useCallback((variable: string) => {
     if (cursorPosition === null || !inputRef.current) return;
     
-    // Remove the {{ that triggered the variable builder
-    const newValue = value.substring(0, cursorPosition - 2) + variable + value.substring(cursorPosition);
+    // Check if the variable already contains a dot (field specifier)
+    let formattedVariable = variable;
+    if (!variable.includes('.')) {
+      // Look for the node to determine if it's an AI node
+      const nodeName = variable;
+      const node = nodes.find(n => 
+        (n.data.params?.nodeName === nodeName) || (n.id === nodeName)
+      );
+      
+      // If it's an AI-type node, use .response, otherwise use .output
+      if (node && ['openai', 'anthropic', 'gemini', 'cohere', 'ai'].some(type => 
+          node.type.toLowerCase().includes(type))) {
+        formattedVariable = `${variable}.response`;
+      } else {
+        formattedVariable = `${variable}.output`;
+      }
+    }
+    
+    // Format the variable with {{ }}
+    const fullVariable = `{{${formattedVariable}}}`;
+    
+    // Remove the {{ that triggered the variable builder and insert the properly formatted variable
+    const newValue = value.substring(0, cursorPosition - 2) + fullVariable + value.substring(cursorPosition);
     onChange(newValue);
     setShowVarBuilder(false);
     
@@ -38,11 +59,11 @@ export const useVariableInput = ({ value, onChange }: VariableInputProps) => {
     setTimeout(() => {
       if (inputRef.current) {
         inputRef.current.focus();
-        inputRef.current.selectionStart = cursorPosition - 2 + variable.length;
-        inputRef.current.selectionEnd = cursorPosition - 2 + variable.length;
+        inputRef.current.selectionStart = cursorPosition - 2 + fullVariable.length;
+        inputRef.current.selectionEnd = cursorPosition - 2 + fullVariable.length;
       }
     }, 0);
-  }, [cursorPosition, value, onChange]);
+  }, [cursorPosition, value, onChange, nodes]);
   
   // Function to get connected nodes
   const getConnectedNodes = useCallback((nodeId: string) => {

@@ -156,14 +156,38 @@ export const useFlowStore = create<FlowState>((set, get) => ({
   },
 
   clearWorkflow: () => {
+    console.log('CLEARING WORKFLOW STATE', new Date().toISOString(), 'Resetting all node state');
+    
+    // Get current state - for debugging
+    const before = {
+      nodeCount: get().nodes.length,
+      edgeCount: get().edges.length,
+      selectedNode: get().selectedNode?.id || 'none',
+      workflowId: get().workflowId || 'none',
+      counters: { ...get().nodeCounters }
+    };
+    console.log('State before clearing:', before);
+    
+    // Complete state reset - this is critical to ensure clean workflow separation
     set({
       nodes: [],
       edges: [],
+      nodeCounters: {}, // Reset node counters to avoid ID conflicts between workflows
       selectedNode: null,
       selectedTemplate: null,
       workflowName: '',
+      workflowId: null,
       saveStatus: 'unsaved'
     });
+    
+    // Verify the reset was successful - for debugging
+    const after = {
+      nodeCount: get().nodes.length,
+      edgeCount: get().edges.length,
+      nodeCounters: get().nodeCounters,
+      workflowId: get().workflowId
+    };
+    console.log('State after clearing:', after);
   },
 
   setEdges: (updater) => {

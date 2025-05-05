@@ -12,7 +12,7 @@ interface NodeInfo {
 
 const nodeCategories: Record<NodeCategory, NodeInfo[]> = {
   general: [
-    { type: 'input', label: 'Input', icon: FileInput, description: 'User-provided text input' },
+    { type: 'input', label: 'Input', icon: FileInput, description: 'User-provided text input (exposes data via .output property)' },
   //  { type: 'web-extractor', label: 'Web Extractor', icon: Globe, description: 'Extracts structured/unstructured text from web pages' },
 
     { type: 'document-to-text', label: 'Document to Text', icon: FileSearch, description: 'Converts PDFs, Word files, and scanned images into text' },
