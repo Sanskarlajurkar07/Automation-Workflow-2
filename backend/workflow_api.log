@@ -3537,3 +3537,1053 @@ KeyError: 'id_token'
 2025-05-05 23:04:02,080 - workflow_api - INFO - Request 1746466442076 completed in 0.004s - Status: 200
 2025-05-05 23:04:02,083 - workflow_api - INFO - Request 1746466442083 - GET /api/workflows/681645931346b7d07a9bdcf0
 2025-05-05 23:04:02,088 - workflow_api - INFO - Request 1746466442083 completed in 0.005s - Status: 200
+2025-05-05 23:06:59,424 - workflow_api - INFO - Request 1746466619424 - GET /api/workflows
+2025-05-05 23:06:59,425 - workflow_api - INFO - Request 1746466619424 completed in 0.001s - Status: 307
+2025-05-05 23:06:59,428 - workflow_api - INFO - Request 1746466619428 - GET /api/workflows
+2025-05-05 23:06:59,429 - workflow_api - INFO - Request 1746466619428 completed in 0.001s - Status: 307
+2025-05-05 23:06:59,430 - workflow_api - INFO - Request 1746466619430 - GET /api/workflows/
+2025-05-05 23:06:59,435 - workflow_api - INFO - Request 1746466619430 completed in 0.004s - Status: 200
+2025-05-05 23:06:59,437 - workflow_api - INFO - Request 1746466619437 - GET /api/workflows/
+2025-05-05 23:06:59,441 - workflow_api - INFO - Request 1746466619437 completed in 0.004s - Status: 200
+2025-05-05 23:07:00,836 - workflow_api - INFO - Request 1746466620836 - OPTIONS /api/workflows/6818ac6ad661ea2cfced9478
+2025-05-05 23:07:00,837 - workflow_api - INFO - Request 1746466620836 completed in 0.001s - Status: 200
+2025-05-05 23:07:00,839 - workflow_api - INFO - Request 1746466620839 - OPTIONS /api/workflows/6818ac6ad661ea2cfced9478
+2025-05-05 23:07:00,840 - workflow_api - INFO - Request 1746466620839 completed in 0.001s - Status: 200
+2025-05-05 23:07:00,842 - workflow_api - INFO - Request 1746466620842 - GET /api/workflows/6818ac6ad661ea2cfced9478
+2025-05-05 23:07:00,847 - workflow_api - INFO - Request 1746466620842 completed in 0.006s - Status: 200
+2025-05-05 23:07:00,851 - workflow_api - INFO - Request 1746466620851 - GET /api/workflows/6818ac6ad661ea2cfced9478
+2025-05-05 23:07:00,857 - workflow_api - INFO - Request 1746466620851 completed in 0.005s - Status: 200
+2025-05-05 23:16:48,546 - workflow_api - INFO - Request 1746467208546 - OPTIONS /api/auth/validate
+2025-05-05 23:16:48,547 - workflow_api - INFO - Request 1746467208547 - OPTIONS /api/auth/validate
+2025-05-05 23:16:48,547 - workflow_api - INFO - Request 1746467208547 - OPTIONS /api/auth/validate
+2025-05-05 23:16:48,547 - workflow_api - INFO - Request 1746467208547 - OPTIONS /api/auth/validate
+2025-05-05 23:16:48,548 - workflow_api - INFO - Request 1746467208546 completed in 0.002s - Status: 200
+2025-05-05 23:16:48,548 - workflow_api - INFO - Request 1746467208547 completed in 0.002s - Status: 200
+2025-05-05 23:16:48,549 - workflow_api - INFO - Request 1746467208547 completed in 0.002s - Status: 200
+2025-05-05 23:16:48,550 - workflow_api - INFO - Request 1746467208547 completed in 0.003s - Status: 200
+2025-05-05 23:16:48,552 - workflow_api - INFO - Request 1746467208552 - GET /api/auth/validate
+2025-05-05 23:16:48,554 - workflow_api - INFO - Request 1746467208552 completed in 0.003s - Status: 200
+2025-05-05 23:16:48,557 - workflow_api - INFO - Request 1746467208557 - GET /api/auth/validate
+2025-05-05 23:16:48,560 - workflow_api - INFO - Request 1746467208557 completed in 0.003s - Status: 200
+2025-05-05 23:16:48,562 - workflow_api - INFO - Request 1746467208562 - GET /api/auth/validate
+2025-05-05 23:16:48,565 - workflow_api - INFO - Request 1746467208562 completed in 0.003s - Status: 200
+2025-05-05 23:16:48,568 - workflow_api - INFO - Request 1746467208568 - GET /api/auth/validate
+2025-05-05 23:16:48,570 - workflow_api - INFO - Request 1746467208568 completed in 0.002s - Status: 200
+2025-05-05 23:16:48,628 - workflow_api - INFO - Request 1746467208628 - GET /api/workflows/6818ac6ad661ea2cfced9478
+2025-05-05 23:16:48,632 - workflow_api - INFO - Request 1746467208628 completed in 0.004s - Status: 200
+2025-05-05 23:16:48,635 - workflow_api - INFO - Request 1746467208635 - GET /api/workflows/6818ac6ad661ea2cfced9478
+2025-05-05 23:16:48,639 - workflow_api - INFO - Request 1746467208635 completed in 0.004s - Status: 200
+2025-05-05 23:21:26,437 - workflow_api - INFO - Request 1746467486437 - GET /api/auth/validate
+2025-05-05 23:21:26,440 - workflow_api - INFO - Request 1746467486437 completed in 0.003s - Status: 200
+2025-05-05 23:21:26,442 - workflow_api - INFO - Request 1746467486442 - GET /api/auth/validate
+2025-05-05 23:21:26,444 - workflow_api - INFO - Request 1746467486442 completed in 0.002s - Status: 200
+2025-05-05 23:21:26,446 - workflow_api - INFO - Request 1746467486446 - GET /api/auth/validate
+2025-05-05 23:21:26,449 - workflow_api - INFO - Request 1746467486446 completed in 0.003s - Status: 200
+2025-05-05 23:21:26,451 - workflow_api - INFO - Request 1746467486451 - GET /api/auth/validate
+2025-05-05 23:21:26,454 - workflow_api - INFO - Request 1746467486451 completed in 0.003s - Status: 200
+2025-05-05 23:21:26,492 - workflow_api - INFO - Request 1746467486492 - OPTIONS /api/workflows/6818ac6ad661ea2cfced9478
+2025-05-05 23:21:26,493 - workflow_api - INFO - Request 1746467486492 completed in 0.001s - Status: 200
+2025-05-05 23:21:26,495 - workflow_api - INFO - Request 1746467486495 - OPTIONS /api/workflows/6818ac6ad661ea2cfced9478
+2025-05-05 23:21:26,495 - workflow_api - INFO - Request 1746467486495 completed in 0.001s - Status: 200
+2025-05-05 23:21:26,497 - workflow_api - INFO - Request 1746467486497 - GET /api/workflows/6818ac6ad661ea2cfced9478
+2025-05-05 23:21:26,502 - workflow_api - INFO - Request 1746467486497 completed in 0.004s - Status: 200
+2025-05-05 23:21:26,504 - workflow_api - INFO - Request 1746467486504 - GET /api/workflows/6818ac6ad661ea2cfced9478
+2025-05-05 23:21:26,510 - workflow_api - INFO - Request 1746467486504 completed in 0.006s - Status: 200
+2025-05-06 11:21:00,623 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 11:21:14,695 - workflow_api - INFO - Request 1746510674695 - OPTIONS /api/auth/validate
+2025-05-06 11:21:14,707 - workflow_api - INFO - Request 1746510674707 - OPTIONS /api/auth/validate
+2025-05-06 11:21:14,718 - workflow_api - INFO - Request 1746510674695 completed in 0.023s - Status: 200
+2025-05-06 11:21:14,725 - workflow_api - INFO - Request 1746510674707 completed in 0.018s - Status: 200
+2025-05-06 11:21:14,730 - workflow_api - INFO - Request 1746510674730 - OPTIONS /api/auth/validate
+2025-05-06 11:21:14,732 - workflow_api - INFO - Request 1746510674731 - OPTIONS /api/auth/validate
+2025-05-06 11:21:14,734 - workflow_api - INFO - Request 1746510674730 completed in 0.004s - Status: 200
+2025-05-06 11:21:14,736 - workflow_api - INFO - Request 1746510674731 completed in 0.004s - Status: 200
+2025-05-06 11:21:17,172 - workflow_api - INFO - Request 1746510677172 - GET /api/auth/validate
+2025-05-06 11:21:17,262 - workflow_api - INFO - Request 1746510677172 completed in 0.090s - Status: 401
+2025-05-06 11:21:17,265 - workflow_api - INFO - Request 1746510677265 - GET /api/auth/validate
+2025-05-06 11:21:17,267 - workflow_api - INFO - Request 1746510677265 completed in 0.002s - Status: 401
+2025-05-06 11:21:17,271 - workflow_api - INFO - Request 1746510677271 - GET /api/auth/validate
+2025-05-06 11:21:17,273 - workflow_api - INFO - Request 1746510677271 completed in 0.002s - Status: 401
+2025-05-06 11:21:17,277 - workflow_api - INFO - Request 1746510677277 - GET /api/auth/validate
+2025-05-06 11:21:17,281 - workflow_api - INFO - Request 1746510677277 completed in 0.004s - Status: 401
+2025-05-06 11:21:20,222 - workflow_api - INFO - Request 1746510680222 - GET /api/auth/google/login
+2025-05-06 11:21:20,223 - workflow_api - INFO - Google OAuth login initiated - redirect_uri: http://localhost:8000/api/auth/google/auth
+2025-05-06 11:21:21,040 - workflow_api - INFO - Request 1746510680222 completed in 0.818s - Status: 302
+2025-05-06 11:21:25,409 - workflow_api - INFO - Request 1746510685409 - GET /api/auth/google/auth
+2025-05-06 11:21:25,411 - workflow_api - INFO - Google OAuth callback received - state valid: True
+2025-05-06 11:21:25,412 - workflow_api - INFO - Attempting to get OAuth access token
+2025-05-06 11:21:26,672 - httpx - INFO - HTTP Request: POST https://accounts.google.com/o/oauth2/token "HTTP/1.1 200 OK"
+2025-05-06 11:21:27,769 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/oauth2/v3/certs "HTTP/1.1 200 OK"
+2025-05-06 11:21:27,846 - workflow_api - INFO - Successfully obtained access token
+2025-05-06 11:21:27,847 - workflow_api - INFO - Attempting to parse ID token
+2025-05-06 11:21:27,848 - workflow_api - ERROR - Error parsing ID token: 'id_token'
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\auth.py", line 218, in google_auth
+    user_info = await oauth.google.parse_id_token(request, token)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\authlib\integrations\base_client\async_openid.py", line 63, in parse_id_token
+    token["id_token"],
+    ~~~~~^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\starlette\requests.py", line 81, in __getitem__
+    return self.scope[key]
+           ~~~~~~~~~~^^^^^
+KeyError: 'id_token'
+2025-05-06 11:21:27,854 - workflow_api - INFO - Falling back to userinfo endpoint
+2025-05-06 11:21:29,203 - httpx - INFO - HTTP Request: GET https://openidconnect.googleapis.com/v1/userinfo "HTTP/1.1 200 OK"
+2025-05-06 11:21:29,244 - workflow_api - INFO - Successfully retrieved user info from userinfo endpoint
+2025-05-06 11:21:29,245 - workflow_api - INFO - User info retrieved successfully for: sanskarlajurkar9645@gmail.com
+2025-05-06 11:21:29,314 - workflow_api - INFO - Request 1746510685409 completed in 3.905s - Status: 302
+2025-05-06 11:21:30,121 - workflow_api - INFO - Request 1746510690121 - GET /api/auth/validate
+2025-05-06 11:21:30,150 - workflow_api - INFO - Request 1746510690121 completed in 0.029s - Status: 200
+2025-05-06 11:21:30,154 - workflow_api - INFO - Request 1746510690154 - GET /api/auth/validate
+2025-05-06 11:21:30,159 - workflow_api - INFO - Request 1746510690154 completed in 0.005s - Status: 200
+2025-05-06 11:21:30,163 - workflow_api - INFO - Request 1746510690163 - GET /api/auth/validate
+2025-05-06 11:21:30,168 - workflow_api - INFO - Request 1746510690163 completed in 0.005s - Status: 200
+2025-05-06 11:21:31,319 - workflow_api - INFO - Request 1746510691319 - GET /api/auth/validate
+2025-05-06 11:21:31,325 - workflow_api - INFO - Request 1746510691319 completed in 0.006s - Status: 200
+2025-05-06 11:21:31,335 - workflow_api - INFO - Request 1746510691335 - GET /api/auth/validate
+2025-05-06 11:21:31,343 - workflow_api - INFO - Request 1746510691335 completed in 0.008s - Status: 200
+2025-05-06 11:21:31,395 - workflow_api - INFO - Request 1746510691395 - OPTIONS /api/workflows
+2025-05-06 11:21:31,397 - workflow_api - INFO - Request 1746510691397 - OPTIONS /api/workflows
+2025-05-06 11:21:31,398 - workflow_api - INFO - Request 1746510691395 completed in 0.002s - Status: 200
+2025-05-06 11:21:31,400 - workflow_api - INFO - Request 1746510691397 completed in 0.003s - Status: 200
+2025-05-06 11:21:31,405 - workflow_api - INFO - Request 1746510691405 - GET /api/workflows
+2025-05-06 11:21:31,407 - workflow_api - INFO - Request 1746510691405 completed in 0.002s - Status: 307
+2025-05-06 11:21:31,410 - workflow_api - INFO - Request 1746510691410 - GET /api/workflows
+2025-05-06 11:21:31,412 - workflow_api - INFO - Request 1746510691412 - OPTIONS /api/workflows/
+2025-05-06 11:21:31,413 - workflow_api - INFO - Request 1746510691410 completed in 0.003s - Status: 307
+2025-05-06 11:21:31,432 - workflow_api - INFO - Request 1746510691412 completed in 0.020s - Status: 200
+2025-05-06 11:21:31,438 - workflow_api - INFO - Request 1746510691438 - OPTIONS /api/workflows/
+2025-05-06 11:21:31,439 - workflow_api - INFO - Request 1746510691438 completed in 0.001s - Status: 200
+2025-05-06 11:21:31,442 - workflow_api - INFO - Request 1746510691442 - GET /api/workflows/
+2025-05-06 11:21:31,451 - workflow_api - INFO - Request 1746510691442 completed in 0.009s - Status: 200
+2025-05-06 11:21:31,456 - workflow_api - INFO - Request 1746510691456 - GET /api/workflows/
+2025-05-06 11:21:31,462 - workflow_api - INFO - Request 1746510691456 completed in 0.006s - Status: 200
+2025-05-06 11:21:35,201 - workflow_api - INFO - Request 1746510695201 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 11:21:35,203 - workflow_api - INFO - Request 1746510695203 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 11:21:35,204 - workflow_api - INFO - Request 1746510695201 completed in 0.003s - Status: 200
+2025-05-06 11:21:35,207 - workflow_api - INFO - Request 1746510695203 completed in 0.004s - Status: 200
+2025-05-06 11:21:35,210 - workflow_api - INFO - Request 1746510695210 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 11:21:35,217 - workflow_api - INFO - Request 1746510695210 completed in 0.007s - Status: 200
+2025-05-06 11:21:35,226 - workflow_api - INFO - Request 1746510695226 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 11:21:35,236 - workflow_api - INFO - Request 1746510695226 completed in 0.010s - Status: 200
+2025-05-06 11:23:50,349 - workflow_api - INFO - Request 1746510830349 - OPTIONS /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 11:23:50,350 - workflow_api - INFO - Request 1746510830349 completed in 0.001s - Status: 200
+2025-05-06 11:23:50,355 - workflow_api - INFO - Request 1746510830355 - POST /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 11:23:50,363 - workflow_api - INFO - Starting workflow execution: 6818ed694f47505f38823877
+2025-05-06 11:23:50,366 - workflow_api - INFO - Execution inputs: {'input_0': InputValue(value='hi', type='Text')}
+2025-05-06 11:23:50,438 - workflow_api - INFO - Created execution log: 6819a3ee79e3fdd8f7fe1e23
+2025-05-06 11:23:50,438 - workflow_api - INFO - Execution order: []
+2025-05-06 11:23:50,439 - workflow_api - INFO - Workflow executed successfully in 0.076s
+2025-05-06 11:23:50,443 - workflow_api - INFO - Request 1746510830355 completed in 0.088s - Status: 200
+2025-05-06 11:23:51,890 - workflow_api - INFO - Request 1746510831890 - POST /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 11:23:51,896 - workflow_api - INFO - Starting workflow execution: 6818ed694f47505f38823877
+2025-05-06 11:23:51,899 - workflow_api - INFO - Execution inputs: {'input_0': InputValue(value='hi', type='Text')}
+2025-05-06 11:23:51,901 - workflow_api - INFO - Created execution log: 6819a3ef79e3fdd8f7fe1e24
+2025-05-06 11:23:51,902 - workflow_api - INFO - Execution order: []
+2025-05-06 11:23:51,903 - workflow_api - INFO - Workflow executed successfully in 0.006s
+2025-05-06 11:23:51,905 - workflow_api - INFO - Request 1746510831890 completed in 0.015s - Status: 200
+2025-05-06 11:29:10,008 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 11:29:15,038 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 11:29:28,882 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 11:29:33,266 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 11:30:36,354 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 11:30:41,188 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 11:30:46,374 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 11:30:50,900 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 11:54:46,637 - workflow_api - INFO - Request 1746512686637 - OPTIONS /api/auth/validate
+2025-05-06 11:54:46,640 - workflow_api - INFO - Request 1746512686640 - OPTIONS /api/auth/validate
+2025-05-06 11:54:46,641 - workflow_api - INFO - Request 1746512686641 - OPTIONS /api/auth/validate
+2025-05-06 11:54:46,642 - workflow_api - INFO - Request 1746512686642 - OPTIONS /api/auth/validate
+2025-05-06 11:54:46,643 - workflow_api - INFO - Request 1746512686637 completed in 0.006s - Status: 200
+2025-05-06 11:54:46,645 - workflow_api - INFO - Request 1746512686640 completed in 0.005s - Status: 200
+2025-05-06 11:54:46,647 - workflow_api - INFO - Request 1746512686641 completed in 0.006s - Status: 200
+2025-05-06 11:54:46,648 - workflow_api - INFO - Request 1746512686642 completed in 0.006s - Status: 200
+2025-05-06 11:54:46,651 - workflow_api - INFO - Request 1746512686651 - GET /api/auth/validate
+2025-05-06 11:54:46,660 - workflow_api - INFO - Request 1746512686651 completed in 0.009s - Status: 401
+2025-05-06 11:54:46,664 - workflow_api - INFO - Request 1746512686664 - GET /api/auth/validate
+2025-05-06 11:54:46,666 - workflow_api - INFO - Request 1746512686664 completed in 0.002s - Status: 401
+2025-05-06 11:54:46,671 - workflow_api - INFO - Request 1746512686671 - GET /api/auth/validate
+2025-05-06 11:54:46,673 - workflow_api - INFO - Request 1746512686671 completed in 0.002s - Status: 401
+2025-05-06 11:54:46,677 - workflow_api - INFO - Request 1746512686677 - GET /api/auth/validate
+2025-05-06 11:54:46,684 - workflow_api - INFO - Request 1746512686677 completed in 0.007s - Status: 401
+2025-05-06 11:54:48,933 - workflow_api - INFO - Request 1746512688933 - GET /api/auth/google/login
+2025-05-06 11:54:48,934 - workflow_api - INFO - Google OAuth login initiated - redirect_uri: http://localhost:8000/api/auth/google/auth
+2025-05-06 11:54:49,627 - workflow_api - INFO - Request 1746512688933 completed in 0.695s - Status: 302
+2025-05-06 11:54:53,578 - workflow_api - INFO - Request 1746512693578 - GET /api/auth/google/auth
+2025-05-06 11:54:53,580 - workflow_api - INFO - Google OAuth callback received - state valid: True
+2025-05-06 11:54:53,581 - workflow_api - INFO - Attempting to get OAuth access token
+2025-05-06 11:54:54,975 - httpx - INFO - HTTP Request: POST https://accounts.google.com/o/oauth2/token "HTTP/1.1 200 OK"
+2025-05-06 11:54:56,223 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/oauth2/v3/certs "HTTP/1.1 200 OK"
+2025-05-06 11:54:56,227 - workflow_api - INFO - Successfully obtained access token
+2025-05-06 11:54:56,228 - workflow_api - INFO - Attempting to parse ID token
+2025-05-06 11:54:56,228 - workflow_api - ERROR - Error parsing ID token: 'id_token'
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\auth.py", line 219, in google_auth
+    user_info = await oauth.google.parse_id_token(request, token)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\authlib\integrations\base_client\async_openid.py", line 63, in parse_id_token
+    token["id_token"],
+    ~~~~~^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\starlette\requests.py", line 81, in __getitem__
+    return self.scope[key]
+           ~~~~~~~~~~^^^^^
+KeyError: 'id_token'
+2025-05-06 11:54:56,233 - workflow_api - INFO - Falling back to userinfo endpoint
+2025-05-06 11:54:57,614 - httpx - INFO - HTTP Request: GET https://openidconnect.googleapis.com/v1/userinfo "HTTP/1.1 200 OK"
+2025-05-06 11:54:57,616 - workflow_api - INFO - Successfully retrieved user info from userinfo endpoint
+2025-05-06 11:54:57,617 - workflow_api - INFO - User info retrieved successfully for: sanskarlajurkar9645@gmail.com
+2025-05-06 11:54:57,642 - workflow_api - INFO - Request 1746512693578 completed in 4.063s - Status: 302
+2025-05-06 11:54:58,187 - workflow_api - INFO - Request 1746512698187 - GET /api/auth/validate
+2025-05-06 11:54:58,215 - workflow_api - INFO - Request 1746512698187 completed in 0.028s - Status: 200
+2025-05-06 11:54:58,219 - workflow_api - INFO - Request 1746512698219 - GET /api/auth/validate
+2025-05-06 11:54:58,223 - workflow_api - INFO - Request 1746512698219 completed in 0.005s - Status: 200
+2025-05-06 11:54:58,228 - workflow_api - INFO - Request 1746512698227 - GET /api/auth/validate
+2025-05-06 11:54:58,233 - workflow_api - INFO - Request 1746512698227 completed in 0.005s - Status: 200
+2025-05-06 11:54:59,705 - workflow_api - INFO - Request 1746512699704 - GET /api/auth/validate
+2025-05-06 11:54:59,709 - workflow_api - INFO - Request 1746512699704 completed in 0.005s - Status: 200
+2025-05-06 11:54:59,717 - workflow_api - INFO - Request 1746512699717 - GET /api/auth/validate
+2025-05-06 11:54:59,725 - workflow_api - INFO - Request 1746512699717 completed in 0.008s - Status: 200
+2025-05-06 11:54:59,787 - workflow_api - INFO - Request 1746512699787 - OPTIONS /api/workflows
+2025-05-06 11:54:59,822 - workflow_api - INFO - Request 1746512699787 completed in 0.035s - Status: 200
+2025-05-06 11:54:59,827 - workflow_api - INFO - Request 1746512699827 - OPTIONS /api/workflows
+2025-05-06 11:54:59,828 - workflow_api - INFO - Request 1746512699827 completed in 0.001s - Status: 200
+2025-05-06 11:54:59,831 - workflow_api - INFO - Request 1746512699831 - GET /api/workflows
+2025-05-06 11:54:59,832 - workflow_api - INFO - Request 1746512699831 completed in 0.001s - Status: 307
+2025-05-06 11:54:59,836 - workflow_api - INFO - Request 1746512699835 - GET /api/workflows
+2025-05-06 11:54:59,837 - workflow_api - INFO - Request 1746512699835 completed in 0.001s - Status: 307
+2025-05-06 11:54:59,840 - workflow_api - INFO - Request 1746512699840 - OPTIONS /api/workflows/
+2025-05-06 11:54:59,841 - workflow_api - INFO - Request 1746512699840 completed in 0.001s - Status: 200
+2025-05-06 11:54:59,844 - workflow_api - INFO - Request 1746512699844 - OPTIONS /api/workflows/
+2025-05-06 11:54:59,845 - workflow_api - INFO - Request 1746512699844 completed in 0.001s - Status: 200
+2025-05-06 11:54:59,849 - workflow_api - INFO - Request 1746512699849 - GET /api/workflows/
+2025-05-06 11:54:59,856 - workflow_api - INFO - Request 1746512699849 completed in 0.007s - Status: 200
+2025-05-06 11:54:59,861 - workflow_api - INFO - Request 1746512699861 - GET /api/workflows/
+2025-05-06 11:54:59,869 - workflow_api - INFO - Request 1746512699861 completed in 0.008s - Status: 200
+2025-05-06 11:55:01,358 - workflow_api - INFO - Request 1746512701358 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 11:55:01,360 - workflow_api - INFO - Request 1746512701360 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 11:55:01,361 - workflow_api - INFO - Request 1746512701358 completed in 0.003s - Status: 200
+2025-05-06 11:55:01,363 - workflow_api - INFO - Request 1746512701360 completed in 0.003s - Status: 200
+2025-05-06 11:55:01,366 - workflow_api - INFO - Request 1746512701366 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 11:55:01,373 - workflow_api - INFO - Request 1746512701366 completed in 0.007s - Status: 200
+2025-05-06 11:55:01,379 - workflow_api - INFO - Request 1746512701379 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 11:55:01,388 - workflow_api - INFO - Request 1746512701379 completed in 0.009s - Status: 200
+2025-05-06 11:57:02,691 - workflow_api - INFO - Request 1746512822691 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 11:57:02,693 - workflow_api - INFO - Request 1746512822691 completed in 0.001s - Status: 200
+2025-05-06 11:57:02,697 - workflow_api - INFO - Request 1746512822697 - PUT /api/workflows/6818ed694f47505f38823877
+2025-05-06 11:57:02,712 - workflow_api - INFO - Request 1746512822697 completed in 0.015s - Status: 200
+2025-05-06 11:57:15,920 - workflow_api - INFO - Request 1746512835919 - OPTIONS /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 11:57:15,921 - workflow_api - INFO - Request 1746512835919 completed in 0.001s - Status: 200
+2025-05-06 11:57:15,925 - workflow_api - INFO - Request 1746512835925 - POST /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 11:57:15,931 - workflow_api - INFO - Starting workflow execution: 6818ed694f47505f38823877
+2025-05-06 11:57:15,934 - workflow_api - INFO - Input node input_0 has type: Text
+2025-05-06 11:57:15,934 - workflow_api - INFO - Input node input_1 has type: Text
+2025-05-06 11:57:15,935 - workflow_api - INFO - Execution inputs: {'input_0': InputValue(value='chat with me', type='Text')}
+2025-05-06 11:57:15,938 - workflow_api - INFO - Created execution log: 6819abc3166f15034675efea
+2025-05-06 11:57:15,939 - workflow_api - INFO - Execution order: ['input_1', 'input_0', 'openai_0', 'output_0']
+2025-05-06 11:57:15,940 - workflow_api - INFO - Executing node 1/4: input_1 (input)
+2025-05-06 11:57:15,941 - workflow_api - INFO - Node input_1 executed successfully in 0.000s
+2025-05-06 11:57:15,941 - workflow_api - INFO - Executing node 2/4: input_0 (input)
+2025-05-06 11:57:15,942 - workflow_api - INFO - Node input_0 executed successfully in 0.000s
+2025-05-06 11:57:15,942 - workflow_api - INFO - Executing node 3/4: openai_0 (openai)
+2025-05-06 11:57:18,452 - workflow_api - WARNING - No OpenAI API key available. Please set OPENAI_API_KEY in environment variables.
+2025-05-06 11:57:18,497 - workflow_api - INFO - Node openai_0 executed successfully in 2.554s
+2025-05-06 11:57:18,497 - workflow_api - INFO - Executing node 4/4: output_0 (output)
+2025-05-06 11:57:18,498 - workflow_api - INFO - Node output_0 executed successfully in 0.000s
+2025-05-06 11:57:18,498 - workflow_api - INFO - Workflow executed successfully in 2.567s
+2025-05-06 11:57:18,503 - workflow_api - INFO - Request 1746512835925 completed in 2.578s - Status: 200
+2025-05-06 12:08:03,980 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 12:08:09,048 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 12:09:53,805 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 12:09:58,173 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 12:10:24,086 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 12:10:28,344 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 12:11:02,439 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 12:11:06,784 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 12:14:05,162 - workflow_api - INFO - Request 1746513845162 - OPTIONS /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 12:14:05,164 - workflow_api - INFO - Request 1746513845162 completed in 0.002s - Status: 200
+2025-05-06 12:14:05,168 - workflow_api - INFO - Request 1746513845168 - POST /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 12:14:05,226 - workflow_api - INFO - Starting workflow execution: 6818ed694f47505f38823877
+2025-05-06 12:14:05,230 - workflow_api - INFO - Using frontend provided API key for workflow execution
+2025-05-06 12:14:05,230 - workflow_api - INFO - Input node input_0 has type: Text
+2025-05-06 12:14:05,231 - workflow_api - INFO - Input node input_1 has type: Text
+2025-05-06 12:14:05,231 - workflow_api - INFO - Execution inputs: {'input_0': InputValue(value='chat with me', type='Text'), 'input_1': InputValue(value='hi', type='Text')}
+2025-05-06 12:14:05,234 - workflow_api - INFO - Created execution log: 6819afb57cc71fffd5617504
+2025-05-06 12:14:05,234 - workflow_api - INFO - Execution order: ['input_1', 'input_0', 'openai_0', 'output_0']
+2025-05-06 12:14:05,235 - workflow_api - INFO - Executing node 1/4: input_1 (input)
+2025-05-06 12:14:05,236 - workflow_api - INFO - Node input_1 executed successfully in 0.000s
+2025-05-06 12:14:05,236 - workflow_api - INFO - Executing node 2/4: input_0 (input)
+2025-05-06 12:14:05,237 - workflow_api - INFO - Node input_0 executed successfully in 0.000s
+2025-05-06 12:14:05,237 - workflow_api - INFO - Executing node 3/4: openai_0 (openai)
+2025-05-06 12:14:05,238 - workflow_api - INFO - Injecting frontend API key for OpenAI node: openai_0
+2025-05-06 12:14:05,239 - workflow_api - INFO - Sending request to OpenAI API using model: gpt-3.5-turbo
+2025-05-06 12:14:08,071 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-06 12:14:08,073 - workflow_api - ERROR - OpenAI API rate limit error: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+2025-05-06 12:14:08,074 - workflow_api - ERROR - OpenAI node error: OpenAI API rate limit reached. Please try again later or check your subscription limits.
+2025-05-06 12:14:08,075 - workflow_api - ERROR - Error executing node of type openai: OpenAI API error: OpenAI API rate limit reached. Please try again later or check your subscription limits.
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\workflows.py", line 698, in execute_node
+    raise Exception(f"OpenAI API error: {error_message}")
+Exception: OpenAI API error: OpenAI API rate limit reached. Please try again later or check your subscription limits.
+2025-05-06 12:14:08,077 - workflow_api - INFO - Node openai_0 executed successfully in 2.839s
+2025-05-06 12:14:08,078 - workflow_api - INFO - Executing node 4/4: output_0 (output)
+2025-05-06 12:14:08,079 - workflow_api - INFO - Node output_0 executed successfully in 0.000s
+2025-05-06 12:14:08,079 - workflow_api - INFO - Workflow executed successfully in 2.852s
+2025-05-06 12:14:08,084 - workflow_api - INFO - Request 1746513845168 completed in 2.915s - Status: 200
+2025-05-06 12:51:58,968 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 13:13:11,841 - workflow_api - INFO - Request 1746517391841 - OPTIONS /api/auth/validate
+2025-05-06 13:13:11,844 - workflow_api - INFO - Request 1746517391844 - OPTIONS /api/auth/validate
+2025-05-06 13:13:11,845 - workflow_api - INFO - Request 1746517391841 completed in 0.004s - Status: 200
+2025-05-06 13:13:11,847 - workflow_api - INFO - Request 1746517391844 completed in 0.003s - Status: 200
+2025-05-06 13:13:11,850 - workflow_api - INFO - Request 1746517391850 - OPTIONS /api/auth/validate
+2025-05-06 13:13:11,851 - workflow_api - INFO - Request 1746517391851 - OPTIONS /api/auth/validate
+2025-05-06 13:13:11,852 - workflow_api - INFO - Request 1746517391850 completed in 0.002s - Status: 200
+2025-05-06 13:13:11,855 - workflow_api - INFO - Request 1746517391851 completed in 0.003s - Status: 200
+2025-05-06 13:13:11,857 - workflow_api - INFO - Request 1746517391857 - GET /api/auth/validate
+2025-05-06 13:13:11,875 - workflow_api - INFO - Request 1746517391857 completed in 0.018s - Status: 401
+2025-05-06 13:13:11,879 - workflow_api - INFO - Request 1746517391878 - GET /api/auth/validate
+2025-05-06 13:13:11,881 - workflow_api - INFO - Request 1746517391878 completed in 0.002s - Status: 401
+2025-05-06 13:13:11,886 - workflow_api - INFO - Request 1746517391886 - GET /api/auth/validate
+2025-05-06 13:13:11,889 - workflow_api - INFO - Request 1746517391886 completed in 0.003s - Status: 401
+2025-05-06 13:13:11,898 - workflow_api - INFO - Request 1746517391898 - GET /api/auth/validate
+2025-05-06 13:13:11,900 - workflow_api - INFO - Request 1746517391898 completed in 0.003s - Status: 401
+2025-05-06 13:13:38,913 - workflow_api - INFO - Request 1746517418913 - GET /api/auth/google/login
+2025-05-06 13:13:38,915 - workflow_api - INFO - Google OAuth login initiated - redirect_uri: http://localhost:8000/api/auth/google/auth
+2025-05-06 13:13:39,876 - workflow_api - INFO - Request 1746517418913 completed in 0.963s - Status: 302
+2025-05-06 13:13:45,722 - workflow_api - INFO - Request 1746517425721 - GET /api/auth/google/auth
+2025-05-06 13:13:45,723 - workflow_api - INFO - Google OAuth callback received - state valid: True
+2025-05-06 13:13:45,724 - workflow_api - INFO - Attempting to get OAuth access token
+2025-05-06 13:13:47,157 - httpx - INFO - HTTP Request: POST https://accounts.google.com/o/oauth2/token "HTTP/1.1 200 OK"
+2025-05-06 13:13:48,895 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/oauth2/v3/certs "HTTP/1.1 200 OK"
+2025-05-06 13:13:48,918 - workflow_api - INFO - Successfully obtained access token
+2025-05-06 13:13:48,918 - workflow_api - INFO - Attempting to parse ID token
+2025-05-06 13:13:48,919 - workflow_api - ERROR - Error parsing ID token: 'id_token'
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\auth.py", line 219, in google_auth
+    user_info = await oauth.google.parse_id_token(request, token)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\authlib\integrations\base_client\async_openid.py", line 63, in parse_id_token
+    token["id_token"],
+    ~~~~~^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\starlette\requests.py", line 81, in __getitem__
+    return self.scope[key]
+           ~~~~~~~~~~^^^^^
+KeyError: 'id_token'
+2025-05-06 13:13:48,926 - workflow_api - INFO - Falling back to userinfo endpoint
+2025-05-06 13:13:50,834 - httpx - INFO - HTTP Request: GET https://openidconnect.googleapis.com/v1/userinfo "HTTP/1.1 200 OK"
+2025-05-06 13:13:50,836 - workflow_api - INFO - Successfully retrieved user info from userinfo endpoint
+2025-05-06 13:13:50,837 - workflow_api - INFO - User info retrieved successfully for: sanskarlajurkar9645@gmail.com
+2025-05-06 13:13:50,937 - workflow_api - INFO - Request 1746517425721 completed in 5.216s - Status: 302
+2025-05-06 13:13:51,735 - workflow_api - INFO - Request 1746517431735 - GET /api/auth/validate
+2025-05-06 13:13:51,762 - workflow_api - INFO - Request 1746517431735 completed in 0.027s - Status: 200
+2025-05-06 13:13:51,766 - workflow_api - INFO - Request 1746517431766 - GET /api/auth/validate
+2025-05-06 13:13:51,771 - workflow_api - INFO - Request 1746517431766 completed in 0.004s - Status: 200
+2025-05-06 13:13:51,774 - workflow_api - INFO - Request 1746517431774 - GET /api/auth/validate
+2025-05-06 13:13:51,778 - workflow_api - INFO - Request 1746517431774 completed in 0.004s - Status: 200
+2025-05-06 13:13:52,935 - workflow_api - INFO - Request 1746517432935 - GET /api/auth/validate
+2025-05-06 13:13:52,951 - workflow_api - INFO - Request 1746517432935 completed in 0.016s - Status: 200
+2025-05-06 13:13:52,959 - workflow_api - INFO - Request 1746517432959 - GET /api/auth/validate
+2025-05-06 13:13:52,973 - workflow_api - INFO - Request 1746517432959 completed in 0.014s - Status: 200
+2025-05-06 13:13:53,032 - workflow_api - INFO - Request 1746517433032 - OPTIONS /api/workflows
+2025-05-06 13:13:53,036 - workflow_api - INFO - Request 1746517433036 - OPTIONS /api/workflows
+2025-05-06 13:13:53,037 - workflow_api - INFO - Request 1746517433032 completed in 0.005s - Status: 200
+2025-05-06 13:13:53,039 - workflow_api - INFO - Request 1746517433036 completed in 0.003s - Status: 200
+2025-05-06 13:13:53,109 - workflow_api - INFO - Request 1746517433109 - GET /api/workflows
+2025-05-06 13:13:53,113 - workflow_api - INFO - Request 1746517433109 completed in 0.004s - Status: 307
+2025-05-06 13:13:53,116 - workflow_api - INFO - Request 1746517433116 - GET /api/workflows
+2025-05-06 13:13:53,118 - workflow_api - INFO - Request 1746517433118 - OPTIONS /api/workflows/
+2025-05-06 13:13:53,119 - workflow_api - INFO - Request 1746517433116 completed in 0.003s - Status: 307
+2025-05-06 13:13:53,122 - workflow_api - INFO - Request 1746517433118 completed in 0.004s - Status: 200
+2025-05-06 13:13:53,128 - workflow_api - INFO - Request 1746517433128 - OPTIONS /api/workflows/
+2025-05-06 13:13:53,129 - workflow_api - INFO - Request 1746517433128 completed in 0.001s - Status: 200
+2025-05-06 13:13:53,131 - workflow_api - INFO - Request 1746517433131 - GET /api/workflows/
+2025-05-06 13:13:53,141 - workflow_api - INFO - Request 1746517433131 completed in 0.009s - Status: 200
+2025-05-06 13:13:53,146 - workflow_api - INFO - Request 1746517433146 - GET /api/workflows/
+2025-05-06 13:13:53,152 - workflow_api - INFO - Request 1746517433146 completed in 0.006s - Status: 200
+2025-05-06 13:14:31,670 - workflow_api - INFO - Request 1746517471670 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:14:31,671 - workflow_api - INFO - Request 1746517471671 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:14:31,672 - workflow_api - INFO - Request 1746517471670 completed in 0.002s - Status: 200
+2025-05-06 13:14:31,675 - workflow_api - INFO - Request 1746517471671 completed in 0.003s - Status: 200
+2025-05-06 13:14:31,678 - workflow_api - INFO - Request 1746517471678 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:14:31,686 - workflow_api - INFO - Request 1746517471678 completed in 0.008s - Status: 200
+2025-05-06 13:14:31,690 - workflow_api - INFO - Request 1746517471690 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:14:31,696 - workflow_api - INFO - Request 1746517471690 completed in 0.007s - Status: 200
+2025-05-06 13:14:35,405 - workflow_api - INFO - Request 1746517475405 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:14:35,406 - workflow_api - INFO - Request 1746517475405 completed in 0.001s - Status: 200
+2025-05-06 13:14:35,410 - workflow_api - INFO - Request 1746517475410 - PUT /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:14:35,425 - workflow_api - INFO - Request 1746517475410 completed in 0.015s - Status: 200
+2025-05-06 13:14:49,462 - workflow_api - INFO - Request 1746517489462 - OPTIONS /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 13:14:49,464 - workflow_api - INFO - Request 1746517489462 completed in 0.001s - Status: 200
+2025-05-06 13:14:49,468 - workflow_api - INFO - Request 1746517489468 - POST /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 13:14:49,475 - workflow_api - INFO - Starting workflow execution: 6818ed694f47505f38823877
+2025-05-06 13:14:49,478 - workflow_api - INFO - Using frontend provided API key for workflow execution
+2025-05-06 13:14:49,479 - workflow_api - INFO - Input node input_0 has type: Text
+2025-05-06 13:14:49,479 - workflow_api - INFO - Input node input_1 has type: Text
+2025-05-06 13:14:49,480 - workflow_api - INFO - Execution inputs: {'input_0': InputValue(value='chat with me', type='Text'), 'input_1': InputValue(value='hi', type='Text')}
+2025-05-06 13:14:49,483 - workflow_api - INFO - Created execution log: 6819bdf1892de965fccad830
+2025-05-06 13:14:49,483 - workflow_api - INFO - Execution order: ['input_1', 'input_0', 'openai_0', 'output_0']
+2025-05-06 13:14:49,484 - workflow_api - INFO - Executing node 1/4: input_1 (input)
+2025-05-06 13:14:49,484 - workflow_api - INFO - Node input_1 executed successfully in 0.000s
+2025-05-06 13:14:49,485 - workflow_api - INFO - Executing node 2/4: input_0 (input)
+2025-05-06 13:14:49,485 - workflow_api - INFO - Node input_0 executed successfully in 0.000s
+2025-05-06 13:14:49,486 - workflow_api - INFO - Executing node 3/4: openai_0 (openai)
+2025-05-06 13:14:49,487 - workflow_api - INFO - Injecting frontend API key for OpenAI node: openai_0
+2025-05-06 13:14:49,487 - workflow_api - INFO - Sending request to OpenAI API using model: gpt-3.5-turbo
+2025-05-06 13:14:51,381 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-06 13:14:51,383 - workflow_api - ERROR - OpenAI API rate limit error: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+2025-05-06 13:14:51,384 - workflow_api - ERROR - OpenAI node error: OpenAI API rate limit reached. Please try again later or check your subscription limits.
+2025-05-06 13:14:51,385 - workflow_api - ERROR - Error executing node of type openai: OpenAI API error: OpenAI API rate limit reached. Please try again later or check your subscription limits.
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\workflows.py", line 698, in execute_node
+    raise Exception(f"OpenAI API error: {error_message}")
+Exception: OpenAI API error: OpenAI API rate limit reached. Please try again later or check your subscription limits.
+2025-05-06 13:14:51,387 - workflow_api - INFO - Node openai_0 executed successfully in 1.900s
+2025-05-06 13:14:51,387 - workflow_api - INFO - Executing node 4/4: output_0 (output)
+2025-05-06 13:14:51,388 - workflow_api - INFO - Node output_0 executed successfully in 0.000s
+2025-05-06 13:14:51,388 - workflow_api - INFO - Workflow executed successfully in 1.912s
+2025-05-06 13:14:51,392 - workflow_api - INFO - Request 1746517489468 completed in 1.924s - Status: 200
+2025-05-06 13:15:36,842 - workflow_api - INFO - Request 1746517536842 - PUT /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:15:36,856 - workflow_api - INFO - Request 1746517536842 completed in 0.014s - Status: 200
+2025-05-06 13:17:08,375 - workflow_api - INFO - Request 1746517628375 - PUT /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:17:08,454 - workflow_api - INFO - Request 1746517628375 completed in 0.078s - Status: 200
+2025-05-06 13:17:35,228 - workflow_api - INFO - Request 1746517655228 - POST /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 13:17:35,234 - workflow_api - INFO - Starting workflow execution: 6818ed694f47505f38823877
+2025-05-06 13:17:35,237 - workflow_api - INFO - Using frontend provided API key for workflow execution
+2025-05-06 13:17:35,238 - workflow_api - INFO - Input node input_0 has type: Text
+2025-05-06 13:17:35,238 - workflow_api - INFO - Input node input_1 has type: Text
+2025-05-06 13:17:35,240 - workflow_api - INFO - Execution inputs: {'input_0': InputValue(value='chat with me', type='Text'), 'input_1': InputValue(value='hi', type='Text')}
+2025-05-06 13:17:35,243 - workflow_api - INFO - Created execution log: 6819be97892de965fccad831
+2025-05-06 13:17:35,243 - workflow_api - INFO - Execution order: ['input_1', 'input_0', 'openai_0', 'output_0']
+2025-05-06 13:17:35,244 - workflow_api - INFO - Executing node 1/4: input_1 (input)
+2025-05-06 13:17:35,245 - workflow_api - INFO - Node input_1 executed successfully in 0.000s
+2025-05-06 13:17:35,245 - workflow_api - INFO - Executing node 2/4: input_0 (input)
+2025-05-06 13:17:35,246 - workflow_api - INFO - Node input_0 executed successfully in 0.000s
+2025-05-06 13:17:35,246 - workflow_api - INFO - Executing node 3/4: openai_0 (openai)
+2025-05-06 13:17:35,247 - workflow_api - INFO - Sending request to OpenAI API using model: gpt-3.5-turbo
+2025-05-06 13:17:37,254 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-06 13:17:37,256 - workflow_api - ERROR - OpenAI API rate limit error: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+2025-05-06 13:17:37,257 - workflow_api - ERROR - OpenAI node error: OpenAI API rate limit reached. Please try again later or check your subscription limits.
+2025-05-06 13:17:37,257 - workflow_api - ERROR - Error executing node of type openai: OpenAI API error: OpenAI API rate limit reached. Please try again later or check your subscription limits.
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\workflows.py", line 698, in execute_node
+    raise Exception(f"OpenAI API error: {error_message}")
+Exception: OpenAI API error: OpenAI API rate limit reached. Please try again later or check your subscription limits.
+2025-05-06 13:17:37,259 - workflow_api - INFO - Node openai_0 executed successfully in 2.012s
+2025-05-06 13:17:37,259 - workflow_api - INFO - Executing node 4/4: output_0 (output)
+2025-05-06 13:17:37,260 - workflow_api - INFO - Node output_0 executed successfully in 0.000s
+2025-05-06 13:17:37,260 - workflow_api - INFO - Workflow executed successfully in 2.026s
+2025-05-06 13:17:37,265 - workflow_api - INFO - Request 1746517655228 completed in 2.036s - Status: 200
+2025-05-06 13:22:25,224 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 13:22:30,622 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 13:22:36,794 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 13:22:50,532 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 13:22:55,142 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 13:23:01,113 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 13:23:06,616 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 13:23:11,059 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 13:23:17,029 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 13:24:28,014 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 13:24:32,629 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 13:24:38,564 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 13:28:17,162 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 13:28:21,694 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 13:32:09,627 - workflow_api - INFO - Request 1746518529626 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:32:09,628 - workflow_api - INFO - Request 1746518529626 completed in 0.001s - Status: 200
+2025-05-06 13:32:09,633 - workflow_api - INFO - Request 1746518529632 - PUT /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:32:09,759 - workflow_api - INFO - Request 1746518529632 completed in 0.127s - Status: 200
+2025-05-06 13:32:24,549 - workflow_api - INFO - Request 1746518544549 - OPTIONS /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 13:32:24,550 - workflow_api - INFO - Request 1746518544549 completed in 0.001s - Status: 200
+2025-05-06 13:32:24,566 - workflow_api - INFO - Request 1746518544566 - POST /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 13:32:24,575 - workflow_api - INFO - Starting workflow execution: 6818ed694f47505f38823877
+2025-05-06 13:32:24,578 - workflow_api - INFO - Input node input_0 has type: Text
+2025-05-06 13:32:24,579 - workflow_api - INFO - Input node input_1 has type: Text
+2025-05-06 13:32:24,579 - workflow_api - INFO - Execution inputs: {'input_0': InputValue(value='chat with me', type='Text'), 'input_1': InputValue(value='hi', type='Text')}
+2025-05-06 13:32:24,582 - workflow_api - INFO - Created execution log: 6819c2100a367d84d826772a
+2025-05-06 13:32:24,583 - workflow_api - INFO - Execution order: ['input_1', 'input_0', 'anthropic_0', 'output_0']
+2025-05-06 13:32:24,583 - workflow_api - INFO - Executing node 1/4: input_1 (input)
+2025-05-06 13:32:24,584 - workflow_api - INFO - Node input_1 executed successfully in 0.000s
+2025-05-06 13:32:24,584 - workflow_api - INFO - Executing node 2/4: input_0 (input)
+2025-05-06 13:32:24,585 - workflow_api - INFO - Node input_0 executed successfully in 0.000s
+2025-05-06 13:32:24,585 - workflow_api - INFO - Executing node 3/4: anthropic_0 (anthropic)
+2025-05-06 13:32:24,586 - workflow_api - ERROR - Anthropic node error: No Anthropic API key configured. Please add your API key in the Anthropic node settings.
+2025-05-06 13:32:24,586 - workflow_api - ERROR - Error executing node of type anthropic: Anthropic API error: No Anthropic API key configured. Please add your API key in the Anthropic node settings.
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\workflows.py", line 768, in execute_node
+    raise Exception(f"Anthropic API error: {error_message}")
+Exception: Anthropic API error: No Anthropic API key configured. Please add your API key in the Anthropic node settings.
+2025-05-06 13:32:24,590 - workflow_api - INFO - Node anthropic_0 executed successfully in 0.004s
+2025-05-06 13:32:24,590 - workflow_api - INFO - Executing node 4/4: output_0 (output)
+2025-05-06 13:32:24,591 - workflow_api - INFO - Node output_0 executed successfully in 0.000s
+2025-05-06 13:32:24,592 - workflow_api - INFO - Workflow executed successfully in 0.016s
+2025-05-06 13:32:24,595 - workflow_api - INFO - Request 1746518544566 completed in 0.029s - Status: 200
+2025-05-06 13:32:44,263 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 13:32:56,991 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 13:34:09,303 - workflow_api - INFO - Request 1746518649303 - PUT /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:34:09,350 - workflow_api - INFO - Request 1746518649303 completed in 0.047s - Status: 200
+2025-05-06 13:34:10,686 - workflow_api - INFO - Request 1746518650686 - PUT /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:34:10,699 - workflow_api - INFO - Request 1746518650686 completed in 0.012s - Status: 200
+2025-05-06 13:34:22,906 - workflow_api - INFO - Request 1746518662906 - POST /api/workflows/6818ed694f47505f38823877/execute
+2025-05-06 13:34:22,912 - workflow_api - INFO - Starting workflow execution: 6818ed694f47505f38823877
+2025-05-06 13:34:22,915 - workflow_api - INFO - Input node input_0 has type: Text
+2025-05-06 13:34:22,916 - workflow_api - INFO - Input node input_1 has type: Text
+2025-05-06 13:34:22,916 - workflow_api - INFO - Execution inputs: {'input_0': InputValue(value='chat with me ', type='Text'), 'input_1': InputValue(value='hi', type='Text')}
+2025-05-06 13:34:22,920 - workflow_api - INFO - Created execution log: 6819c2863025f821b20f4aca
+2025-05-06 13:34:22,920 - workflow_api - INFO - Execution order: ['input_1', 'input_0', 'anthropic_0', 'output_0']
+2025-05-06 13:34:22,921 - workflow_api - INFO - Executing node 1/4: input_1 (input)
+2025-05-06 13:34:22,921 - workflow_api - INFO - Node input_1 executed successfully in 0.000s
+2025-05-06 13:34:22,922 - workflow_api - INFO - Executing node 2/4: input_0 (input)
+2025-05-06 13:34:22,922 - workflow_api - INFO - Node input_0 executed successfully in 0.000s
+2025-05-06 13:34:22,923 - workflow_api - INFO - Executing node 3/4: anthropic_0 (anthropic)
+2025-05-06 13:34:22,924 - workflow_api - INFO - Sending request to Anthropic API using model: claude-3-haiku-20240307
+2025-05-06 13:34:24,467 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 400 Bad Request"
+2025-05-06 13:34:24,469 - workflow_api - ERROR - Anthropic API error (400): {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."}}
+2025-05-06 13:34:24,470 - workflow_api - ERROR - Anthropic node error: Anthropic API error (400): {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."}}
+2025-05-06 13:34:24,470 - workflow_api - ERROR - Error executing node of type anthropic: Anthropic API error: Anthropic API error (400): {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."}}
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\workflows.py", line 778, in execute_node
+    raise Exception(f"Anthropic API error: {error_message}")
+Exception: Anthropic API error: Anthropic API error (400): {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."}}
+2025-05-06 13:34:24,473 - workflow_api - INFO - Node anthropic_0 executed successfully in 1.549s
+2025-05-06 13:34:24,473 - workflow_api - INFO - Executing node 4/4: output_0 (output)
+2025-05-06 13:34:24,474 - workflow_api - INFO - Node output_0 executed successfully in 0.000s
+2025-05-06 13:34:24,474 - workflow_api - INFO - Workflow executed successfully in 1.562s
+2025-05-06 13:34:24,478 - workflow_api - INFO - Request 1746518662906 completed in 1.572s - Status: 200
+2025-05-06 13:44:45,900 - workflow_api - INFO - Shutting down Workflow Automation API
+2025-05-06 13:45:13,059 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 13:45:14,862 - workflow_api - INFO - Request 1746519314862 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:45:14,863 - workflow_api - INFO - Request 1746519314862 completed in 0.001s - Status: 200
+2025-05-06 13:45:14,869 - workflow_api - INFO - Request 1746519314869 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 13:45:14,877 - workflow_api - INFO - Request 1746519314869 completed in 0.008s - Status: 401
+2025-05-06 14:29:44,093 - workflow_api - INFO - Request 1746521984093 - GET /api/auth/google/login
+2025-05-06 14:29:44,095 - workflow_api - INFO - Google OAuth login initiated - redirect_uri: http://localhost:8000/api/auth/google/auth
+2025-05-06 14:29:44,737 - workflow_api - INFO - Request 1746521984093 completed in 0.644s - Status: 302
+2025-05-06 14:29:48,832 - workflow_api - INFO - Request 1746521988831 - GET /api/auth/google/auth
+2025-05-06 14:29:48,833 - workflow_api - INFO - Google OAuth callback received - state valid: True
+2025-05-06 14:29:48,834 - workflow_api - INFO - Attempting to get OAuth access token
+2025-05-06 14:29:50,170 - httpx - INFO - HTTP Request: POST https://accounts.google.com/o/oauth2/token "HTTP/1.1 200 OK"
+2025-05-06 14:29:51,276 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/oauth2/v3/certs "HTTP/1.1 200 OK"
+2025-05-06 14:29:51,279 - workflow_api - INFO - Successfully obtained access token
+2025-05-06 14:29:51,280 - workflow_api - INFO - Attempting to parse ID token
+2025-05-06 14:29:51,280 - workflow_api - ERROR - Error parsing ID token: 'id_token'
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\auth.py", line 218, in google_auth
+    user_info = await oauth.google.parse_id_token(request, token)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\authlib\integrations\base_client\async_openid.py", line 63, in parse_id_token
+    token["id_token"],
+    ~~~~~^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\starlette\requests.py", line 81, in __getitem__
+    return self.scope[key]
+           ~~~~~~~~~~^^^^^
+KeyError: 'id_token'
+2025-05-06 14:29:51,284 - workflow_api - INFO - Falling back to userinfo endpoint
+2025-05-06 14:29:52,521 - httpx - INFO - HTTP Request: GET https://openidconnect.googleapis.com/v1/userinfo "HTTP/1.1 200 OK"
+2025-05-06 14:29:52,523 - workflow_api - INFO - Successfully retrieved user info from userinfo endpoint
+2025-05-06 14:29:52,524 - workflow_api - INFO - User info retrieved successfully for: sanskarlajurkar9645@gmail.com
+2025-05-06 14:29:52,605 - workflow_api - INFO - Request 1746521988831 completed in 3.774s - Status: 302
+2025-05-06 14:29:53,536 - workflow_api - INFO - Request 1746521993536 - OPTIONS /api/auth/validate
+2025-05-06 14:29:53,537 - workflow_api - INFO - Request 1746521993537 - OPTIONS /api/auth/validate
+2025-05-06 14:29:53,538 - workflow_api - INFO - Request 1746521993538 - OPTIONS /api/auth/validate
+2025-05-06 14:29:53,539 - workflow_api - INFO - Request 1746521993536 completed in 0.004s - Status: 200
+2025-05-06 14:29:53,541 - workflow_api - INFO - Request 1746521993537 completed in 0.004s - Status: 200
+2025-05-06 14:29:53,543 - workflow_api - INFO - Request 1746521993538 completed in 0.005s - Status: 200
+2025-05-06 14:29:53,547 - workflow_api - INFO - Request 1746521993547 - GET /api/auth/validate
+2025-05-06 14:29:53,567 - workflow_api - INFO - Request 1746521993547 completed in 0.020s - Status: 200
+2025-05-06 14:29:53,571 - workflow_api - INFO - Request 1746521993571 - GET /api/auth/validate
+2025-05-06 14:29:53,576 - workflow_api - INFO - Request 1746521993571 completed in 0.005s - Status: 200
+2025-05-06 14:29:53,581 - workflow_api - INFO - Request 1746521993581 - GET /api/auth/validate
+2025-05-06 14:29:53,585 - workflow_api - INFO - Request 1746521993581 completed in 0.005s - Status: 200
+2025-05-06 14:29:54,728 - workflow_api - INFO - Request 1746521994728 - GET /api/auth/validate
+2025-05-06 14:29:54,733 - workflow_api - INFO - Request 1746521994728 completed in 0.005s - Status: 200
+2025-05-06 14:29:54,740 - workflow_api - INFO - Request 1746521994740 - GET /api/auth/validate
+2025-05-06 14:29:54,746 - workflow_api - INFO - Request 1746521994740 completed in 0.007s - Status: 200
+2025-05-06 14:29:54,807 - workflow_api - INFO - Request 1746521994807 - OPTIONS /api/workflows
+2025-05-06 14:29:54,809 - workflow_api - INFO - Request 1746521994809 - OPTIONS /api/workflows
+2025-05-06 14:29:54,810 - workflow_api - INFO - Request 1746521994807 completed in 0.003s - Status: 200
+2025-05-06 14:29:54,812 - workflow_api - INFO - Request 1746521994809 completed in 0.003s - Status: 200
+2025-05-06 14:29:54,815 - workflow_api - INFO - Request 1746521994815 - GET /api/workflows
+2025-05-06 14:29:54,816 - workflow_api - INFO - Request 1746521994815 completed in 0.001s - Status: 307
+2025-05-06 14:29:54,820 - workflow_api - INFO - Request 1746521994820 - GET /api/workflows
+2025-05-06 14:29:54,822 - workflow_api - INFO - Request 1746521994822 - OPTIONS /api/workflows/
+2025-05-06 14:29:54,822 - workflow_api - INFO - Request 1746521994820 completed in 0.002s - Status: 307
+2025-05-06 14:29:54,824 - workflow_api - INFO - Request 1746521994822 completed in 0.003s - Status: 200
+2025-05-06 14:29:54,827 - workflow_api - INFO - Request 1746521994827 - OPTIONS /api/workflows/
+2025-05-06 14:29:54,828 - workflow_api - INFO - Request 1746521994828 - GET /api/workflows/
+2025-05-06 14:29:54,829 - workflow_api - INFO - Request 1746521994827 completed in 0.002s - Status: 200
+2025-05-06 14:29:54,838 - workflow_api - INFO - Request 1746521994828 completed in 0.009s - Status: 200
+2025-05-06 14:29:54,841 - workflow_api - INFO - Request 1746521994841 - GET /api/workflows/
+2025-05-06 14:29:54,848 - workflow_api - INFO - Request 1746521994841 completed in 0.007s - Status: 200
+2025-05-06 14:29:57,288 - workflow_api - INFO - Request 1746521997288 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:29:57,290 - workflow_api - INFO - Request 1746521997290 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:29:57,290 - workflow_api - INFO - Request 1746521997288 completed in 0.002s - Status: 200
+2025-05-06 14:29:57,292 - workflow_api - INFO - Request 1746521997290 completed in 0.002s - Status: 200
+2025-05-06 14:29:57,295 - workflow_api - INFO - Request 1746521997295 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:29:57,302 - workflow_api - INFO - Request 1746521997295 completed in 0.007s - Status: 200
+2025-05-06 14:29:57,307 - workflow_api - INFO - Request 1746521997306 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:29:57,316 - workflow_api - INFO - Request 1746521997306 completed in 0.010s - Status: 200
+2025-05-06 14:30:00,372 - workflow_api - INFO - Request 1746522000371 - GET /api/workflows
+2025-05-06 14:30:00,374 - workflow_api - INFO - Request 1746522000371 completed in 0.002s - Status: 307
+2025-05-06 14:30:00,381 - workflow_api - INFO - Request 1746522000381 - GET /api/workflows
+2025-05-06 14:30:00,386 - workflow_api - INFO - Request 1746522000386 - GET /api/workflows/
+2025-05-06 14:30:00,389 - workflow_api - INFO - Request 1746522000381 completed in 0.008s - Status: 307
+2025-05-06 14:30:00,398 - workflow_api - INFO - Request 1746522000386 completed in 0.011s - Status: 200
+2025-05-06 14:30:00,402 - workflow_api - INFO - Request 1746522000402 - GET /api/workflows/
+2025-05-06 14:30:00,409 - workflow_api - INFO - Request 1746522000402 completed in 0.007s - Status: 200
+2025-05-06 14:30:02,318 - workflow_api - INFO - Request 1746522002317 - OPTIONS /api/workflows/6818b4fd10963cddc36f257a
+2025-05-06 14:30:02,319 - workflow_api - INFO - Request 1746522002319 - OPTIONS /api/workflows/6818b4fd10963cddc36f257a
+2025-05-06 14:30:02,320 - workflow_api - INFO - Request 1746522002317 completed in 0.002s - Status: 200
+2025-05-06 14:30:02,322 - workflow_api - INFO - Request 1746522002319 completed in 0.003s - Status: 200
+2025-05-06 14:30:02,325 - workflow_api - INFO - Request 1746522002325 - GET /api/workflows/6818b4fd10963cddc36f257a
+2025-05-06 14:30:02,335 - workflow_api - INFO - Request 1746522002325 completed in 0.010s - Status: 200
+2025-05-06 14:30:02,339 - workflow_api - INFO - Request 1746522002339 - GET /api/workflows/6818b4fd10963cddc36f257a
+2025-05-06 14:30:02,347 - workflow_api - INFO - Request 1746522002339 completed in 0.007s - Status: 200
+2025-05-06 14:30:04,375 - workflow_api - INFO - Request 1746522004375 - GET /api/workflows
+2025-05-06 14:30:04,376 - workflow_api - INFO - Request 1746522004375 completed in 0.001s - Status: 307
+2025-05-06 14:30:04,380 - workflow_api - INFO - Request 1746522004380 - GET /api/workflows
+2025-05-06 14:30:04,383 - workflow_api - INFO - Request 1746522004383 - GET /api/workflows/
+2025-05-06 14:30:04,385 - workflow_api - INFO - Request 1746522004380 completed in 0.005s - Status: 307
+2025-05-06 14:30:04,395 - workflow_api - INFO - Request 1746522004383 completed in 0.013s - Status: 200
+2025-05-06 14:30:04,400 - workflow_api - INFO - Request 1746522004400 - GET /api/workflows/
+2025-05-06 14:30:04,407 - workflow_api - INFO - Request 1746522004400 completed in 0.007s - Status: 200
+2025-05-06 14:30:08,716 - workflow_api - INFO - Request 1746522008716 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:30:08,721 - workflow_api - INFO - Request 1746522008716 completed in 0.006s - Status: 200
+2025-05-06 14:30:08,726 - workflow_api - INFO - Request 1746522008726 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:30:08,734 - workflow_api - INFO - Request 1746522008726 completed in 0.008s - Status: 200
+2025-05-06 14:33:59,179 - workflow_api - INFO - Request 1746522239179 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:33:59,186 - workflow_api - INFO - Request 1746522239179 completed in 0.006s - Status: 200
+2025-05-06 14:33:59,874 - workflow_api - INFO - Request 1746522239874 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:33:59,881 - workflow_api - INFO - Request 1746522239874 completed in 0.007s - Status: 200
+2025-05-06 14:41:46,188 - workflow_api - INFO - Request 1746522706188 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:41:46,189 - workflow_api - INFO - Request 1746522706188 completed in 0.001s - Status: 200
+2025-05-06 14:41:46,192 - workflow_api - INFO - Request 1746522706192 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:41:46,198 - workflow_api - INFO - Request 1746522706192 completed in 0.006s - Status: 200
+2025-05-06 14:47:54,001 - workflow_api - INFO - Request 1746523074001 - OPTIONS /api/auth/validate
+2025-05-06 14:47:54,003 - workflow_api - INFO - Request 1746523074003 - OPTIONS /api/auth/validate
+2025-05-06 14:47:54,004 - workflow_api - INFO - Request 1746523074003 - OPTIONS /api/auth/validate
+2025-05-06 14:47:54,005 - workflow_api - INFO - Request 1746523074005 - OPTIONS /api/auth/validate
+2025-05-06 14:47:54,005 - workflow_api - INFO - Request 1746523074001 completed in 0.005s - Status: 200
+2025-05-06 14:47:54,007 - workflow_api - INFO - Request 1746523074003 completed in 0.005s - Status: 200
+2025-05-06 14:47:54,009 - workflow_api - INFO - Request 1746523074003 completed in 0.005s - Status: 200
+2025-05-06 14:47:54,011 - workflow_api - INFO - Request 1746523074005 completed in 0.006s - Status: 200
+2025-05-06 14:47:54,013 - workflow_api - INFO - Request 1746523074013 - GET /api/auth/validate
+2025-05-06 14:47:54,019 - workflow_api - INFO - Request 1746523074013 completed in 0.006s - Status: 200
+2025-05-06 14:47:54,024 - workflow_api - INFO - Request 1746523074024 - GET /api/auth/validate
+2025-05-06 14:47:54,028 - workflow_api - INFO - Request 1746523074024 completed in 0.005s - Status: 200
+2025-05-06 14:47:54,034 - workflow_api - INFO - Request 1746523074034 - GET /api/auth/validate
+2025-05-06 14:47:54,039 - workflow_api - INFO - Request 1746523074034 completed in 0.005s - Status: 200
+2025-05-06 14:47:54,042 - workflow_api - INFO - Request 1746523074042 - GET /api/auth/validate
+2025-05-06 14:47:54,047 - workflow_api - INFO - Request 1746523074042 completed in 0.005s - Status: 200
+2025-05-06 14:47:54,126 - workflow_api - INFO - Request 1746523074126 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:47:54,132 - workflow_api - INFO - Request 1746523074126 completed in 0.006s - Status: 200
+2025-05-06 14:47:54,136 - workflow_api - INFO - Request 1746523074136 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:47:54,144 - workflow_api - INFO - Request 1746523074136 completed in 0.008s - Status: 200
+2025-05-06 14:48:37,192 - workflow_api - INFO - Request 1746523117192 - OPTIONS /api/workflows
+2025-05-06 14:48:37,193 - workflow_api - INFO - Request 1746523117192 completed in 0.001s - Status: 200
+2025-05-06 14:48:37,198 - workflow_api - INFO - Request 1746523117197 - POST /api/workflows
+2025-05-06 14:48:37,199 - workflow_api - INFO - Request 1746523117197 completed in 0.001s - Status: 307
+2025-05-06 14:48:37,203 - workflow_api - INFO - Request 1746523117203 - OPTIONS /api/workflows/
+2025-05-06 14:48:37,209 - workflow_api - INFO - Request 1746523117203 completed in 0.005s - Status: 200
+2025-05-06 14:48:37,215 - workflow_api - INFO - Request 1746523117214 - POST /api/workflows/
+2025-05-06 14:48:37,228 - workflow_api - INFO - Request 1746523117214 completed in 0.014s - Status: 201
+2025-05-06 14:48:37,255 - workflow_api - INFO - Request 1746523117255 - GET /api/auth/validate
+2025-05-06 14:48:37,260 - workflow_api - INFO - Request 1746523117255 completed in 0.005s - Status: 200
+2025-05-06 14:48:37,264 - workflow_api - INFO - Request 1746523117264 - GET /api/auth/validate
+2025-05-06 14:48:37,269 - workflow_api - INFO - Request 1746523117264 completed in 0.005s - Status: 200
+2025-05-06 14:48:37,298 - workflow_api - INFO - Request 1746523117298 - GET /api/workflows
+2025-05-06 14:48:37,299 - workflow_api - INFO - Request 1746523117298 completed in 0.001s - Status: 307
+2025-05-06 14:48:37,303 - workflow_api - INFO - Request 1746523117303 - GET /api/workflows
+2025-05-06 14:48:37,304 - workflow_api - INFO - Request 1746523117303 completed in 0.001s - Status: 307
+2025-05-06 14:48:37,307 - workflow_api - INFO - Request 1746523117307 - GET /api/workflows/
+2025-05-06 14:48:37,314 - workflow_api - INFO - Request 1746523117307 completed in 0.007s - Status: 200
+2025-05-06 14:48:37,318 - workflow_api - INFO - Request 1746523117318 - GET /api/workflows/
+2025-05-06 14:48:37,327 - workflow_api - INFO - Request 1746523117318 completed in 0.009s - Status: 200
+2025-05-06 14:48:39,866 - workflow_api - INFO - Request 1746523119866 - OPTIONS /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 14:48:39,868 - workflow_api - INFO - Request 1746523119868 - OPTIONS /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 14:48:39,868 - workflow_api - INFO - Request 1746523119866 completed in 0.002s - Status: 200
+2025-05-06 14:48:39,872 - workflow_api - INFO - Request 1746523119868 completed in 0.004s - Status: 200
+2025-05-06 14:48:39,938 - workflow_api - INFO - Request 1746523119938 - GET /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 14:48:39,945 - workflow_api - INFO - Request 1746523119938 completed in 0.007s - Status: 200
+2025-05-06 14:48:39,949 - workflow_api - INFO - Request 1746523119949 - GET /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 14:48:39,956 - workflow_api - INFO - Request 1746523119949 completed in 0.007s - Status: 200
+2025-05-06 14:49:08,006 - workflow_api - INFO - Request 1746523148006 - GET /api/workflows
+2025-05-06 14:49:08,007 - workflow_api - INFO - Request 1746523148006 completed in 0.001s - Status: 307
+2025-05-06 14:49:08,010 - workflow_api - INFO - Request 1746523148010 - GET /api/workflows
+2025-05-06 14:49:08,012 - workflow_api - INFO - Request 1746523148010 completed in 0.001s - Status: 307
+2025-05-06 14:49:08,018 - workflow_api - INFO - Request 1746523148018 - GET /api/workflows/
+2025-05-06 14:49:08,027 - workflow_api - INFO - Request 1746523148018 completed in 0.009s - Status: 200
+2025-05-06 14:49:08,032 - workflow_api - INFO - Request 1746523148032 - GET /api/workflows/
+2025-05-06 14:49:08,039 - workflow_api - INFO - Request 1746523148032 completed in 0.007s - Status: 200
+2025-05-06 14:49:09,354 - workflow_api - INFO - Request 1746523149353 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:49:09,360 - workflow_api - INFO - Request 1746523149353 completed in 0.007s - Status: 200
+2025-05-06 14:49:09,365 - workflow_api - INFO - Request 1746523149365 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 14:49:09,381 - workflow_api - INFO - Request 1746523149365 completed in 0.016s - Status: 200
+2025-05-06 15:10:58,821 - workflow_api - INFO - Request 1746524458821 - OPTIONS /api/workflows/6818ed694f47505f38823877
+2025-05-06 15:10:58,822 - workflow_api - INFO - Request 1746524458821 completed in 0.001s - Status: 200
+2025-05-06 15:10:58,826 - workflow_api - INFO - Request 1746524458826 - PUT /api/workflows/6818ed694f47505f38823877
+2025-05-06 15:10:58,829 - workflow_api - INFO - Request 1746524458826 completed in 0.003s - Status: 401
+2025-05-06 15:11:03,341 - workflow_api - INFO - Request 1746524463341 - GET /api/auth/google/login
+2025-05-06 15:11:03,342 - workflow_api - INFO - Google OAuth login initiated - redirect_uri: http://localhost:8000/api/auth/google/auth
+2025-05-06 15:11:04,118 - workflow_api - INFO - Request 1746524463341 completed in 0.778s - Status: 302
+2025-05-06 15:11:38,968 - workflow_api - INFO - Request 1746524498968 - GET /api/auth/google/auth
+2025-05-06 15:11:38,970 - workflow_api - INFO - Google OAuth callback received - state valid: True
+2025-05-06 15:11:38,971 - workflow_api - INFO - Attempting to get OAuth access token
+2025-05-06 15:11:40,012 - httpx - INFO - HTTP Request: POST https://accounts.google.com/o/oauth2/token "HTTP/1.1 200 OK"
+2025-05-06 15:11:40,016 - workflow_api - INFO - Successfully obtained access token
+2025-05-06 15:11:40,017 - workflow_api - INFO - Attempting to parse ID token
+2025-05-06 15:11:40,017 - workflow_api - ERROR - Error parsing ID token: 'id_token'
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\auth.py", line 218, in google_auth
+    user_info = await oauth.google.parse_id_token(request, token)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\authlib\integrations\base_client\async_openid.py", line 63, in parse_id_token
+    token["id_token"],
+    ~~~~~^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\starlette\requests.py", line 81, in __getitem__
+    return self.scope[key]
+           ~~~~~~~~~~^^^^^
+KeyError: 'id_token'
+2025-05-06 15:11:40,020 - workflow_api - INFO - Falling back to userinfo endpoint
+2025-05-06 15:11:41,194 - httpx - INFO - HTTP Request: GET https://openidconnect.googleapis.com/v1/userinfo "HTTP/1.1 200 OK"
+2025-05-06 15:11:41,197 - workflow_api - INFO - Successfully retrieved user info from userinfo endpoint
+2025-05-06 15:11:41,197 - workflow_api - INFO - User info retrieved successfully for: sanskarlajurkar9645@gmail.com
+2025-05-06 15:11:41,203 - workflow_api - INFO - Request 1746524498968 completed in 2.235s - Status: 302
+2025-05-06 15:11:41,727 - workflow_api - INFO - Request 1746524501727 - OPTIONS /api/auth/validate
+2025-05-06 15:11:41,729 - workflow_api - INFO - Request 1746524501727 completed in 0.002s - Status: 200
+2025-05-06 15:11:41,733 - workflow_api - INFO - Request 1746524501733 - OPTIONS /api/auth/validate
+2025-05-06 15:11:41,734 - workflow_api - INFO - Request 1746524501733 completed in 0.002s - Status: 200
+2025-05-06 15:11:41,739 - workflow_api - INFO - Request 1746524501739 - OPTIONS /api/auth/validate
+2025-05-06 15:11:41,740 - workflow_api - INFO - Request 1746524501739 completed in 0.001s - Status: 200
+2025-05-06 15:11:41,744 - workflow_api - INFO - Request 1746524501744 - GET /api/auth/validate
+2025-05-06 15:11:41,749 - workflow_api - INFO - Request 1746524501744 completed in 0.005s - Status: 200
+2025-05-06 15:11:41,753 - workflow_api - INFO - Request 1746524501753 - GET /api/auth/validate
+2025-05-06 15:11:41,758 - workflow_api - INFO - Request 1746524501753 completed in 0.005s - Status: 200
+2025-05-06 15:11:41,762 - workflow_api - INFO - Request 1746524501762 - GET /api/auth/validate
+2025-05-06 15:11:41,767 - workflow_api - INFO - Request 1746524501762 completed in 0.005s - Status: 200
+2025-05-06 15:11:43,237 - workflow_api - INFO - Request 1746524503237 - GET /api/auth/validate
+2025-05-06 15:11:43,243 - workflow_api - INFO - Request 1746524503237 completed in 0.006s - Status: 200
+2025-05-06 15:11:43,248 - workflow_api - INFO - Request 1746524503248 - GET /api/auth/validate
+2025-05-06 15:11:43,253 - workflow_api - INFO - Request 1746524503248 completed in 0.005s - Status: 200
+2025-05-06 15:11:43,319 - workflow_api - INFO - Request 1746524503319 - OPTIONS /api/workflows
+2025-05-06 15:11:43,321 - workflow_api - INFO - Request 1746524503321 - OPTIONS /api/workflows
+2025-05-06 15:11:43,321 - workflow_api - INFO - Request 1746524503319 completed in 0.002s - Status: 200
+2025-05-06 15:11:43,324 - workflow_api - INFO - Request 1746524503321 completed in 0.003s - Status: 200
+2025-05-06 15:11:43,326 - workflow_api - INFO - Request 1746524503326 - GET /api/workflows
+2025-05-06 15:11:43,327 - workflow_api - INFO - Request 1746524503326 completed in 0.001s - Status: 307
+2025-05-06 15:11:43,331 - workflow_api - INFO - Request 1746524503331 - GET /api/workflows
+2025-05-06 15:11:43,333 - workflow_api - INFO - Request 1746524503333 - OPTIONS /api/workflows/
+2025-05-06 15:11:43,334 - workflow_api - INFO - Request 1746524503331 completed in 0.003s - Status: 307
+2025-05-06 15:11:43,336 - workflow_api - INFO - Request 1746524503333 completed in 0.003s - Status: 200
+2025-05-06 15:11:43,339 - workflow_api - INFO - Request 1746524503339 - OPTIONS /api/workflows/
+2025-05-06 15:11:43,341 - workflow_api - INFO - Request 1746524503341 - GET /api/workflows/
+2025-05-06 15:11:43,342 - workflow_api - INFO - Request 1746524503339 completed in 0.003s - Status: 200
+2025-05-06 15:11:43,350 - workflow_api - INFO - Request 1746524503341 completed in 0.009s - Status: 200
+2025-05-06 15:11:43,355 - workflow_api - INFO - Request 1746524503354 - GET /api/workflows/
+2025-05-06 15:11:43,362 - workflow_api - INFO - Request 1746524503354 completed in 0.007s - Status: 200
+2025-05-06 15:11:46,054 - workflow_api - INFO - Request 1746524506054 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 15:11:46,060 - workflow_api - INFO - Request 1746524506054 completed in 0.006s - Status: 200
+2025-05-06 15:11:46,065 - workflow_api - INFO - Request 1746524506065 - GET /api/workflows/6818ed694f47505f38823877
+2025-05-06 15:11:46,075 - workflow_api - INFO - Request 1746524506065 completed in 0.010s - Status: 200
+2025-05-06 15:15:45,345 - workflow_api - INFO - Request 1746524745345 - OPTIONS /api/workflows
+2025-05-06 15:15:45,346 - workflow_api - INFO - Request 1746524745345 completed in 0.001s - Status: 200
+2025-05-06 15:15:45,351 - workflow_api - INFO - Request 1746524745351 - POST /api/workflows
+2025-05-06 15:15:45,353 - workflow_api - INFO - Request 1746524745351 completed in 0.002s - Status: 307
+2025-05-06 15:15:45,358 - workflow_api - INFO - Request 1746524745358 - OPTIONS /api/workflows/
+2025-05-06 15:15:45,360 - workflow_api - INFO - Request 1746524745358 completed in 0.002s - Status: 200
+2025-05-06 15:15:45,365 - workflow_api - INFO - Request 1746524745365 - POST /api/workflows/
+2025-05-06 15:15:45,375 - workflow_api - INFO - Request 1746524745365 completed in 0.010s - Status: 201
+2025-05-06 15:15:45,400 - workflow_api - INFO - Request 1746524745400 - GET /api/auth/validate
+2025-05-06 15:15:45,405 - workflow_api - INFO - Request 1746524745400 completed in 0.004s - Status: 200
+2025-05-06 15:15:45,410 - workflow_api - INFO - Request 1746524745410 - GET /api/auth/validate
+2025-05-06 15:15:45,415 - workflow_api - INFO - Request 1746524745410 completed in 0.005s - Status: 200
+2025-05-06 15:15:45,438 - workflow_api - INFO - Request 1746524745438 - GET /api/workflows
+2025-05-06 15:15:45,439 - workflow_api - INFO - Request 1746524745438 completed in 0.001s - Status: 307
+2025-05-06 15:15:45,445 - workflow_api - INFO - Request 1746524745445 - GET /api/workflows
+2025-05-06 15:15:45,447 - workflow_api - INFO - Request 1746524745445 completed in 0.001s - Status: 307
+2025-05-06 15:15:45,450 - workflow_api - INFO - Request 1746524745450 - GET /api/workflows/
+2025-05-06 15:15:45,460 - workflow_api - INFO - Request 1746524745450 completed in 0.010s - Status: 200
+2025-05-06 15:15:45,465 - workflow_api - INFO - Request 1746524745465 - GET /api/workflows/
+2025-05-06 15:15:45,473 - workflow_api - INFO - Request 1746524745465 completed in 0.008s - Status: 200
+2025-05-06 15:15:47,552 - workflow_api - INFO - Request 1746524747552 - OPTIONS /api/workflows/6819da49e9287c507e41a4e2
+2025-05-06 15:15:47,554 - workflow_api - INFO - Request 1746524747554 - OPTIONS /api/workflows/6819da49e9287c507e41a4e2
+2025-05-06 15:15:47,555 - workflow_api - INFO - Request 1746524747552 completed in 0.003s - Status: 200
+2025-05-06 15:15:47,556 - workflow_api - INFO - Request 1746524747554 completed in 0.003s - Status: 200
+2025-05-06 15:15:47,559 - workflow_api - INFO - Request 1746524747559 - GET /api/workflows/6819da49e9287c507e41a4e2
+2025-05-06 15:15:47,566 - workflow_api - INFO - Request 1746524747559 completed in 0.008s - Status: 200
+2025-05-06 15:15:47,571 - workflow_api - INFO - Request 1746524747571 - GET /api/workflows/6819da49e9287c507e41a4e2
+2025-05-06 15:15:47,578 - workflow_api - INFO - Request 1746524747571 completed in 0.007s - Status: 200
+2025-05-06 15:57:36,930 - workflow_api - INFO - Request 1746527256930 - OPTIONS /api/auth/validate
+2025-05-06 15:57:36,931 - workflow_api - INFO - Request 1746527256931 - OPTIONS /api/auth/validate
+2025-05-06 15:57:36,931 - workflow_api - INFO - Request 1746527256931 - OPTIONS /api/auth/validate
+2025-05-06 15:57:36,931 - workflow_api - INFO - Request 1746527256931 - OPTIONS /api/auth/validate
+2025-05-06 15:57:36,932 - workflow_api - INFO - Request 1746527256930 completed in 0.002s - Status: 200
+2025-05-06 15:57:36,933 - workflow_api - INFO - Request 1746527256931 completed in 0.002s - Status: 200
+2025-05-06 15:57:36,933 - workflow_api - INFO - Request 1746527256931 completed in 0.002s - Status: 200
+2025-05-06 15:57:36,934 - workflow_api - INFO - Request 1746527256931 completed in 0.003s - Status: 200
+2025-05-06 15:57:36,935 - workflow_api - INFO - Request 1746527256935 - GET /api/auth/validate
+2025-05-06 15:57:36,936 - workflow_api - INFO - Request 1746527256935 completed in 0.001s - Status: 401
+2025-05-06 15:57:36,937 - workflow_api - INFO - Request 1746527256937 - GET /api/auth/validate
+2025-05-06 15:57:36,939 - workflow_api - INFO - Request 1746527256937 completed in 0.001s - Status: 401
+2025-05-06 15:57:36,941 - workflow_api - INFO - Request 1746527256941 - GET /api/auth/validate
+2025-05-06 15:57:36,942 - workflow_api - INFO - Request 1746527256941 completed in 0.001s - Status: 401
+2025-05-06 15:57:36,945 - workflow_api - INFO - Request 1746527256945 - GET /api/auth/validate
+2025-05-06 15:57:36,947 - workflow_api - INFO - Request 1746527256945 completed in 0.002s - Status: 401
+2025-05-06 15:57:38,560 - workflow_api - INFO - Request 1746527258560 - GET /api/auth/google/login
+2025-05-06 15:57:38,565 - workflow_api - INFO - Google OAuth login initiated - redirect_uri: http://localhost:8000/api/auth/google/auth
+2025-05-06 15:57:38,904 - workflow_api - INFO - Request 1746527258560 completed in 0.344s - Status: 302
+2025-05-06 15:57:42,207 - workflow_api - INFO - Request 1746527262207 - GET /api/auth/google/auth
+2025-05-06 15:57:42,207 - workflow_api - INFO - Google OAuth callback received - state valid: True
+2025-05-06 15:57:42,208 - workflow_api - INFO - Attempting to get OAuth access token
+2025-05-06 15:57:42,952 - httpx - INFO - HTTP Request: POST https://accounts.google.com/o/oauth2/token "HTTP/1.1 200 OK"
+2025-05-06 15:57:42,954 - workflow_api - INFO - Successfully obtained access token
+2025-05-06 15:57:42,954 - workflow_api - INFO - Attempting to parse ID token
+2025-05-06 15:57:42,954 - workflow_api - ERROR - Error parsing ID token: 'id_token'
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\auth.py", line 218, in google_auth
+    user_info = await oauth.google.parse_id_token(request, token)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\authlib\integrations\base_client\async_openid.py", line 63, in parse_id_token
+    token["id_token"],
+    ~~~~~^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\starlette\requests.py", line 81, in __getitem__
+    return self.scope[key]
+           ~~~~~~~~~~^^^^^
+KeyError: 'id_token'
+2025-05-06 15:57:42,955 - workflow_api - INFO - Falling back to userinfo endpoint
+2025-05-06 15:57:43,741 - httpx - INFO - HTTP Request: GET https://openidconnect.googleapis.com/v1/userinfo "HTTP/1.1 200 OK"
+2025-05-06 15:57:43,742 - workflow_api - INFO - Successfully retrieved user info from userinfo endpoint
+2025-05-06 15:57:43,742 - workflow_api - INFO - User info retrieved successfully for: sanskarlajurkar9645@gmail.com
+2025-05-06 15:57:43,746 - workflow_api - INFO - Request 1746527262207 completed in 1.539s - Status: 302
+2025-05-06 15:57:44,209 - workflow_api - INFO - Request 1746527264209 - GET /api/auth/validate
+2025-05-06 15:57:44,213 - workflow_api - INFO - Request 1746527264209 completed in 0.004s - Status: 200
+2025-05-06 15:57:44,216 - workflow_api - INFO - Request 1746527264216 - GET /api/auth/validate
+2025-05-06 15:57:44,220 - workflow_api - INFO - Request 1746527264216 completed in 0.004s - Status: 200
+2025-05-06 15:57:44,223 - workflow_api - INFO - Request 1746527264223 - GET /api/auth/validate
+2025-05-06 15:57:44,228 - workflow_api - INFO - Request 1746527264223 completed in 0.004s - Status: 200
+2025-05-06 15:57:45,716 - workflow_api - INFO - Request 1746527265716 - GET /api/auth/validate
+2025-05-06 15:57:45,719 - workflow_api - INFO - Request 1746527265716 completed in 0.003s - Status: 200
+2025-05-06 15:57:45,722 - workflow_api - INFO - Request 1746527265722 - GET /api/auth/validate
+2025-05-06 15:57:45,726 - workflow_api - INFO - Request 1746527265722 completed in 0.004s - Status: 200
+2025-05-06 15:57:45,758 - workflow_api - INFO - Request 1746527265758 - OPTIONS /api/workflows
+2025-05-06 15:57:45,760 - workflow_api - INFO - Request 1746527265758 completed in 0.002s - Status: 200
+2025-05-06 15:57:45,763 - workflow_api - INFO - Request 1746527265763 - OPTIONS /api/workflows
+2025-05-06 15:57:45,763 - workflow_api - INFO - Request 1746527265763 completed in 0.001s - Status: 200
+2025-05-06 15:57:45,767 - workflow_api - INFO - Request 1746527265767 - GET /api/workflows
+2025-05-06 15:57:45,768 - workflow_api - INFO - Request 1746527265767 completed in 0.001s - Status: 307
+2025-05-06 15:57:45,771 - workflow_api - INFO - Request 1746527265771 - GET /api/workflows
+2025-05-06 15:57:45,772 - workflow_api - INFO - Request 1746527265771 completed in 0.001s - Status: 307
+2025-05-06 15:57:45,774 - workflow_api - INFO - Request 1746527265774 - OPTIONS /api/workflows/
+2025-05-06 15:57:45,775 - workflow_api - INFO - Request 1746527265774 completed in 0.001s - Status: 200
+2025-05-06 15:57:45,777 - workflow_api - INFO - Request 1746527265777 - OPTIONS /api/workflows/
+2025-05-06 15:57:45,778 - workflow_api - INFO - Request 1746527265777 completed in 0.001s - Status: 200
+2025-05-06 15:57:45,781 - workflow_api - INFO - Request 1746527265781 - GET /api/workflows/
+2025-05-06 15:57:45,785 - workflow_api - INFO - Request 1746527265781 completed in 0.004s - Status: 200
+2025-05-06 15:57:45,788 - workflow_api - INFO - Request 1746527265788 - GET /api/workflows/
+2025-05-06 15:57:45,793 - workflow_api - INFO - Request 1746527265788 completed in 0.005s - Status: 200
+2025-05-06 15:57:49,016 - workflow_api - INFO - Request 1746527269016 - OPTIONS /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 15:57:49,017 - workflow_api - INFO - Request 1746527269017 - OPTIONS /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 15:57:49,018 - workflow_api - INFO - Request 1746527269016 completed in 0.001s - Status: 200
+2025-05-06 15:57:49,019 - workflow_api - INFO - Request 1746527269017 completed in 0.002s - Status: 200
+2025-05-06 15:57:49,020 - workflow_api - INFO - Request 1746527269020 - GET /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 15:57:49,026 - workflow_api - INFO - Request 1746527269020 completed in 0.005s - Status: 200
+2025-05-06 15:57:49,029 - workflow_api - INFO - Request 1746527269029 - GET /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 15:57:49,034 - workflow_api - INFO - Request 1746527269029 completed in 0.005s - Status: 200
+2025-05-06 16:04:29,550 - workflow_api - INFO - Request 1746527669550 - GET /api/auth/validate
+2025-05-06 16:04:29,553 - workflow_api - INFO - Request 1746527669550 completed in 0.003s - Status: 200
+2025-05-06 16:04:29,555 - workflow_api - INFO - Request 1746527669555 - GET /api/auth/validate
+2025-05-06 16:04:29,559 - workflow_api - INFO - Request 1746527669555 completed in 0.003s - Status: 200
+2025-05-06 16:04:29,561 - workflow_api - INFO - Request 1746527669561 - GET /api/auth/validate
+2025-05-06 16:04:29,564 - workflow_api - INFO - Request 1746527669561 completed in 0.003s - Status: 200
+2025-05-06 16:04:29,566 - workflow_api - INFO - Request 1746527669566 - GET /api/auth/validate
+2025-05-06 16:04:29,569 - workflow_api - INFO - Request 1746527669566 completed in 0.002s - Status: 200
+2025-05-06 16:04:29,698 - workflow_api - INFO - Request 1746527669698 - GET /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 16:04:29,703 - workflow_api - INFO - Request 1746527669698 completed in 0.006s - Status: 200
+2025-05-06 16:04:29,706 - workflow_api - INFO - Request 1746527669706 - GET /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 16:04:29,711 - workflow_api - INFO - Request 1746527669706 completed in 0.005s - Status: 200
+2025-05-06 17:49:05,913 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 17:50:12,910 - workflow_api - INFO - Request 1746534012909 - OPTIONS /api/auth/validate
+2025-05-06 17:50:12,912 - workflow_api - INFO - Request 1746534012912 - OPTIONS /api/auth/validate
+2025-05-06 17:50:12,912 - workflow_api - INFO - Request 1746534012909 completed in 0.003s - Status: 200
+2025-05-06 17:50:12,915 - workflow_api - INFO - Request 1746534012912 completed in 0.003s - Status: 200
+2025-05-06 17:50:12,918 - workflow_api - INFO - Request 1746534012918 - GET /api/auth/validate
+2025-05-06 17:50:12,939 - workflow_api - INFO - Request 1746534012918 completed in 0.021s - Status: 401
+2025-05-06 17:50:12,943 - workflow_api - INFO - Request 1746534012943 - GET /api/auth/validate
+2025-05-06 17:50:12,945 - workflow_api - INFO - Request 1746534012943 completed in 0.002s - Status: 401
+2025-05-06 17:50:15,885 - workflow_api - INFO - Request 1746534015884 - GET /api/auth/google/login
+2025-05-06 17:50:15,886 - workflow_api - INFO - Google OAuth login initiated - redirect_uri: http://localhost:8000/api/auth/google/auth
+2025-05-06 17:50:16,849 - workflow_api - INFO - Request 1746534015884 completed in 0.965s - Status: 302
+2025-05-06 17:50:39,103 - workflow_api - INFO - Request 1746534039103 - GET /api/auth/google/auth
+2025-05-06 17:50:39,104 - workflow_api - INFO - Google OAuth callback received - state valid: True
+2025-05-06 17:50:39,105 - workflow_api - INFO - Attempting to get OAuth access token
+2025-05-06 17:50:40,892 - httpx - INFO - HTTP Request: POST https://accounts.google.com/o/oauth2/token "HTTP/1.1 200 OK"
+2025-05-06 17:50:43,787 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/oauth2/v3/certs "HTTP/1.1 200 OK"
+2025-05-06 17:50:43,866 - workflow_api - INFO - Successfully obtained access token
+2025-05-06 17:50:43,867 - workflow_api - INFO - Attempting to parse ID token
+2025-05-06 17:50:43,868 - workflow_api - ERROR - Error parsing ID token: 'id_token'
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\auth.py", line 218, in google_auth
+    user_info = await oauth.google.parse_id_token(request, token)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\authlib\integrations\base_client\async_openid.py", line 63, in parse_id_token
+    token["id_token"],
+    ~~~~~^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\starlette\requests.py", line 81, in __getitem__
+    return self.scope[key]
+           ~~~~~~~~~~^^^^^
+KeyError: 'id_token'
+2025-05-06 17:50:43,873 - workflow_api - INFO - Falling back to userinfo endpoint
+2025-05-06 17:50:46,013 - httpx - INFO - HTTP Request: GET https://openidconnect.googleapis.com/v1/userinfo "HTTP/1.1 200 OK"
+2025-05-06 17:50:46,015 - workflow_api - INFO - Successfully retrieved user info from userinfo endpoint
+2025-05-06 17:50:46,015 - workflow_api - INFO - User info retrieved successfully for: sanskarlajurkar9645@gmail.com
+2025-05-06 17:50:46,058 - workflow_api - INFO - Request 1746534039103 completed in 6.955s - Status: 302
+2025-05-06 17:50:46,860 - workflow_api - INFO - Request 1746534046860 - GET /api/auth/validate
+2025-05-06 17:50:46,885 - workflow_api - INFO - Request 1746534046860 completed in 0.024s - Status: 200
+2025-05-06 17:50:46,890 - workflow_api - INFO - Request 1746534046890 - GET /api/auth/validate
+2025-05-06 17:50:46,895 - workflow_api - INFO - Request 1746534046890 completed in 0.005s - Status: 200
+2025-05-06 17:50:46,899 - workflow_api - INFO - Request 1746534046899 - GET /api/auth/validate
+2025-05-06 17:50:46,903 - workflow_api - INFO - Request 1746534046899 completed in 0.004s - Status: 200
+2025-05-06 17:50:48,084 - workflow_api - INFO - Request 1746534048084 - GET /api/auth/validate
+2025-05-06 17:50:48,089 - workflow_api - INFO - Request 1746534048084 completed in 0.005s - Status: 200
+2025-05-06 17:50:48,094 - workflow_api - INFO - Request 1746534048094 - GET /api/auth/validate
+2025-05-06 17:50:48,106 - workflow_api - INFO - Request 1746534048094 completed in 0.012s - Status: 200
+2025-05-06 17:50:48,163 - workflow_api - INFO - Request 1746534048163 - OPTIONS /api/workflows
+2025-05-06 17:50:48,165 - workflow_api - INFO - Request 1746534048165 - OPTIONS /api/workflows
+2025-05-06 17:50:48,166 - workflow_api - INFO - Request 1746534048163 completed in 0.003s - Status: 200
+2025-05-06 17:50:48,168 - workflow_api - INFO - Request 1746534048165 completed in 0.003s - Status: 200
+2025-05-06 17:50:48,171 - workflow_api - INFO - Request 1746534048171 - GET /api/workflows
+2025-05-06 17:50:48,174 - workflow_api - INFO - Request 1746534048171 completed in 0.003s - Status: 307
+2025-05-06 17:50:48,179 - workflow_api - INFO - Request 1746534048179 - GET /api/workflows
+2025-05-06 17:50:48,181 - workflow_api - INFO - Request 1746534048181 - OPTIONS /api/workflows/
+2025-05-06 17:50:48,186 - workflow_api - INFO - Request 1746534048179 completed in 0.007s - Status: 307
+2025-05-06 17:50:48,197 - workflow_api - INFO - Request 1746534048181 completed in 0.016s - Status: 200
+2025-05-06 17:50:48,201 - workflow_api - INFO - Request 1746534048201 - OPTIONS /api/workflows/
+2025-05-06 17:50:48,203 - workflow_api - INFO - Request 1746534048203 - GET /api/workflows/
+2025-05-06 17:50:48,204 - workflow_api - INFO - Request 1746534048201 completed in 0.003s - Status: 200
+2025-05-06 17:50:48,215 - workflow_api - INFO - Request 1746534048203 completed in 0.011s - Status: 200
+2025-05-06 17:50:48,219 - workflow_api - INFO - Request 1746534048219 - GET /api/workflows/
+2025-05-06 17:50:48,225 - workflow_api - INFO - Request 1746534048219 completed in 0.006s - Status: 200
+2025-05-06 17:51:02,889 - workflow_api - INFO - Request 1746534062889 - OPTIONS /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 17:51:02,890 - workflow_api - INFO - Request 1746534062890 - OPTIONS /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 17:51:02,891 - workflow_api - INFO - Request 1746534062889 completed in 0.002s - Status: 200
+2025-05-06 17:51:02,893 - workflow_api - INFO - Request 1746534062890 completed in 0.003s - Status: 200
+2025-05-06 17:51:02,961 - workflow_api - INFO - Request 1746534062961 - GET /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 17:51:02,968 - workflow_api - INFO - Request 1746534062961 completed in 0.006s - Status: 200
+2025-05-06 17:51:02,972 - workflow_api - INFO - Request 1746534062972 - GET /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 17:51:02,978 - workflow_api - INFO - Request 1746534062972 completed in 0.006s - Status: 200
+2025-05-06 18:09:06,823 - workflow_api - INFO - Request 1746535146823 - OPTIONS /api/auth/validate
+2025-05-06 18:09:06,825 - workflow_api - INFO - Request 1746535146825 - OPTIONS /api/auth/validate
+2025-05-06 18:09:06,826 - workflow_api - INFO - Request 1746535146826 - OPTIONS /api/auth/validate
+2025-05-06 18:09:06,827 - workflow_api - INFO - Request 1746535146827 - OPTIONS /api/auth/validate
+2025-05-06 18:09:06,828 - workflow_api - INFO - Request 1746535146823 completed in 0.005s - Status: 200
+2025-05-06 18:09:06,830 - workflow_api - INFO - Request 1746535146825 completed in 0.005s - Status: 200
+2025-05-06 18:09:06,832 - workflow_api - INFO - Request 1746535146826 completed in 0.006s - Status: 200
+2025-05-06 18:09:06,834 - workflow_api - INFO - Request 1746535146827 completed in 0.007s - Status: 200
+2025-05-06 18:09:06,838 - workflow_api - INFO - Request 1746535146838 - GET /api/auth/validate
+2025-05-06 18:09:06,843 - workflow_api - INFO - Request 1746535146838 completed in 0.005s - Status: 200
+2025-05-06 18:09:06,848 - workflow_api - INFO - Request 1746535146848 - GET /api/auth/validate
+2025-05-06 18:09:06,853 - workflow_api - INFO - Request 1746535146848 completed in 0.005s - Status: 200
+2025-05-06 18:09:06,857 - workflow_api - INFO - Request 1746535146857 - GET /api/auth/validate
+2025-05-06 18:09:06,865 - workflow_api - INFO - Request 1746535146857 completed in 0.007s - Status: 200
+2025-05-06 18:09:06,869 - workflow_api - INFO - Request 1746535146869 - GET /api/auth/validate
+2025-05-06 18:09:06,874 - workflow_api - INFO - Request 1746535146869 completed in 0.005s - Status: 200
+2025-05-06 18:09:06,978 - workflow_api - INFO - Request 1746535146978 - OPTIONS /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 18:09:07,027 - workflow_api - INFO - Request 1746535147027 - OPTIONS /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 18:09:07,028 - workflow_api - INFO - Request 1746535146978 completed in 0.051s - Status: 200
+2025-05-06 18:09:07,031 - workflow_api - INFO - Request 1746535147027 completed in 0.003s - Status: 200
+2025-05-06 18:09:07,034 - workflow_api - INFO - Request 1746535147034 - GET /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 18:09:07,040 - workflow_api - INFO - Request 1746535147034 completed in 0.007s - Status: 200
+2025-05-06 18:09:07,044 - workflow_api - INFO - Request 1746535147044 - GET /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 18:09:07,050 - workflow_api - INFO - Request 1746535147044 completed in 0.006s - Status: 200
+2025-05-06 19:52:34,031 - workflow_api - INFO - Starting Workflow Automation API
+2025-05-06 19:52:47,306 - workflow_api - INFO - Request 1746541367306 - OPTIONS /api/auth/validate
+2025-05-06 19:52:47,307 - workflow_api - INFO - Request 1746541367307 - OPTIONS /api/auth/validate
+2025-05-06 19:52:47,307 - workflow_api - INFO - Request 1746541367306 completed in 0.001s - Status: 200
+2025-05-06 19:52:47,308 - workflow_api - INFO - Request 1746541367307 completed in 0.001s - Status: 200
+2025-05-06 19:52:47,309 - workflow_api - INFO - Request 1746541367309 - GET /api/auth/validate
+2025-05-06 19:52:47,317 - workflow_api - INFO - Request 1746541367309 completed in 0.008s - Status: 401
+2025-05-06 19:52:47,319 - workflow_api - INFO - Request 1746541367319 - GET /api/auth/validate
+2025-05-06 19:52:47,320 - workflow_api - INFO - Request 1746541367319 completed in 0.001s - Status: 401
+2025-05-06 19:52:48,896 - workflow_api - INFO - Request 1746541368896 - GET /api/auth/google/login
+2025-05-06 19:52:48,896 - workflow_api - INFO - Google OAuth login initiated - redirect_uri: http://localhost:8000/api/auth/google/auth
+2025-05-06 19:52:49,168 - workflow_api - INFO - Request 1746541368896 completed in 0.273s - Status: 302
+2025-05-06 19:52:52,764 - workflow_api - INFO - Request 1746541372763 - GET /api/auth/google/auth
+2025-05-06 19:52:52,764 - workflow_api - INFO - Google OAuth callback received - state valid: True
+2025-05-06 19:52:52,765 - workflow_api - INFO - Attempting to get OAuth access token
+2025-05-06 19:52:53,643 - httpx - INFO - HTTP Request: POST https://accounts.google.com/o/oauth2/token "HTTP/1.1 200 OK"
+2025-05-06 19:52:54,257 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/oauth2/v3/certs "HTTP/1.1 200 OK"
+2025-05-06 19:52:54,265 - workflow_api - INFO - Successfully obtained access token
+2025-05-06 19:52:54,265 - workflow_api - INFO - Attempting to parse ID token
+2025-05-06 19:52:54,266 - workflow_api - ERROR - Error parsing ID token: 'id_token'
+Traceback (most recent call last):
+  File "E:\Workflow Automation p4\backend\routers\auth.py", line 218, in google_auth
+    user_info = await oauth.google.parse_id_token(request, token)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\authlib\integrations\base_client\async_openid.py", line 63, in parse_id_token
+    token["id_token"],
+    ~~~~~^^^^^^^^^^^^
+  File "E:\Workflow Automation p4\backend\venv\Lib\site-packages\starlette\requests.py", line 81, in __getitem__
+    return self.scope[key]
+           ~~~~~~~~~~^^^^^
+KeyError: 'id_token'
+2025-05-06 19:52:54,268 - workflow_api - INFO - Falling back to userinfo endpoint
+2025-05-06 19:52:55,158 - httpx - INFO - HTTP Request: GET https://openidconnect.googleapis.com/v1/userinfo "HTTP/1.1 200 OK"
+2025-05-06 19:52:55,159 - workflow_api - INFO - Successfully retrieved user info from userinfo endpoint
+2025-05-06 19:52:55,159 - workflow_api - INFO - User info retrieved successfully for: sanskarlajurkar9645@gmail.com
+2025-05-06 19:52:55,191 - workflow_api - INFO - Request 1746541372763 completed in 2.428s - Status: 302
+2025-05-06 19:52:55,422 - workflow_api - INFO - Request 1746541375422 - GET /api/auth/validate
+2025-05-06 19:52:55,435 - workflow_api - INFO - Request 1746541375422 completed in 0.013s - Status: 200
+2025-05-06 19:52:55,437 - workflow_api - INFO - Request 1746541375437 - GET /api/auth/validate
+2025-05-06 19:52:55,440 - workflow_api - INFO - Request 1746541375437 completed in 0.003s - Status: 200
+2025-05-06 19:52:55,443 - workflow_api - INFO - Request 1746541375443 - GET /api/auth/validate
+2025-05-06 19:52:55,445 - workflow_api - INFO - Request 1746541375443 completed in 0.003s - Status: 200
+2025-05-06 19:52:56,920 - workflow_api - INFO - Request 1746541376920 - GET /api/auth/validate
+2025-05-06 19:52:56,922 - workflow_api - INFO - Request 1746541376920 completed in 0.003s - Status: 200
+2025-05-06 19:52:56,925 - workflow_api - INFO - Request 1746541376925 - GET /api/auth/validate
+2025-05-06 19:52:56,928 - workflow_api - INFO - Request 1746541376925 completed in 0.003s - Status: 200
+2025-05-06 19:52:56,954 - workflow_api - INFO - Request 1746541376954 - OPTIONS /api/workflows
+2025-05-06 19:52:56,954 - workflow_api - INFO - Request 1746541376954 completed in 0.001s - Status: 200
+2025-05-06 19:52:56,956 - workflow_api - INFO - Request 1746541376956 - OPTIONS /api/workflows
+2025-05-06 19:52:56,956 - workflow_api - INFO - Request 1746541376956 completed in 0.001s - Status: 200
+2025-05-06 19:52:56,958 - workflow_api - INFO - Request 1746541376958 - GET /api/workflows
+2025-05-06 19:52:56,959 - workflow_api - INFO - Request 1746541376958 completed in 0.001s - Status: 307
+2025-05-06 19:52:56,961 - workflow_api - INFO - Request 1746541376961 - GET /api/workflows
+2025-05-06 19:52:56,961 - workflow_api - INFO - Request 1746541376961 completed in 0.001s - Status: 307
+2025-05-06 19:52:56,963 - workflow_api - INFO - Request 1746541376963 - OPTIONS /api/workflows/
+2025-05-06 19:52:56,963 - workflow_api - INFO - Request 1746541376963 completed in 0.000s - Status: 200
+2025-05-06 19:52:56,964 - workflow_api - INFO - Request 1746541376964 - OPTIONS /api/workflows/
+2025-05-06 19:52:56,965 - workflow_api - INFO - Request 1746541376964 completed in 0.000s - Status: 200
+2025-05-06 19:52:56,966 - workflow_api - INFO - Request 1746541376966 - GET /api/workflows/
+2025-05-06 19:52:56,972 - workflow_api - INFO - Request 1746541376966 completed in 0.005s - Status: 200
+2025-05-06 19:52:56,974 - workflow_api - INFO - Request 1746541376974 - GET /api/workflows/
+2025-05-06 19:52:56,977 - workflow_api - INFO - Request 1746541376974 completed in 0.003s - Status: 200
+2025-05-06 19:53:01,775 - workflow_api - INFO - Request 1746541381775 - OPTIONS /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 19:53:01,776 - workflow_api - INFO - Request 1746541381776 - OPTIONS /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 19:53:01,776 - workflow_api - INFO - Request 1746541381775 completed in 0.001s - Status: 200
+2025-05-06 19:53:01,777 - workflow_api - INFO - Request 1746541381776 completed in 0.001s - Status: 200
+2025-05-06 19:53:01,780 - workflow_api - INFO - Request 1746541381780 - GET /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 19:53:01,783 - workflow_api - INFO - Request 1746541381780 completed in 0.004s - Status: 200
+2025-05-06 19:53:01,785 - workflow_api - INFO - Request 1746541381785 - GET /api/workflows/6819d3ede9287c507e41a4e1
+2025-05-06 19:53:01,788 - workflow_api - INFO - Request 1746541381785 completed in 0.003s - Status: 200

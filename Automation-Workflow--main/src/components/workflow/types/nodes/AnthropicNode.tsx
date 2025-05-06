@@ -1,10 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Handle, Position } from 'reactflow';
-import { Settings, Trash2, Brain, Eye, EyeOff, Copy, AlertTriangle } from 'lucide-react';
+import { 
+  Settings, Trash2, Copy, Sparkles, Eye, EyeOff, 
+  AlertTriangle, MessageSquare, ChevronDown, ChevronUp,
+  CheckCircle, FileText, Zap
+} from 'lucide-react';
 import { useFlowStore } from '../../../../store/flowStore';
 import { VariableBuilder } from '../../VariableBuilder';
 import { useVariableInput } from '../../../../hooks/useVariableInput';
 import { VariableHighlighter } from '../../VariableHighlighter';
+import AutocompleteInput from '../../AutocompleteInput';
+import NodeSettingsField from '../../NodeSettingsField';
 
 interface AnthropicNodeProps {
   id: string;
@@ -81,16 +87,25 @@ const AnthropicNode: React.FC<AnthropicNodeProps> = ({ id, data, selected }) => 
       }`}
     >
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-3">
+      <div className="bg-gradient-to-r from-purple-500 to-violet-600 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
-              <Brain className="w-5 h-5 text-white" />
+            <div className="p-1 bg-white/20 backdrop-blur-sm rounded-lg w-9 h-9 flex items-center justify-center">
+              <img 
+                src="/logos/anthropic.png" 
+                alt="Anthropic Logo" 
+                className="w-7 h-7 object-contain"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = "https://www.anthropic.com/images/favicon.svg"; 
+                  target.onerror = null;
+                }}
+              />
             </div>
             <div>
-              <h3 className="font-medium text-white">Anthropic</h3>
-              <p className="text-xs text-indigo-50/80">
-                {data.params?.model || 'Select model'}
+              <h3 className="font-medium text-white">{data.params?.nodeName || 'Anthropic'}</h3>
+              <p className="text-xs text-purple-50/80">
+                {data.params?.model || 'claude-3-opus'}
               </p>
             </div>
           </div>
@@ -177,34 +192,19 @@ const AnthropicNode: React.FC<AnthropicNodeProps> = ({ id, data, selected }) => 
         <div className="space-y-2 relative">
           <label className="flex items-center justify-between">
             <span className="text-xs font-medium text-gray-500">System Instructions</span>
-            <div className="flex items-center space-x-2">
-              <div className="text-xs text-purple-600 flex items-center">
-                <span className="mr-1">Type </span>
-                <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 border border-gray-300 rounded">&#123;&#123;</kbd>
-                <span className="ml-1">to use variables</span>
-              </div>
-              <button
-                onClick={() => updateNodeData(id, { system: '' })}
-                className="text-xs text-gray-400 hover:text-gray-600"
-              >
-                Clear
-              </button>
-            </div>
+            <button
+              onClick={() => updateNodeData(id, { system: '' })}
+              className="text-xs text-gray-400 hover:text-gray-600"
+            >
+              Clear
+            </button>
           </label>
-          <textarea
-            ref={systemInputRef}
+          <AutocompleteInput
             value={data.params?.system || data.system || ''}
-            onChange={(e) => updateNodeData(id, { system: e.target.value })}
-            onKeyUp={handleSystemKeyUp}
-            onFocus={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              setVariablePosition({ 
-                x: rect.left, 
-                y: rect.bottom + window.scrollY + 5
-              });
-            }}
+            onChange={(value) => updateNodeData(id, { system: value })}
             placeholder="Enter system instructions..."
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+            multiline={true}
+            rows={3}
           />
           
           {/* System variables preview */}
@@ -217,41 +217,19 @@ const AnthropicNode: React.FC<AnthropicNodeProps> = ({ id, data, selected }) => 
               />
             </div>
           )}
-          
-          {showSystemVarBuilder && variablePosition && (
-            <VariableBuilder 
-              nodeId={id}
-              position={variablePosition}
-              onSelect={(variable) => insertSystemVariable(variable)}
-              inputType="Text"
-            />
-          )}
         </div>
 
         {/* Prompt */}
         <div className="space-y-2 relative">
           <label className="flex items-center justify-between">
             <span className="text-sm font-medium text-gray-700">Prompt</span>
-            <div className="text-xs text-purple-600 flex items-center">
-              <span className="mr-1">Type </span>
-              <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 border border-gray-300 rounded">&#123;&#123;</kbd>
-              <span className="ml-1">to use variables</span>
-            </div>
           </label>
-          <textarea
-            ref={promptInputRef}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+          <AutocompleteInput
             value={data.params?.prompt || data.prompt || ''}
-            onChange={(e) => updateNodeData(id, { prompt: e.target.value })}
-            onKeyUp={handlePromptKeyUp}
-            onFocus={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              setVariablePosition({ 
-                x: rect.left, 
-                y: rect.bottom + window.scrollY + 5
-              });
-            }}
-            placeholder="Type your prompt here... Type {{ to use variables from other nodes"
+            onChange={(value) => updateNodeData(id, { prompt: value })}
+            placeholder="Type your prompt here... Use variables from other nodes"
+            multiline={true}
+            rows={4}
           />
           
           {/* Add this block to show the highlighted variables preview */}
@@ -263,15 +241,6 @@ const AnthropicNode: React.FC<AnthropicNodeProps> = ({ id, data, selected }) => 
                 className="text-sm text-gray-700"
               />
             </div>
-          )}
-          
-          {showPromptVarBuilder && variablePosition && (
-            <VariableBuilder 
-              nodeId={id}
-              position={variablePosition}
-              onSelect={(variable) => insertPromptVariable(variable)}
-              inputType="Text"
-            />
           )}
         </div>
 

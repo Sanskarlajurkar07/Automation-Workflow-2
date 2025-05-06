@@ -14,13 +14,15 @@ import ReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { useFlowStore } from '../../store/flowStore';
-import { Save, Download, Play, X, Info } from 'lucide-react';
+import { useTheme } from '../../utils/themeProvider';
+import { Save, Download, Play, X, Info, HelpCircle, BookOpen, Layers, Clipboard, Link, Variable } from 'lucide-react';
 import { NodeType, FlowNode, FlowEdge } from '../../types/flow';
 import CustomEdge from '../CustomEdge';
 import InputNode from './types/nodes/InputNode';
 import OutputNode from './types/nodes/OutputNode';
 import OpenAINode from './types/nodes/openaiNode';
 import AnthropicNode from './types/nodes/AnthropicNode';
+import Claude35Node from './types/nodes/Claude35Node';
 import GeminiNode from './types/nodes/geminiNode';
 import CohereNode from './types/nodes/cohereNode';
 import PerplexityNode from './types/nodes/perplexityNode';
@@ -82,6 +84,13 @@ import WikiLoaderNode from './types/nodes/WikiLoaderNode';
 import ExecuteWorkflow from './executeWorkflow'; // Import ExecuteWorkflow component
 import workflowService from '../../lib/workflowService';
 import { logApiError, validateWorkflow } from '../../utils/debugUtils';
+import NodeHelper from './NodeHelper';
+import NodeInputPreviewTip from './NodeInputPreviewTip';
+import TemplateGallery from './TemplateGallery';
+import OnboardingTutorial from './OnboardingTutorial';
+import VariableManager from './VariableManager';
+import VarInputPreview from './VarInputPreview';
+import VariableTutorial from './VariableTutorial';
 
 
 const nodeTypes = {
@@ -89,6 +98,7 @@ const nodeTypes = {
   output: OutputNode,
   openai: OpenAINode,
   anthropic: AnthropicNode,
+  claude35: Claude35Node,
   gemini: GeminiNode,
   cohere: CohereNode,
   perplexity: PerplexityNode,
@@ -166,6 +176,17 @@ export const FlowCanvasContent = ({ workflowId, initialNodes = [], initialEdges 
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; id: string } | null>(null);
+  const [showNodeHelper, setShowNodeHelper] = useState(false);
+  const [showTemplateGallery, setShowTemplateGallery] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [showVariableManager, setShowVariableManager] = useState(false);
+  const [showVarPreview, setShowVarPreview] = useState(false);
+  const [showVarTutorial, setShowVarTutorial] = useState(false);
+  const [hoverNode, setHoverNode] = useState<FlowNode | null>(null);
+  const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
+  
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
 
   const {
     nodes,
@@ -508,6 +529,52 @@ export const FlowCanvasContent = ({ workflowId, initialNodes = [], initialEdges 
     setContextMenu(null);
   }, []);
 
+  // Check if tutorials should be shown on new workflow creation
+  useEffect(() => {
+    // Check if the user has completed the tutorial before
+    const hasCompletedTutorial = localStorage.getItem('tutorial-completed');
+    const hasShownHelper = localStorage.getItem('node-helper-shown');
+    
+    // For brand new workflows without nodes and edges, show tutorial if not completed
+    if (workflowId && !hasCompletedTutorial && initialNodes.length === 0 && initialEdges.length === 0) {
+      setShowTutorial(true);
+    } else if (workflowId && !hasShownHelper) {
+      // For existing workflows or if tutorial completed, just show the helper
+      setShowNodeHelper(true);
+    }
+  }, [workflowId, initialNodes.length, initialEdges.length]);
+
+  // Handle node hover for showing input preview tip
+  const onNodeMouseEnter = useCallback((event: React.MouseEvent, node: FlowNode) => {
+    setHoverNode(node);
+    setHoverPosition({
+      x: event.clientX,
+      y: event.clientY - 120, // Position above the cursor
+    });
+  }, []);
+
+  const onNodeMouseLeave = useCallback(() => {
+    setHoverNode(null);
+    setHoverPosition(null);
+  }, []);
+
+  const onNodeMouseMove = useCallback((event: React.MouseEvent) => {
+    if (hoverNode) {
+      setHoverPosition({
+        x: event.clientX,
+        y: event.clientY - 120, // Position above the cursor
+      });
+    }
+  }, [hoverNode]);
+
+  // Check if user has seen the variable tutorial
+  useEffect(() => {
+    const hasSeenVarTutorial = localStorage.getItem('variable-tutorial-seen');
+    if (!hasSeenVarTutorial && nodes.length > 0) {
+      setShowVarTutorial(true);
+    }
+  }, [nodes.length]);
+
   return (
     <div 
       ref={reactFlowWrapper} 
@@ -538,6 +605,15 @@ export const FlowCanvasContent = ({ workflowId, initialNodes = [], initialEdges 
           
           .animate-modal-appear {
             animation: modalAppear 0.3s ease-out forwards;
+          }
+          
+          @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+          }
+          
+          .pulse-glow {
+            animation: pulse-glow 2s infinite;
           }
         `}
       </style>
@@ -574,6 +650,9 @@ export const FlowCanvasContent = ({ workflowId, initialNodes = [], initialEdges 
           markerEnd: { type: MarkerType.ArrowClosed, color: '#3AAFA9' },
         }}
         proOptions={{ hideAttribution: true }}
+        onNodeMouseEnter={onNodeMouseEnter}
+        onNodeMouseLeave={onNodeMouseLeave}
+        onNodeMouseMove={onNodeMouseMove}
       >
         <Background
           gap={24}
@@ -600,6 +679,46 @@ export const FlowCanvasContent = ({ workflowId, initialNodes = [], initialEdges 
         {/* Enhanced Panel UI */}
         <Panel position="top-right" className="p-0 flex gap-2">
           <div className="flex bg-theme-medium-dark/70 backdrop-blur-md rounded-lg border border-theme-medium-dark shadow-xl p-1.5 flex-row gap-2">
+            <button
+              onClick={() => setShowNodeHelper(true)}
+              className="flex items-center justify-center w-10 h-10 rounded-md bg-theme-medium/30 text-theme-medium-dark hover:bg-theme-medium/40 hover:text-theme-medium transition-all"
+              title="Help with node connections"
+            >
+              <HelpCircle size={18} />
+            </button>
+            
+            <button
+              onClick={() => setShowVarTutorial(true)}
+              className="flex items-center justify-center w-10 h-10 rounded-md bg-blue-500/80 text-white hover:bg-blue-600 transition-all pulse-glow"
+              title="Learn about variables"
+            >
+              <Variable size={18} />
+            </button>
+            
+            <button
+              onClick={() => setShowTemplateGallery(true)}
+              className="flex items-center justify-center w-10 h-10 rounded-md bg-theme-medium-dark/30 text-theme-light hover:bg-theme-medium-dark/50 hover:text-theme-white transition-all"
+              title="Workflow templates"
+            >
+              <BookOpen size={18} />
+            </button>
+            
+            <button
+              onClick={() => setShowVariableManager(true)}
+              className="flex items-center justify-center w-10 h-10 rounded-md bg-theme-medium/30 text-theme-medium-dark hover:bg-theme-medium/40 hover:text-theme-medium transition-all"
+              title="Manage workflow variables"
+            >
+              <Clipboard size={18} />
+            </button>
+            
+            <button
+              onClick={() => setShowVarPreview(true)}
+              className="flex items-center justify-center w-10 h-10 rounded-md bg-theme-medium/30 text-theme-medium-dark hover:bg-theme-medium/40 hover:text-theme-medium transition-all"
+              title="View variable connections"
+            >
+              <Link size={18} />
+            </button>
+            
             <button
               onClick={handleSaveWorkflow}
               className="flex items-center justify-center w-10 h-10 rounded-md bg-theme-medium/30 text-theme-medium-dark hover:bg-theme-medium/40 hover:text-theme-medium transition-all"
@@ -736,6 +855,53 @@ export const FlowCanvasContent = ({ workflowId, initialNodes = [], initialEdges 
           </div>
         </>
       )}
+      
+      {/* Node helper dialog */}
+      <NodeHelper 
+        isOpen={showNodeHelper} 
+        onClose={() => setShowNodeHelper(false)} 
+      />
+      
+      {/* Template gallery */}
+      <TemplateGallery 
+        isOpen={showTemplateGallery} 
+        onClose={() => setShowTemplateGallery(false)} 
+      />
+      
+      {/* Node input preview tip */}
+      <NodeInputPreviewTip
+        sourceNode={hoverNode}
+        isVisible={!!hoverNode}
+        position={hoverPosition}
+      />
+      
+      {/* Onboarding tutorial */}
+      <OnboardingTutorial
+        isOpen={showTutorial}
+        onClose={() => setShowTutorial(false)}
+      />
+      
+      {/* Variable manager */}
+      <VariableManager
+        isOpen={showVariableManager}
+        onClose={() => setShowVariableManager(false)}
+      />
+      
+      {/* Variable connections preview */}
+      <VarInputPreview
+        isOpen={showVarPreview}
+        onClose={() => setShowVarPreview(false)}
+        workflowId={workflowId}
+      />
+      
+      {/* Variable tutorial */}
+      <VariableTutorial
+        isOpen={showVarTutorial}
+        onClose={() => {
+          localStorage.setItem('variable-tutorial-seen', 'true');
+          setShowVarTutorial(false);
+        }}
+      />
     </div>
   );
 };

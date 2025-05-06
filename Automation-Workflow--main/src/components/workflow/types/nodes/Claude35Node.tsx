@@ -3,51 +3,22 @@ import { Handle, Position } from 'reactflow';
 import { 
   Settings, Trash2, Copy, BookOpen, Eye, EyeOff, 
   AlertTriangle, MessageSquare, ChevronDown, ChevronUp,
-  Zap, Cloud, Server, Key
+  Zap, Sparkles, Lightbulb, Music
 } from 'lucide-react';
 import { useFlowStore } from '../../../../store/flowStore';
 import { VariableHighlighter } from '../../VariableHighlighter';
 import AutocompleteInput from '../../AutocompleteInput';
 
-// AWS Bedrock model options
+// Latest Claude models
 const modelOptions = [
-  // Claude models on AWS Bedrock
-  { value: 'anthropic.claude-3-sonnet-20240229-v1:0', label: 'Claude 3 Sonnet', group: 'Anthropic' },
-  { value: 'anthropic.claude-3-haiku-20240307-v1:0', label: 'Claude 3 Haiku', group: 'Anthropic' },
-  { value: 'anthropic.claude-instant-v1', label: 'Claude Instant', group: 'Anthropic' },
-  
-  // Amazon models
-  { value: 'amazon.titan-text-express-v1', label: 'Titan Text Express', group: 'Amazon' },
-  { value: 'amazon.titan-text-lite-v1', label: 'Titan Text Lite', group: 'Amazon' },
-  { value: 'amazon.titan-embed-text-v1', label: 'Titan Embed', group: 'Amazon' },
-
-  // Meta models on AWS Bedrock
-  { value: 'meta.llama3-8b-instruct-v1:0', label: 'Llama 3 8B', group: 'Meta' },
-  { value: 'meta.llama3-70b-instruct-v1:0', label: 'Llama 3 70B', group: 'Meta' },
-  { value: 'meta.llama2-13b-chat-v1', label: 'Llama 2 13B', group: 'Meta' },
-  { value: 'meta.llama2-70b-chat-v1', label: 'Llama 2 70B', group: 'Meta' },
-
-  // Cohere models on AWS Bedrock
-  { value: 'cohere.command-text-v14', label: 'Command', group: 'Cohere' },
-  { value: 'cohere.command-light-text-v14', label: 'Command Light', group: 'Cohere' },
-  { value: 'cohere.embed-english-v3', label: 'Embed English', group: 'Cohere' },
-  { value: 'cohere.embed-multilingual-v3', label: 'Embed Multilingual', group: 'Cohere' },
-
-  // Mistral models on AWS Bedrock
-  { value: 'mistral.mistral-7b-instruct-v0:2', label: 'Mistral 7B', group: 'Mistral' },
-  { value: 'mistral.mixtral-8x7b-instruct-v0:1', label: 'Mixtral 8x7B', group: 'Mistral' }
+  'claude-3-5-sonnet',
+  'claude-3-opus',
+  'claude-3-sonnet',
+  'claude-3-haiku',
+  'claude-instant'
 ];
 
-// Group models by provider
-const groupedModels = modelOptions.reduce((acc, model) => {
-  if (!acc[model.group]) {
-    acc[model.group] = [];
-  }
-  acc[model.group].push(model);
-  return acc;
-}, {} as Record<string, typeof modelOptions>);
-
-interface AWSNodeProps {
+interface Claude35NodeProps {
   id: string;
   data: {
     params?: {
@@ -55,31 +26,23 @@ interface AWSNodeProps {
       system?: string;
       prompt?: string;
       model?: string;
-      awsAccessKeyId?: string;
-      awsSecretAccessKey?: string;
-      awsRegion?: string;
+      apiKey?: string;
       max_tokens?: number;
       temperature?: number;
+      topP?: number;
       showSettings?: boolean;
     };
   };
   selected?: boolean;
 }
 
-const regionOptions = [
-  'us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 
-  'eu-west-1', 'eu-central-1', 'ap-northeast-1', 'ap-southeast-1'
-];
-
-const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
-  const [showAccessKey, setShowAccessKey] = useState(false);
-  const [showSecretKey, setShowSecretKey] = useState(false);
+const Claude35Node: React.FC<Claude35NodeProps> = ({ id, data, selected }) => {
+  const [showApiKey, setShowApiKey] = useState(false);
   const [expandedSections, setExpandedSections] = useState({
     prompt: true,
     system: false,
     model: true,
-    advanced: false,
-    credentials: false
+    advanced: false
   });
   
   const removeNode = useFlowStore((state) => state.removeNode);
@@ -92,13 +55,16 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
       updateNodeData(id, { temperature: 0.7 });
     }
     if (!data.params?.max_tokens) {
-      updateNodeData(id, { max_tokens: 2048 });
+      updateNodeData(id, { max_tokens: 4096 });
     }
-    if (!data.params?.awsRegion) {
-      updateNodeData(id, { awsRegion: 'us-east-1' });
+    if (!data.params?.topP) {
+      updateNodeData(id, { topP: 0.9 });
+    }
+    if (!data.params?.model) {
+      updateNodeData(id, { model: 'claude-3-5-sonnet' });
     }
     if (!data.params?.nodeName) {
-      updateNodeData(id, { nodeName: `aws_${id.split('-')[1] || '0'}` });
+      updateNodeData(id, { nodeName: `claude35_${id.split('-')[1] || '0'}` });
     }
   }, [id, data.params, updateNodeData]);
 
@@ -106,7 +72,7 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
     navigator.clipboard.writeText(id);
   };
 
-  const toggleSectionExpand = (section: 'prompt' | 'system' | 'model' | 'advanced' | 'credentials') => {
+  const toggleSectionExpand = (section: 'prompt' | 'system' | 'model' | 'advanced') => {
     setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
@@ -133,52 +99,36 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
       issues.push({ type: 'error', message: 'Prompt is empty' });
     }
 
-    if (!data.params?.awsAccessKeyId || !data.params?.awsSecretAccessKey) {
-      issues.push({ type: 'error', message: 'AWS credentials required' });
-    }
-
     return issues;
   };
 
   const nodeIssues = getNodeIssues();
   const hasErrors = nodeIssues.some(issue => issue.type === 'error');
 
-  const getModelProvider = () => {
-    const modelValue = data.params?.model || '';
-    for (const group in groupedModels) {
-      if (groupedModels[group].some(m => m.value === modelValue)) {
-        return group;
-      }
-    }
-    return null;
-  };
-
-  const modelProvider = getModelProvider();
-
   return (
     <div className={`bg-white rounded-lg shadow-lg overflow-hidden ${
-      selected ? 'ring-2 ring-amber-500' : hasErrors ? 'border border-red-300' : 'border border-gray-200'
+      selected ? 'ring-2 ring-purple-500' : hasErrors ? 'border border-red-300' : 'border border-gray-200'
     }`}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-3">
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-700 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="p-1 bg-white/20 backdrop-blur-sm rounded-lg w-9 h-9 flex items-center justify-center">
               <img 
-                src="/logos/aws-bedrock.png" 
-                alt="AWS Bedrock Logo" 
+                src="/logos/claude35.png" 
+                alt="Claude 3.5 Logo" 
                 className="w-7 h-7 object-contain"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = "https://a0.awsstatic.com/libra-css/images/site/fav/favicon.ico"; 
+                  target.src = "https://www.anthropic.com/images/favicon.svg"; 
                   target.onerror = null;
                 }}
               />
             </div>
             <div>
-              <h3 className="font-medium text-white">{data.params?.nodeName || 'AWS Bedrock'}</h3>
-              <p className="text-xs text-amber-50/80">
-                {modelOptions.find(m => m.value === data.params?.model)?.label || 'Select model'}
+              <h3 className="font-medium text-white">{data.params?.nodeName || 'Claude 3.5'}</h3>
+              <p className="text-xs text-indigo-50/80">
+                {data.params?.model || 'claude-3-5-sonnet'}
               </p>
             </div>
           </div>
@@ -199,7 +149,7 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
             </button>
             <button
               onClick={() => {
-                if (window.confirm('Are you sure you want to delete this AWS Bedrock node?')) {
+                if (window.confirm('Are you sure you want to delete this Claude 3.5 node?')) {
                   removeNode(id);
                 }
               }}
@@ -242,7 +192,7 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
             type="text"
             value={data.params?.nodeName || ''}
             onChange={(e) => updateNodeData(id, { nodeName: e.target.value })}
-            className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
         </div>
 
@@ -250,7 +200,7 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
         <div className="space-y-2">
           <label className="text-xs font-medium text-gray-500 flex items-center">
             <span>Connected Inputs</span>
-            <span className="ml-2 px-1.5 py-0.5 text-xs rounded-md bg-amber-100 text-amber-800">
+            <span className="ml-2 px-1.5 py-0.5 text-xs rounded-md bg-indigo-100 text-indigo-800">
               {getConnectedNodes().length} {getConnectedNodes().length === 1 ? 'node' : 'nodes'}
             </span>
           </label>
@@ -259,7 +209,7 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
               <ul className="space-y-1">
                 {getConnectedNodes().map((node: any) => (
                   <li key={node.id} className="flex items-center text-xs">
-                    <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
+                    <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
                     <span className="font-medium">{node.data.params?.nodeName || node.id}</span>
                     <span className="text-gray-500 ml-1">({node.type})</span>
                   </li>
@@ -277,91 +227,6 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
           )}
         </div>
 
-        {/* AWS Credentials */}
-        <div className="space-y-2">
-          <div
-            className="flex items-center justify-between cursor-pointer"
-            onClick={() => toggleSectionExpand('credentials')}
-          >
-            <label className="block text-sm font-medium text-gray-700 flex items-center">
-              <Key className="w-4 h-4 mr-2 text-amber-500" />
-              <span>AWS Credentials</span>
-            </label>
-            <button className="text-gray-400">
-              {expandedSections.credentials ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </button>
-          </div>
-          
-          {expandedSections.credentials && (
-            <div className="pt-2 space-y-4">
-              {/* AWS Access Key ID */}
-              <div className="space-y-1">
-                <label className="block text-xs font-medium text-gray-500">
-                  AWS Access Key ID
-                </label>
-                <div className="relative">
-                  <input
-                    type={showAccessKey ? 'text' : 'password'}
-                    className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                    value={data.params?.awsAccessKeyId || ''}
-                    onChange={(e) => updateNodeData(id, { awsAccessKeyId: e.target.value })}
-                    placeholder="Enter your AWS Access Key ID"
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-                    onClick={() => setShowAccessKey(!showAccessKey)}
-                  >
-                    {showAccessKey ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="w-4 h-4 text-gray-400" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* AWS Secret Access Key */}
-              <div className="space-y-1">
-                <label className="block text-xs font-medium text-gray-500">
-                  AWS Secret Access Key
-                </label>
-                <div className="relative">
-                  <input
-                    type={showSecretKey ? 'text' : 'password'}
-                    className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                    value={data.params?.awsSecretAccessKey || ''}
-                    onChange={(e) => updateNodeData(id, { awsSecretAccessKey: e.target.value })}
-                    placeholder="Enter your AWS Secret Access Key"
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-                    onClick={() => setShowSecretKey(!showSecretKey)}
-                  >
-                    {showSecretKey ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="w-4 h-4 text-gray-400" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* AWS Region */}
-              <div className="space-y-1">
-                <label className="block text-xs font-medium text-gray-500">
-                  AWS Region
-                </label>
-                <select
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
-                  value={data.params?.awsRegion || 'us-east-1'}
-                  onChange={(e) => updateNodeData(id, { awsRegion: e.target.value })}
-                >
-                  {regionOptions.map((region) => (
-                    <option key={region} value={region}>
-                      {region}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-xs text-gray-500">Make sure Bedrock is available in the selected region</p>
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Model Section */}
         <div className="space-y-2">
           <div
@@ -369,7 +234,7 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
             onClick={() => toggleSectionExpand('model')}
           >
             <label className="block text-sm font-medium text-gray-700 flex items-center">
-              <Server className="w-4 h-4 mr-2 text-amber-500" />
+              <MessageSquare className="w-4 h-4 mr-2 text-indigo-500" />
               <span>Model Selection</span>
             </label>
             <button className="text-gray-400">
@@ -380,36 +245,22 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
           {expandedSections.model && (
             <div className="pt-2 space-y-3">
               <select
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 value={data.params?.model || ''}
                 onChange={(e) => updateNodeData(id, { model: e.target.value })}
               >
                 <option value="">Select a model</option>
-                {Object.entries(groupedModels).map(([group, models]) => (
-                  <optgroup key={group} label={`${group} Models`}>
-                    {models.map((model) => (
-                      <option key={model.value} value={model.value}>
-                        {model.label}
-                      </option>
-                    ))}
-                  </optgroup>
+                {modelOptions.map((model) => (
+                  <option key={model} value={model}>
+                    {model}
+                  </option>
                 ))}
               </select>
               
-              {modelProvider && (
-                <div className="p-2 bg-amber-50 border border-amber-100 rounded text-xs text-amber-700 flex items-center">
-                  <img 
-                    src={`/logos/${modelProvider.toLowerCase()}.png`} 
-                    alt={`${modelProvider} Logo`} 
-                    className="w-4 h-4 mr-2 object-contain"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      const fallbackSpan = document.createElement('span');
-                      fallbackSpan.className = 'w-4 h-4 mr-2 flex-shrink-0 bg-amber-200 rounded-full';
-                      e.currentTarget.parentNode?.insertBefore(fallbackSpan, e.currentTarget);
-                    }}
-                  />
-                  {modelProvider} model on AWS Bedrock
+              {data.params?.model?.includes('claude-3-5') && (
+                <div className="p-2 bg-purple-50 border border-purple-100 rounded text-xs text-purple-700 flex items-center">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Claude 3.5 Sonnet: Anthropic's latest model with enhanced reasoning capabilities
                 </div>
               )}
             </div>
@@ -423,7 +274,7 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
             onClick={() => toggleSectionExpand('system')}
           >
             <label className="block text-sm font-medium text-gray-700 flex items-center">
-              <BookOpen className="w-4 h-4 mr-2 text-amber-500" />
+              <BookOpen className="w-4 h-4 mr-2 text-indigo-500" />
               <span>System Instructions</span>
             </label>
             <button className="text-gray-400">
@@ -452,13 +303,6 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
                   />
                 </div>
               )}
-
-              {modelProvider && modelProvider !== 'Anthropic' && (
-                <div className="p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-700">
-                  <AlertTriangle className="w-4 h-4 mr-1 inline-block" />
-                  System instructions may not be supported by all models
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -470,7 +314,7 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
             onClick={() => toggleSectionExpand('prompt')}
           >
             <label className="block text-sm font-medium text-gray-700 flex items-center">
-              <Zap className="w-4 h-4 mr-2 text-amber-500" />
+              <Zap className="w-4 h-4 mr-2 text-indigo-500" />
               <span>Prompt</span>
             </label>
             <button className="text-gray-400">
@@ -510,7 +354,7 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
             onClick={() => toggleSectionExpand('advanced')}
           >
             <label className="block text-sm font-medium text-gray-700 flex items-center">
-              <Settings className="w-4 h-4 mr-2 text-amber-500" />
+              <Settings className="w-4 h-4 mr-2 text-indigo-500" />
               <span>Advanced Settings</span>
             </label>
             <button className="text-gray-400">
@@ -539,54 +383,99 @@ const AWSNode: React.FC<AWSNodeProps> = ({ id, data, selected }) => {
                   step="0.1"
                   value={data.params?.temperature || 0.7}
                   onChange={(e) => updateNodeData(id, { temperature: parseFloat(e.target.value) })}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                />
+              </div>
+              
+              {/* Top P slider */}
+              <div className="space-y-1">
+                <div className="flex justify-between">
+                  <label className="block text-xs font-medium text-gray-500">Top P: {data.params?.topP}</label>
+                  <span className="text-xs text-gray-400">
+                    Nuclear sampling parameter
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={data.params?.topP || 0.9}
+                  onChange={(e) => updateNodeData(id, { topP: parseFloat(e.target.value) })}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-500"
                 />
               </div>
               
               {/* Max tokens */}
               <div className="space-y-1">
                 <label className="block text-xs font-medium text-gray-500">
-                  Max Tokens: {data.params?.max_tokens || 2048}
+                  Max Tokens: {data.params?.max_tokens || 4096}
                 </label>
                 <input
                   type="number"
-                  value={data.params?.max_tokens || 2048}
+                  value={data.params?.max_tokens || 4096}
                   onChange={(e) => updateNodeData(id, { max_tokens: parseInt(e.target.value) })}
                   min="1"
-                  max="8192"
-                  className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  max="200000"
+                  className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
                 <p className="text-xs text-gray-500">Maximum number of tokens to generate in the response.</p>
+              </div>
+              
+              {/* API Key */}
+              <div className="space-y-1">
+                <label className="block text-xs font-medium text-gray-500">
+                  API Key <span className="text-xs text-gray-400">(Required)</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showApiKey ? 'text' : 'password'}
+                    className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    value={data.params?.apiKey || ''}
+                    onChange={(e) => updateNodeData(id, { apiKey: e.target.value })}
+                    placeholder="Enter your Anthropic API Key"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                    onClick={() => setShowApiKey(!showApiKey)}
+                  >
+                    {showApiKey ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="w-4 h-4 text-gray-400" />}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Get your API key from <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:underline">console.anthropic.com</a>
+                </p>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Status Bar */}
-      <div className="px-4 py-2 bg-amber-50 border-t border-amber-100 flex items-center justify-between text-xs text-amber-700">
+      {/* Version tag */}
+      <div className="px-4 py-2 bg-indigo-50 border-t border-indigo-100 flex items-center justify-between text-xs text-indigo-500">
         <div className="flex items-center gap-1">
-          <span className={`w-2 h-2 rounded-full ${data.params?.awsAccessKeyId && data.params?.awsSecretAccessKey ? 'bg-green-500' : 'bg-red-500'}`}></span>
-          <span>{data.params?.awsRegion || 'us-east-1'}</span>
+          <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+          <span>Claude 3.5</span>
         </div>
-        <span className="font-medium">{modelOptions.find(m => m.value === data.params?.model)?.group || 'AWS Bedrock'}</span>
+        <span className="font-mono">200K context</span>
       </div>
 
       {/* Handles */}
       <Handle
         type="target"
         position={Position.Left}
-        className="w-3 h-3 -ml-0.5 bg-amber-500 border-2 border-white rounded-full"
+        className="w-3 h-3 -ml-0.5 bg-indigo-500 border-2 border-white rounded-full"
         style={{ top: '50%' }}
       />
       <Handle
         type="source"
         position={Position.Right}
-        className="w-3 h-3 -mr-0.5 bg-amber-500 border-2 border-white rounded-full"
+        className="w-3 h-3 -mr-0.5 bg-indigo-500 border-2 border-white rounded-full"
         style={{ top: '50%' }}
       />
     </div>
   );
 };
 
-export default AWSNode;
+export default Claude35Node; 

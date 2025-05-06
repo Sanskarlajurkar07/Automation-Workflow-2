@@ -41,9 +41,16 @@ body {
   color: var(--text-primary);
 }
 
-/* Input text colors - now black */
+/* Input text colors - custom for each theme */
 input, textarea, select {
-  color: #000000 !important; /* Black text in all inputs */
+  color: #000000 !important; /* Black text in light mode inputs */
+}
+
+html.dark input, 
+html.dark textarea, 
+html.dark select {
+  color: #F1F5F9 !important; /* Light slate text in dark mode inputs */
+  background-color: #0F172A !important; /* Dark slate background in dark mode */
 }
 
 /* Authentication screens inputs should have black text */
@@ -76,6 +83,17 @@ input[class*="bg-theme-"],
 textarea[class*="bg-theme-"],
 select[class*="bg-theme-"] {
   color: #000000 !important; /* Black text in themed backgrounds */
+}
+
+/* Dark mode override for themed inputs */
+html.dark [class*="bg-theme-"] input,
+html.dark [class*="bg-theme-"] textarea,
+html.dark [class*="bg-theme-"] select,
+html.dark input[class*="bg-theme-"],
+html.dark textarea[class*="bg-theme-"],
+html.dark select[class*="bg-theme-"] {
+  color: #F1F5F9 !important; /* Light slate text in dark mode */
+  background-color: #0F172A !important; /* Dark slate background */
 }
 
 /* Add a global fix for any text in gradient backgrounds - excluding inputs */

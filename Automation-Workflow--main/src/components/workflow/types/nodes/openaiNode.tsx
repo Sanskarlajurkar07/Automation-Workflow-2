@@ -9,6 +9,8 @@ import { useFlowStore } from '../../../../store/flowStore';
 import { VariableBuilder } from '../../VariableBuilder';
 import { useVariableInput } from '../../../../hooks/useVariableInput';
 import { VariableHighlighter } from '../../VariableHighlighter';
+import NodeSettingsField from '../../NodeSettingsField';
+import AutocompleteInput from '../../AutocompleteInput';
 
 interface OpenAINodeProps {
   id: string;
@@ -114,7 +116,7 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
     navigator.clipboard.writeText(id);
   };
 
-  const toggleSectionExpand = (section: string) => {
+  const toggleSectionExpand = (section: 'prompt' | 'system' | 'model' | 'advanced') => {
     setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
@@ -128,28 +130,6 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
     });
     setShowTemplates(false);
   };
-  
-  // Use our variable input hook for system
-  const {
-    inputRef: systemInputRef,
-    showVarBuilder: showSystemVarBuilder,
-    handleKeyUp: handleSystemKeyUp,
-    insertVariable: insertSystemVariable,
-  } = useVariableInput({
-    value: data.params?.system || '',
-    onChange: (value) => updateNodeData(id, { system: value })
-  });
-  
-  // Use our variable input hook for prompt
-  const {
-    inputRef: promptInputRef,
-    showVarBuilder: showPromptVarBuilder,
-    handleKeyUp: handlePromptKeyUp,
-    insertVariable: insertPromptVariable,
-  } = useVariableInput({
-    value: data.params?.prompt || '',
-    onChange: (value) => updateNodeData(id, { prompt: value })
-  });
   
   // Helper to check for variable errors
   const checkVariableErrors = () => {
@@ -240,16 +220,25 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
       selected ? 'ring-2 ring-emerald-500' : hasErrors ? 'border border-red-300' : 'border border-gray-200'
     }`}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-500 to-green-600 px-4 py-3">
+      <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
-              <Sparkles className="w-5 h-5 text-white" />
+            <div className="p-1 bg-white/20 backdrop-blur-sm rounded-lg w-9 h-9 flex items-center justify-center">
+              <img 
+                src="/logos/openai.png" 
+                alt="OpenAI Logo" 
+                className="w-7 h-7 object-contain"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = "https://openai.com/favicon.ico"; 
+                  target.onerror = null;
+                }}
+              />
             </div>
             <div>
               <h3 className="font-medium text-white">{data.params?.nodeName || 'OpenAI'}</h3>
-              <p className="text-xs text-emerald-50/80">
-                {data.params?.model || 'Select model'}
+              <p className="text-xs text-green-50/80">
+                {data.params?.model || 'gpt-4'}
               </p>
             </div>
           </div>
@@ -442,30 +431,13 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
           {expandedSections.system && (
             <div className="pt-2 space-y-2">
               <div className="relative">
-                <textarea
-                  ref={systemInputRef}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm min-h-[100px]"
+                <AutocompleteInput
                   value={data.params?.system || ''}
-                  onChange={(e) => updateNodeData(id, { system: e.target.value })}
-                  onKeyUp={handleSystemKeyUp}
-                  onFocus={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    setVariablePosition({ 
-                      x: rect.left, 
-                      y: rect.bottom + window.scrollY + 5
-                    });
-                  }}
+                  onChange={(value) => updateNodeData(id, { system: value })}
                   placeholder="Define the AI's behavior and knowledge context..."
+                  multiline={true}
+                  rows={4}
                 />
-                
-                {showSystemVarBuilder && variablePosition && (
-                  <VariableBuilder 
-                    nodeId={id}
-                    position={variablePosition}
-                    onSelect={(variable) => insertSystemVariable(variable)}
-                    inputType="Text"
-                  />
-                )}
               </div>
               
               {data.params?.system && (
@@ -477,18 +449,15 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
           )}
         </div>
 
-        {/* Prompt */}
+        {/* Main Prompt */}
         <div className="space-y-2">
           <div
             className="flex items-center justify-between cursor-pointer"
             onClick={() => toggleSectionExpand('prompt')}
           >
             <label className="block text-sm font-medium text-gray-700 flex items-center">
-              <MessageSquare className="w-4 h-4 mr-2 text-emerald-500" />
-              <span>User Prompt</span>
-              {!data.params?.prompt && (
-                <span className="ml-2 text-red-500 text-xs">Required</span>
-              )}
+              <Zap className="w-4 h-4 mr-2 text-emerald-500" />
+              <span>Main Prompt</span>
             </label>
             <button className="text-gray-400">
               {expandedSections.prompt ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -496,62 +465,26 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
           </div>
           
           {expandedSections.prompt && (
-            <div className="pt-2 relative space-y-2">
-              <div className="flex items-center justify-between mb-1">
-                <div className="text-xs text-blue-600 flex items-center">
-                  <span className="mr-1">Type </span>
-                  <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 border border-gray-300 rounded">&#123;&#123;</kbd>
-                  <span className="ml-1">to use variables</span>
-                </div>
-              </div>
-              
-              <textarea
-                ref={promptInputRef}
-                className={`w-full rounded-md shadow-sm sm:text-sm min-h-[140px] ${
-                  !data.params?.prompt 
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                    : 'border-gray-300 focus:border-emerald-500 focus:ring-emerald-500'
-                }`}
-                value={data.params?.prompt || ''}
-                onChange={(e) => updateNodeData(id, { prompt: e.target.value })}
-                onKeyUp={handlePromptKeyUp}
-                onFocus={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  setVariablePosition({ 
-                    x: rect.left, 
-                    y: rect.bottom + window.scrollY + 5
-                  });
-                }}
-                placeholder="Type your prompt here... Type {{ to use variables from other nodes"
-              />
-              
-              {showPromptVarBuilder && variablePosition && (
-                <VariableBuilder 
-                  nodeId={id}
-                  position={variablePosition}
-                  onSelect={(variable) => insertPromptVariable(variable)}
-                  inputType="Text"
+            <div className="pt-2 space-y-2">
+              <div className="relative">
+                <AutocompleteInput
+                  value={data.params?.prompt || ''}
+                  onChange={(value) => updateNodeData(id, { prompt: value })}
+                  placeholder="Enter your prompt here... Use variables from other nodes"
+                  multiline={true}
+                  rows={5}
                 />
-              )}
-              
-              {/* Variable usage guidance */}
-              <div className="mt-2 p-2 bg-blue-50 border border-blue-100 rounded text-xs text-blue-700">
-                <p><strong>Variable Usage:</strong></p>
-                <ul className="mt-1 space-y-1 list-disc pl-4">
-                  <li>Input nodes: use <code>&#123;&#123;nodeName.output&#125;&#125;</code> to access their value</li>
-                  <li>AI nodes: use <code>&#123;&#123;nodeName.response&#125;&#125;</code> for their response</li>
-                  <li>Type <code>&#123;&#123;</code> to open the variable selector</li>
-                </ul>
               </div>
               
-              {/* Add this block to show the highlighted variables preview */}
-              {data.params?.prompt && data.params.prompt.includes('{{') && (
-                <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-md">
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">Preview with variables:</label>
-                  <VariableHighlighter 
-                    text={data.params.prompt} 
-                    className="text-sm text-gray-700"
-                  />
+              {variableError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                  <div className="flex items-start">
+                    <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 mr-2 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-red-800">{variableError.error}</p>
+                      <p className="text-xs text-red-700 mt-1">{variableError.message}</p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

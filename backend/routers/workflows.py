@@ -204,8 +204,25 @@ async def execute_workflow(
     
     try:
         # Calculate execution order (topological sort)
-        execution_order = calculate_execution_order(nodes, edges)
-        execution_path = [node["id"] for node in execution_order]
+        if not nodes:
+            logger.warning("No nodes found in workflow")
+            execution_order = []
+            execution_path = []
+        else:
+            execution_order = calculate_execution_order(nodes, edges)
+            execution_path = [node["id"] for node in execution_order]
+            
+        # If execution_order is empty but we have nodes, add them all in a sensible order
+        if not execution_order and nodes:
+            logger.warning("No execution order determined, falling back to basic order")
+            # Prioritize inputs first, then processing nodes, then outputs
+            input_nodes = [node for node in nodes if node["type"] == "input"]
+            output_nodes = [node for node in nodes if node["type"] == "output"]
+            other_nodes = [node for node in nodes if node["type"] not in ["input", "output"]]
+            
+            execution_order = input_nodes + other_nodes + output_nodes
+            execution_path = [node["id"] for node in execution_order]
+        
         logger.info(f"Execution order: {execution_path}")
         
         # Initialize node outputs, results and detailed execution stats
@@ -505,322 +522,348 @@ def get_node_inputs(node_id, edges, node_outputs, initial_inputs, nodes):
     if not inputs and node_id.startswith("input"):
         input_key = f"input_{node_id.split('-')[1] if '-' in node_id else '0'}"
         if input_key in initial_inputs:
-            inputs["input"] = initial_inputs[input_key].value
+            # Ensure we're getting the value correctly
+            input_value = initial_inputs[input_key]
+            
+            # Handle the InputValue model or direct value
+            if hasattr(input_value, 'value'):
+                inputs["input"] = input_value.value
+            else:
+                inputs["input"] = input_value
+                
+            # Add type information that might be needed by the node
+            node_info = next((n for n in nodes if n["id"] == node_id), None)
+            if node_info:
+                input_type = node_info.get("data", {}).get("params", {}).get("type", "Text")
+                inputs["type"] = input_type
     
     return inputs
 
 async def execute_node(node_type, node_data, inputs, mode):
     """Execute a node based on its type"""
-    # Default implementation that can be expanded based on node types
-    if node_type == "input":
+    try:
+        # Default implementation that can be expanded based on node types
+        if node_type == "input":
+            return {
+                "output": inputs.get("input", "")
+            }
+        elif node_type == "output":
+            return {
+                "output": inputs.get("input", "No input")
+            }
+        elif node_type == "text":
+            return {
+                "output": node_data.get("params", {}).get("text", "Sample text")
+            }
+        elif node_type == "document-to-text":
+            # Simulate document processing
+            await asyncio.sleep(0.5)
+            return {
+                "output": f"Processed document: {inputs.get('document', 'No document')}"
+            }
+        elif node_type == "openai":
+            # Extract parameters
+            params = node_data.get("params", {})
+            model = params.get("model", "gpt-3.5-turbo")
+            prompt = params.get("prompt", "")
+            system = params.get("system", "")
+            temperature = float(params.get("temperature", 0.7))
+            max_tokens = int(params.get("max_tokens", 1000))
+            api_key = params.get("apiKey", "")
+            
+            # Replace variables in prompt
+            for key, value in inputs.items():
+                placeholder = f"{{{{{key}}}}}"
+                prompt = prompt.replace(placeholder, str(value))
+            
+            # Special handling for {{nodeName.text}} format - replace with correct {{nodeName.output}} format
+            # This pattern might be used by users for input nodes, but we store everything in "output" property
+            text_var_pattern = r"{{([^}]+)\.text}}"
+            matches = re.findall(text_var_pattern, prompt)
+            for node_name in matches:
+                # Check if we have this node output available
+                if f"{node_name}.output" in inputs:
+                    text_placeholder = f"{{{{{node_name}.text}}}}"
+                    output_value = inputs[f"{node_name}.output"]
+                    prompt = prompt.replace(text_placeholder, str(output_value))
+            
+            # Also check system prompt for the same patterns
+            matches = re.findall(text_var_pattern, system)
+            for node_name in matches:
+                if f"{node_name}.output" in inputs:
+                    text_placeholder = f"{{{{{node_name}.text}}}}"
+                    output_value = inputs[f"{node_name}.output"]
+                    system = system.replace(text_placeholder, str(output_value))
+            
+            # Prepare the request for the OpenAI handler
+            messages = [
+                {"role": "system", "content": system},
+                {"role": "user", "content": prompt}
+            ]
+            
+            request_data = {
+                "model": model,
+                "messages": messages,
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+                "apiKey": api_key
+            }
+            
+            # Call the handler
+            result = await handle_openai_query(request_data)
+            
+            # Check for errors
+            if "error" in result:
+                error_message = result.get("content", "Unknown error from OpenAI service")
+                # Log error for debugging
+                logger.error(f"OpenAI node error: {error_message}")
+                raise Exception(f"OpenAI API error: {error_message}")
+            
+            # Return formatted response
+            return {
+                "response": result.get("content", ""),
+                "model": model,
+                "output": result.get("content", "")  # Also map to output for consistency
+            }
+        elif node_type == "anthropic":
+            # Extract parameters
+            params = node_data.get("params", {})
+            model = params.get("model", "claude-3-sonnet")
+            prompt = params.get("prompt", "")
+            system = params.get("system", "")
+            max_tokens = int(params.get("max_tokens", 1000))
+            
+            # Replace variables in prompt
+            for key, value in inputs.items():
+                placeholder = f"{{{{{key}}}}}"
+                prompt = prompt.replace(placeholder, str(value))
+            
+            # Prepare the request for the Anthropic handler
+            messages = [
+                {"role": "user", "content": prompt}
+            ]
+            
+            request_data = {
+                "model": model,
+                "system": system,
+                "messages": messages,
+                "max_tokens": max_tokens
+            }
+            
+            # Call the handler
+            result = await handle_anthropic_query(request_data)
+            
+            # Return formatted response
+            return {
+                "response": result.get("content", ""),
+                "model": model,
+                "output": result.get("content", "")  # Also map to output for consistency
+            }
+        elif node_type == "gemini":
+            # Extract parameters
+            params = node_data.get("params", {})
+            model = params.get("model", "gemini-pro")
+            prompt = params.get("prompt", "")
+            temperature = float(params.get("temperature", 0.7))
+            
+            # Replace variables in prompt
+            for key, value in inputs.items():
+                placeholder = f"{{{{{key}}}}}"
+                prompt = prompt.replace(placeholder, str(value))
+            
+            # Prepare the request for the Gemini handler
+            messages = [
+                {"role": "user", "content": prompt}
+            ]
+            
+            request_data = {
+                "model": model,
+                "messages": messages,
+                "temperature": temperature
+            }
+            
+            # Call the handler
+            result = await handle_gemini_query(request_data)
+            
+            # Return formatted response
+            return {
+                "response": result.get("content", ""),
+                "model": model,
+                "output": result.get("content", "")  # Also map to output for consistency
+            }
+        elif node_type == "cohere":
+            # Extract parameters
+            params = node_data.get("params", {})
+            model = params.get("model", "command")
+            prompt = params.get("prompt", "")
+            temperature = float(params.get("temperature", 0.7))
+            max_tokens = int(params.get("max_tokens", 1000))
+            
+            # Replace variables in prompt
+            for key, value in inputs.items():
+                placeholder = f"{{{{{key}}}}}"
+                prompt = prompt.replace(placeholder, str(value))
+            
+            # Prepare the request for the Cohere handler
+            messages = [
+                {"role": "user", "content": prompt}
+            ]
+            
+            request_data = {
+                "model": model,
+                "messages": messages,
+                "temperature": temperature,
+                "max_tokens": max_tokens
+            }
+            
+            # Call the handler
+            result = await handle_cohere_query(request_data)
+            
+            # Return formatted response
+            return {
+                "response": result.get("content", ""),
+                "model": model,
+                "output": result.get("content", "")  # Also map to output for consistency
+            }
+        elif node_type == "perplexity":
+            # Extract parameters
+            params = node_data.get("params", {})
+            model = params.get("model", "sonar-medium")
+            prompt = params.get("prompt", "")
+            
+            # Replace variables in prompt
+            for key, value in inputs.items():
+                placeholder = f"{{{{{key}}}}}"
+                prompt = prompt.replace(placeholder, str(value))
+            
+            # Prepare the request for the Perplexity handler
+            messages = [
+                {"role": "user", "content": prompt}
+            ]
+            
+            request_data = {
+                "model": model,
+                "messages": messages
+            }
+            
+            # Call the handler
+            result = await handle_perplexity_query(request_data)
+            
+            # Return formatted response
+            return {
+                "response": result.get("content", ""),
+                "model": model,
+                "output": result.get("content", "")  # Also map to output for consistency
+            }
+        elif node_type == "xai":
+            # Extract parameters
+            params = node_data.get("params", {})
+            prompt = params.get("prompt", "")
+            
+            # Replace variables in prompt
+            for key, value in inputs.items():
+                placeholder = f"{{{{{key}}}}}"
+                prompt = prompt.replace(placeholder, str(value))
+            
+            # Prepare the request for the XAI handler
+            messages = [
+                {"role": "user", "content": prompt}
+            ]
+            
+            request_data = {
+                "messages": messages
+            }
+            
+            # Call the handler
+            result = await handle_xai_query(request_data)
+            
+            # Return formatted response
+            return {
+                "response": result.get("content", ""),
+                "model": "xai-chat",
+                "output": result.get("content", "")  # Also map to output for consistency
+            }
+        elif node_type == "aws":
+            # Extract parameters
+            params = node_data.get("params", {})
+            model = params.get("model", "amazon-titan")
+            prompt = params.get("prompt", "")
+            
+            # Replace variables in prompt
+            for key, value in inputs.items():
+                placeholder = f"{{{{{key}}}}}"
+                prompt = prompt.replace(placeholder, str(value))
+            
+            # Prepare the request for the AWS handler
+            messages = [
+                {"role": "user", "content": prompt}
+            ]
+            
+            request_data = {
+                "model": model,
+                "messages": messages
+            }
+            
+            # Call the handler
+            result = await handle_aws_query(request_data)
+            
+            # Return formatted response
+            return {
+                "response": result.get("content", ""),
+                "model": model,
+                "output": result.get("content", "")  # Also map to output for consistency
+            }
+        elif node_type == "azure":
+            # Extract parameters
+            params = node_data.get("params", {})
+            model = params.get("model", "gpt-35-turbo")
+            prompt = params.get("prompt", "")
+            system = params.get("system", "")
+            temperature = float(params.get("temperature", 0.7))
+            max_tokens = int(params.get("max_tokens", 1000))
+            
+            # Replace variables in prompt
+            for key, value in inputs.items():
+                placeholder = f"{{{{{key}}}}}"
+                prompt = prompt.replace(placeholder, str(value))
+            
+            # Prepare the request for the Azure handler
+            messages = [
+                {"role": "system", "content": system},
+                {"role": "user", "content": prompt}
+            ]
+            
+            request_data = {
+                "model": model,
+                "messages": messages,
+                "temperature": temperature,
+                "max_tokens": max_tokens
+            }
+            
+            # Call the handler
+            result = await handle_azure_query(request_data)
+            
+            # Return formatted response
+            return {
+                "response": result.get("content", ""),
+                "model": model,
+                "output": result.get("content", "")  # Also map to output for consistency
+            }
+        # Add more node types as needed
+        else:
+            # Unknown node type
+            logger.warning(f"Unknown node type: {node_type}")
+            return {
+                "output": f"Unknown node type: {node_type}"
+            }
+    except Exception as e:
+        # Log the error
+        logger.error(f"Error executing node of type {node_type}: {str(e)}", exc_info=True)
+        
+        # Return an error result that downstream nodes can handle
         return {
-            "output": inputs.get("input", "")
-        }
-    elif node_type == "output":
-        return {
-            "output": inputs.get("input", "No input")
-        }
-    elif node_type == "text":
-        return {
-            "output": node_data.get("params", {}).get("text", "Sample text")
-        }
-    elif node_type == "document-to-text":
-        # Simulate document processing
-        await asyncio.sleep(0.5)
-        return {
-            "output": f"Processed document: {inputs.get('document', 'No document')}"
-        }
-    elif node_type == "openai":
-        # Extract parameters
-        params = node_data.get("params", {})
-        model = params.get("model", "gpt-3.5-turbo")
-        prompt = params.get("prompt", "")
-        system = params.get("system", "")
-        temperature = float(params.get("temperature", 0.7))
-        max_tokens = int(params.get("max_tokens", 1000))
-        api_key = params.get("apiKey", "")
-        
-        # Replace variables in prompt
-        for key, value in inputs.items():
-            placeholder = f"{{{{{key}}}}}"
-            prompt = prompt.replace(placeholder, str(value))
-        
-        # Special handling for {{nodeName.text}} format - replace with correct {{nodeName.output}} format
-        # This pattern might be used by users for input nodes, but we store everything in "output" property
-        text_var_pattern = r"{{([^}]+)\.text}}"
-        matches = re.findall(text_var_pattern, prompt)
-        for node_name in matches:
-            # Check if we have this node output available
-            if f"{node_name}.output" in inputs:
-                text_placeholder = f"{{{{{node_name}.text}}}}"
-                output_value = inputs[f"{node_name}.output"]
-                prompt = prompt.replace(text_placeholder, str(output_value))
-        
-        # Also check system prompt for the same patterns
-        matches = re.findall(text_var_pattern, system)
-        for node_name in matches:
-            if f"{node_name}.output" in inputs:
-                text_placeholder = f"{{{{{node_name}.text}}}}"
-                output_value = inputs[f"{node_name}.output"]
-                system = system.replace(text_placeholder, str(output_value))
-        
-        # Prepare the request for the OpenAI handler
-        messages = [
-            {"role": "system", "content": system},
-            {"role": "user", "content": prompt}
-        ]
-        
-        request_data = {
-            "model": model,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-            "apiKey": api_key
-        }
-        
-        # Call the handler
-        result = await handle_openai_query(request_data)
-        
-        # Check for errors
-        if "error" in result:
-            error_message = result.get("content", "Unknown error from OpenAI service")
-            # Log error for debugging
-            logger.error(f"OpenAI node error: {error_message}")
-        
-        # Return formatted response
-        return {
-            "response": result.get("content", ""),
-            "model": model,
-            "output": result.get("content", "")  # Also map to output for consistency
-        }
-    elif node_type == "anthropic":
-        # Extract parameters
-        params = node_data.get("params", {})
-        model = params.get("model", "claude-3-sonnet")
-        prompt = params.get("prompt", "")
-        system = params.get("system", "")
-        max_tokens = int(params.get("max_tokens", 1000))
-        
-        # Replace variables in prompt
-        for key, value in inputs.items():
-            placeholder = f"{{{{{key}}}}}"
-            prompt = prompt.replace(placeholder, str(value))
-        
-        # Prepare the request for the Anthropic handler
-        messages = [
-            {"role": "user", "content": prompt}
-        ]
-        
-        request_data = {
-            "model": model,
-            "system": system,
-            "messages": messages,
-            "max_tokens": max_tokens
-        }
-        
-        # Call the handler
-        result = await handle_anthropic_query(request_data)
-        
-        # Return formatted response
-        return {
-            "response": result.get("content", ""),
-            "model": model,
-            "output": result.get("content", "")  # Also map to output for consistency
-        }
-    elif node_type == "gemini":
-        # Extract parameters
-        params = node_data.get("params", {})
-        model = params.get("model", "gemini-pro")
-        prompt = params.get("prompt", "")
-        temperature = float(params.get("temperature", 0.7))
-        
-        # Replace variables in prompt
-        for key, value in inputs.items():
-            placeholder = f"{{{{{key}}}}}"
-            prompt = prompt.replace(placeholder, str(value))
-        
-        # Prepare the request for the Gemini handler
-        messages = [
-            {"role": "user", "content": prompt}
-        ]
-        
-        request_data = {
-            "model": model,
-            "messages": messages,
-            "temperature": temperature
-        }
-        
-        # Call the handler
-        result = await handle_gemini_query(request_data)
-        
-        # Return formatted response
-        return {
-            "response": result.get("content", ""),
-            "model": model,
-            "output": result.get("content", "")  # Also map to output for consistency
-        }
-    elif node_type == "cohere":
-        # Extract parameters
-        params = node_data.get("params", {})
-        model = params.get("model", "command")
-        prompt = params.get("prompt", "")
-        temperature = float(params.get("temperature", 0.7))
-        max_tokens = int(params.get("max_tokens", 1000))
-        
-        # Replace variables in prompt
-        for key, value in inputs.items():
-            placeholder = f"{{{{{key}}}}}"
-            prompt = prompt.replace(placeholder, str(value))
-        
-        # Prepare the request for the Cohere handler
-        messages = [
-            {"role": "user", "content": prompt}
-        ]
-        
-        request_data = {
-            "model": model,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens
-        }
-        
-        # Call the handler
-        result = await handle_cohere_query(request_data)
-        
-        # Return formatted response
-        return {
-            "response": result.get("content", ""),
-            "model": model,
-            "output": result.get("content", "")  # Also map to output for consistency
-        }
-    elif node_type == "perplexity":
-        # Extract parameters
-        params = node_data.get("params", {})
-        model = params.get("model", "sonar-medium")
-        prompt = params.get("prompt", "")
-        
-        # Replace variables in prompt
-        for key, value in inputs.items():
-            placeholder = f"{{{{{key}}}}}"
-            prompt = prompt.replace(placeholder, str(value))
-        
-        # Prepare the request for the Perplexity handler
-        messages = [
-            {"role": "user", "content": prompt}
-        ]
-        
-        request_data = {
-            "model": model,
-            "messages": messages
-        }
-        
-        # Call the handler
-        result = await handle_perplexity_query(request_data)
-        
-        # Return formatted response
-        return {
-            "response": result.get("content", ""),
-            "model": model,
-            "output": result.get("content", "")  # Also map to output for consistency
-        }
-    elif node_type == "xai":
-        # Extract parameters
-        params = node_data.get("params", {})
-        prompt = params.get("prompt", "")
-        
-        # Replace variables in prompt
-        for key, value in inputs.items():
-            placeholder = f"{{{{{key}}}}}"
-            prompt = prompt.replace(placeholder, str(value))
-        
-        # Prepare the request for the XAI handler
-        messages = [
-            {"role": "user", "content": prompt}
-        ]
-        
-        request_data = {
-            "messages": messages
-        }
-        
-        # Call the handler
-        result = await handle_xai_query(request_data)
-        
-        # Return formatted response
-        return {
-            "response": result.get("content", ""),
-            "model": "xai-chat",
-            "output": result.get("content", "")  # Also map to output for consistency
-        }
-    elif node_type == "aws":
-        # Extract parameters
-        params = node_data.get("params", {})
-        model = params.get("model", "amazon-titan")
-        prompt = params.get("prompt", "")
-        
-        # Replace variables in prompt
-        for key, value in inputs.items():
-            placeholder = f"{{{{{key}}}}}"
-            prompt = prompt.replace(placeholder, str(value))
-        
-        # Prepare the request for the AWS handler
-        messages = [
-            {"role": "user", "content": prompt}
-        ]
-        
-        request_data = {
-            "model": model,
-            "messages": messages
-        }
-        
-        # Call the handler
-        result = await handle_aws_query(request_data)
-        
-        # Return formatted response
-        return {
-            "response": result.get("content", ""),
-            "model": model,
-            "output": result.get("content", "")  # Also map to output for consistency
-        }
-    elif node_type == "azure":
-        # Extract parameters
-        params = node_data.get("params", {})
-        model = params.get("model", "gpt-35-turbo")
-        prompt = params.get("prompt", "")
-        system = params.get("system", "")
-        temperature = float(params.get("temperature", 0.7))
-        max_tokens = int(params.get("max_tokens", 1000))
-        
-        # Replace variables in prompt
-        for key, value in inputs.items():
-            placeholder = f"{{{{{key}}}}}"
-            prompt = prompt.replace(placeholder, str(value))
-        
-        # Prepare the request for the Azure handler
-        messages = [
-            {"role": "system", "content": system},
-            {"role": "user", "content": prompt}
-        ]
-        
-        request_data = {
-            "model": model,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens
-        }
-        
-        # Call the handler
-        result = await handle_azure_query(request_data)
-        
-        # Return formatted response
-        return {
-            "response": result.get("content", ""),
-            "model": model,
-            "output": result.get("content", "")  # Also map to output for consistency
-        }
-    # Add more node types as needed
-    else:
-        return {
-            "output": f"Executed {node_type} node"
+            "error": str(e),
+            "output": f"Error: {str(e)}"  # Include in output for compatibility
         }
 
 # Helper function to find nodes that depend on the output of a given node

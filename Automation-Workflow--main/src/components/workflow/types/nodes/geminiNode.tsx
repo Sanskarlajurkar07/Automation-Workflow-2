@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Handle, Position } from 'reactflow';
 import { Settings, Trash2, Zap, Eye, EyeOff } from 'lucide-react';
 import { useFlowStore } from '../../../../store/flowStore';
+import AutocompleteInput from '../../AutocompleteInput';
 
 const modelOptions = ['gemini-pro', 'gemini-pro-vision'];
 
@@ -17,16 +18,25 @@ const GeminiNode: React.FC<any> = ({ id, data, selected }) => {
       }`}
     >
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-cyan-600 px-4 py-3">
+      <div className="bg-gradient-to-r from-blue-500 to-cyan-500 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
-              <Zap className="w-5 h-5 text-white" />
+            <div className="p-1 bg-white/20 backdrop-blur-sm rounded-lg w-9 h-9 flex items-center justify-center">
+              <img 
+                src="/logos/gemini.png" 
+                alt="Google Gemini Logo" 
+                className="w-7 h-7 object-contain"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = "https://www.gstatic.com/lamda/images/favicon_v1_70x70.png"; 
+                  target.onerror = null;
+                }}
+              />
             </div>
             <div>
-              <h3 className="font-medium text-white">Gemini</h3>
-              <p className="text-xs text-cyan-50/80">
-                {data.params?.model || 'Select model'}
+              <h3 className="font-medium text-white">{data.params?.nodeName || 'Gemini'}</h3>
+              <p className="text-xs text-blue-50/80">
+                {data.params?.model || 'gemini-pro'}
               </p>
             </div>
           </div>
@@ -87,8 +97,9 @@ const GeminiNode: React.FC<any> = ({ id, data, selected }) => {
             ))}
           </select>
         </div>
-  {/* System Instructions */}
-         <div className="space-y-2">
+
+        {/* System Instructions */}
+        <div className="space-y-2">
           <label className="flex items-center justify-between">
             <span className="text-xs font-medium text-gray-500">System Instructions</span>
             <div className="flex items-center space-x-2">
@@ -100,27 +111,29 @@ const GeminiNode: React.FC<any> = ({ id, data, selected }) => {
               </button>
             </div>
           </label>
-          <textarea
+          <AutocompleteInput
             value={data.params?.system || ''}
-            onChange={(e) => updateNodeData(id, { system: e.target.value })}
+            onChange={(value) => updateNodeData(id, { system: value })}
             placeholder="Enter system instructions..."
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+            multiline={true}
+            rows={3}
           />
         </div>
 
         {/* Prompt */}
         <div>
           <label className="block text-sm font-medium text-gray-700">Prompt</label>
-          <textarea
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+          <AutocompleteInput
             value={data.params?.prompt || ''}
-            onChange={(e) => updateNodeData(id, { prompt: e.target.value })}
-            placeholder="Type {{}} to utilize variables. E.g., Question: {{input_0.text}}"
+            onChange={(value) => updateNodeData(id, { prompt: value })}
+            placeholder="Use variables from other nodes by typing {{"
+            multiline={true}
+            rows={4}
           />
         </div>
 
- {/* API Key */}
- <div>
+        {/* API Key */}
+        <div>
           <label className="block text-sm font-medium text-gray-700">API Key</label>
           <div className="relative">
             <input
@@ -141,17 +154,17 @@ const GeminiNode: React.FC<any> = ({ id, data, selected }) => {
           <p className="mt-1 text-xs text-gray-500">Do not share API Key with anyone you do not trust!</p>
         </div>
 
-      {/* Handles */}
-      <Handle
-        type="target"
-        position={Position.Left}
-        className="w-3 h-3 -ml-0.5 bg-blue-500 border-2 border-white rounded-full"
-      />
-      <Handle
-        type="source"
-        position={Position.Right}
-        className="w-3 h-3 -mr-0.5 bg-green-500 border-2 border-white rounded-full"
-      />
+        {/* Handles */}
+        <Handle
+          type="target"
+          position={Position.Left}
+          className="w-3 h-3 -ml-0.5 bg-blue-500 border-2 border-white rounded-full"
+        />
+        <Handle
+          type="source"
+          position={Position.Right}
+          className="w-3 h-3 -mr-0.5 bg-green-500 border-2 border-white rounded-full"
+        />
       </div>
     </div>
   );

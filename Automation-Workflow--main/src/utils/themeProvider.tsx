@@ -36,16 +36,22 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     document.documentElement.classList.remove('dark', 'light');
     document.documentElement.classList.add(theme);
     
-    // Force all inputs to have black text
-    document.querySelectorAll('input, textarea, select').forEach(el => {
-      // Remove any existing text color classes
-      el.classList.remove('text-white', 'text-theme-dark', 'text-black');
-      // Add black text
-      el.classList.add('text-black');
-      
-      // For extra assurance, set the style directly
-      (el as HTMLElement).style.color = '#000000';
-    });
+    // Style adjustments based on theme
+    if (theme === 'light') {
+      // Force all inputs to have black text in light mode
+      document.querySelectorAll('input, textarea, select').forEach(el => {
+        // Remove any existing text color classes
+        el.classList.remove('text-white', 'text-theme-dark');
+        // Add black text
+        el.classList.add('text-black');
+        
+        // For extra assurance, set the style directly but allow it to be overridden by CSS
+        (el as HTMLElement).style.setProperty('color', '#000000', 'important');
+        
+        // Remove any background color set by JS
+        (el as HTMLElement).style.removeProperty('background-color');
+      });
+    }
     
     localStorage.setItem('theme', theme);
   }, [theme, isInitialized]);

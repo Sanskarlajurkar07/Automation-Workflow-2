@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, ReactNode } from 'react';
 import { useFlowStore } from '../../store/flowStore';
 import { Loader2, X, Maximize2, Download, Play, FileAudio, ImageIcon, Upload, Info, AlertTriangle, CheckCircle, ChevronRight, Settings } from 'lucide-react';
 import workflowService from '../../lib/workflowService';
@@ -14,6 +14,7 @@ interface InputValue {
   type: string;
   nodeId?: string;
   nodeIndex?: string;
+  isRequired?: boolean;
 }
 
 interface ExecutionStats {
@@ -92,22 +93,48 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
   
   // Initialize inputs based on input nodes
   useEffect(() => {
+    if (!inputNodes.length) return;
+    
+    console.log('Initializing inputs from nodes:', inputNodes);
+    
+    // Track existing inputs to preserve values when possible
+    const existingInputs = { ...inputs };
     const initialInputs: Record<string, InputValue> = {};
-    inputNodes.forEach(node => {
+    
+    inputNodes.forEach((node, index) => {
       // Extract node index more safely
       const nodeIndex = node.id.split('-').length > 1 ? node.id.split('-')[1] : '0';
       const inputId = `input_${nodeIndex}`;
-      const inputType = node.data?.params?.type || 'Text';
       
-      console.log(`Initializing input ${inputId} with type: ${inputType}`, node.data?.params);
+      // Auto-detect type from node data, defaulting to Text
+      let inputType = node.data?.params?.type || 'Text';
+      
+      // Validate input type - ensure it's one of the supported types
+      const validTypes = ['Text', 'Image', 'Formatted Text', 'Audio', 'JSON', 'File'];
+      if (!validTypes.includes(inputType)) {
+        console.warn(`Invalid input type "${inputType}" for ${inputId}, defaulting to Text`);
+        inputType = 'Text';
+      }
+      
+      // Preserve existing value if the type hasn't changed
+      const preserveValue = existingInputs[inputId] && 
+        existingInputs[inputId].type === inputType ? 
+        existingInputs[inputId].value : '';
+      
+      console.log(`Setting up input ${inputId} with type: ${inputType}, preserving value:`, 
+        typeof preserveValue === 'string' && preserveValue.length > 50 ? 
+        `${preserveValue.substring(0, 50)}...` : preserveValue);
       
       initialInputs[inputId] = {
-        value: '',
+        value: preserveValue,
         type: inputType,
         nodeId: node.id,
-        nodeIndex: nodeIndex
+        nodeIndex: nodeIndex,
+        isRequired: node.data?.params?.required === true
       };
     });
+    
+    // Important: completely replace inputs instead of merging
     setInputs(initialInputs);
     
     // Also initialize execution stats
@@ -150,37 +177,73 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
   const handleInputChange = useCallback((inputId: string, value: any) => {
     console.log(`Changing input value for ${inputId} to:`, value);
     
-    // Verify we're not updating multiple inputs accidentally
-    if (inputId === 'input_0' || inputId === 'input_1') {
-      console.log('Current inputs state:', inputs);
-    }
-    
     setInputs(prev => {
-      const updatedInputs = {
+      if (!prev[inputId]) {
+        console.warn(`Attempted to update non-existent input: ${inputId}`);
+        return prev;
+      }
+      
+      // Type-specific validation
+      let validatedValue = value;
+      const inputType = prev[inputId].type;
+      
+      // Validate based on input type
+      if (inputType === 'JSON' && typeof value === 'string') {
+        try {
+          // Check if valid JSON if it's a string
+          if (value.trim()) {
+            JSON.parse(value);
+          }
+        } catch (e) {
+          console.warn(`Invalid JSON entered for ${inputId}:`, e);
+          // We still store the invalid JSON but could add an error state
+        }
+      }
+      
+      // Create a new object instead of mutating the previous state
+      return {
         ...prev,
         [inputId]: {
           ...prev[inputId],
-          value
+          value: validatedValue
         }
       };
-      
-      // Log the updated inputs object
-      if (inputId === 'input_0' || inputId === 'input_1') {
-        console.log('Updated inputs state will be:', updatedInputs);
-      }
-      
-      return updatedInputs;
     });
-  }, [inputs]);
+  }, []);
 
   const handleFileInput = useCallback(async (inputId: string, file: File) => {
-    if (!inputs[inputId]) return;
+    if (!inputs[inputId]) {
+      console.warn(`Attempted to update non-existent input: ${inputId}`);
+      return;
+    }
 
-    if (inputs[inputId].type === 'Image' || inputs[inputId].type === 'Audio') {
-      const url = URL.createObjectURL(file);
-      handleInputChange(inputId, url);
-    } else {
-      handleInputChange(inputId, file);
+    try {
+      const inputType = inputs[inputId].type;
+      let value;
+      
+      if (inputType === 'Image') {
+        // Validate image file
+        if (!file.type.startsWith('image/')) {
+          toast.error(`File is not a valid image. Please upload an image file.`);
+          return;
+        }
+        value = URL.createObjectURL(file);
+      } else if (inputType === 'Audio') {
+        // Validate audio file
+        if (!file.type.startsWith('audio/')) {
+          toast.error(`File is not a valid audio. Please upload an audio file.`);
+          return;
+        }
+        value = URL.createObjectURL(file);
+      } else {
+        // For other file types
+        value = file;
+      }
+      
+      handleInputChange(inputId, value);
+    } catch (error) {
+      console.error(`Error processing file for ${inputId}:`, error);
+      toast.error('Error processing file. Please try again.');
     }
   }, [inputs, handleInputChange]);
 
@@ -301,10 +364,52 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
     }
   };
 
+  // Helper function to validate inputs before execution
+  const validateInputs = useCallback(() => {
+    const errors: string[] = [];
+    
+    // Check all required inputs have values
+    Object.entries(inputs).forEach(([inputId, input]) => {
+      if (input.isRequired && (!input.value || (typeof input.value === 'string' && input.value.trim() === ''))) {
+        errors.push(`${inputId} is required but has no value`);
+      }
+      
+      // Type-specific validation
+      if (input.type === 'JSON' && input.value && typeof input.value === 'string') {
+        try {
+          if (input.value.trim()) {
+            JSON.parse(input.value);
+          }
+        } catch (e) {
+          errors.push(`${inputId} contains invalid JSON`);
+        }
+      }
+    });
+    
+    return errors;
+  }, [inputs]);
+
+  // Optimize inputs for network transmission
+  const optimizeInputsForExecution = useCallback((inputData: Record<string, InputValue>) => {
+    const optimized = { ...inputData };
+    
+    // Perform any needed transformations or optimizations on inputs
+    // For example, convert large text inputs to more efficient formats
+    
+    return optimized;
+  }, []);
+
   const runWorkflow = useCallback(async () => {
     if (!isReadyToRun || !workflowId) {
       console.log('Workflow not ready to run. Ready state:', isReadyToRun, 'Workflow ID:', workflowId);
       toast.error('Workflow is not ready to run. Please check inputs and save the workflow.');
+      return;
+    }
+    
+    // Validate inputs before execution
+    const validationErrors = validateInputs();
+    if (validationErrors.length > 0) {
+      validationErrors.forEach(err => toast.error(err));
       return;
     }
     
@@ -324,24 +429,52 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
       stats.map(stat => ({ ...stat, status: 'pending', startTime: undefined, executionTime: undefined }))
     );
     
+    // Track execution start time for accurate timing
+    const executionStartTime = performance.now();
+    
     try {
-      // Call the workflow execution API
-      toast.loading('Executing workflow...', { id: 'workflow-execution' });
+      // Show loading toast with a unique ID
+      const toastId = 'workflow-execution-' + Date.now();
+      toast.loading('Preparing workflow execution...', { id: toastId });
       
-      const executionResult = await workflowService.executeWorkflow(
+      // Optimize inputs for network transfer
+      const optimizedInputs = optimizeInputsForExecution(inputs);
+      
+      // Create a timeout for the workflow execution
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Workflow execution timed out after 60 seconds')), 60000);
+      });
+      
+      // Call the workflow execution API with timeout
+      const executionPromise = workflowService.executeWorkflow(
         workflowId,
-        inputs,
+        optimizedInputs,
         activeTab
       );
       
+      // Race between execution and timeout
+      const executionResult = await Promise.race([executionPromise, timeoutPromise]);
+      
       console.log('Execution result:', executionResult);
       
+      // Check for API-level errors
+      if (executionResult.status === 'error') {
+        throw new Error(executionResult.error || 'Unknown error during workflow execution');
+      }
+      
+      // Update toast to show progress
+      toast.loading('Processing execution results...', { id: toastId });
+      
       // Process the execution path and update node stats
-      if (executionResult.execution_path) {
+      if (executionResult.execution_path && executionResult.execution_path.length > 0) {
         // Mark nodes as complete in sequence with a delay to show progress
         const executionPath = executionResult.execution_path;
         for (let i = 0; i < executionPath.length; i++) {
           const nodeId = executionPath[i];
+          
+          // Check if this node had an error in node_results
+          const nodeResult = executionResult.node_results?.[nodeId];
+          const hasNodeError = nodeResult?.status === 'error';
           
           // Update current step for visualization
           setCurrentStep(i + 1);
@@ -355,59 +488,75 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
             )
           );
           
-          // Small delay to visualize progress
-          await new Promise(resolve => setTimeout(resolve, 300));
+          // Small delay to visualize progress - scale based on total nodes for better UX
+          // Use a shorter delay for workflows with many nodes
+          const delayMs = Math.min(300, Math.max(50, 1000 / executionPath.length));
+          await new Promise(resolve => setTimeout(resolve, delayMs));
           
-          // Update the node status to completed
+          // Update the node status to completed or error
           setExecutionStats(prev => 
             prev.map(stat => 
               stat.nodeId === nodeId 
                 ? { 
                     ...stat, 
-                    status: 'completed', 
+                    status: hasNodeError ? 'error' : 'completed', 
                     executionTime: stat.startTime ? (Date.now() - stat.startTime) / 1000 : undefined 
                   } 
                 : stat
             )
           );
+          
+          // If there was an error in this node, show it and potentially stop visualization
+          if (hasNodeError && nodeResult.error) {
+            const nodeInfo = nodes.find(n => n.id === nodeId);
+            const nodeName = nodeInfo?.data?.params?.nodeName || nodeId;
+            
+            toast.error(`Error in node "${nodeName}": ${nodeResult.error}`, { 
+              id: `node-error-${nodeId}`,
+              duration: 5000
+            });
+          }
         }
+      } else {
+        // No execution path, finished instantly
+        console.warn('No execution path returned from backend');
+        toast.success('Workflow executed with no processing steps', { id: toastId });
       }
       
       // Set results
       setResults(executionResult.outputs || {});
       
-      // Set execution time
-      setExecutionTime(executionResult.execution_time);
+      // Calculate accurate execution time from our own measurement
+      const clientExecutionTime = (performance.now() - executionStartTime) / 1000;
+      // Use the server-reported time if available, otherwise use our measurement
+      setExecutionTime(executionResult.execution_time || clientExecutionTime);
       
-      // Show success toast
-      toast.success('Workflow executed successfully', { id: 'workflow-execution' });
+      // Success feedback
+      toast.success('Workflow executed successfully', { id: toastId, duration: 3000 });
       
-    } catch (err) {
-      console.error('Workflow execution failed:', err);
+    } catch (e) {
+      console.error('Error executing workflow:', e);
+      const errorMessage = e instanceof Error ? e.message : String(e);
       
-      // Mark the current node as failed
-      if (currentStep > 0 && currentStep <= executionStats.length) {
-        setExecutionStats(prev => {
-          const newStats = [...prev];
-          const currentNodeIndex = currentStep - 1;
-          if (newStats[currentNodeIndex]) {
-            newStats[currentNodeIndex].status = 'error';
-          }
-          return newStats;
-        });
-      }
-      
-      // Set error message
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      // Set error state
       setError(errorMessage);
       
-      // Show error toast
-      toast.error(`Workflow execution failed: ${errorMessage}`, { id: 'workflow-execution' });
+      // Mark all in-progress nodes as error
+      setExecutionStats(stats => 
+        stats.map(stat => 
+          stat.status === 'running' 
+            ? { ...stat, status: 'error' } 
+            : stat
+        )
+      );
+      
+      // Error feedback
+      toast.error(`Execution failed: ${errorMessage}`);
       
     } finally {
       setIsRunning(false);
     }
-  }, [isReadyToRun, workflowId, inputs, activeTab, currentStep, executionStats.length]);
+  }, [isReadyToRun, workflowId, validateInputs, inputs, activeTab, optimizeInputsForExecution, nodes]);
 
   // Function to fix input types
   const fixInputTypes = async () => {
@@ -425,79 +574,102 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
     }
   };
 
-  // Render results with improved visualization
+  // Enhanced results display with better visualization and functionality
   const renderResults = () => {
     if (Object.keys(results).length === 0) return null;
     
     return (
       <div className="space-y-4 mt-4 rounded-lg border border-green-200 p-4 bg-green-50">
-        <h4 className="text-md font-semibold text-green-800 flex items-center">
-          <CheckCircle className="w-5 h-5 mr-2" />
-          Results
-          {executionTime && (
-            <span className="ml-2 text-sm font-normal text-green-600">
-              (completed in {executionTime.toFixed(2)}s)
-            </span>
-          )}
-        </h4>
+        <div className="flex items-center justify-between">
+          <h4 className="text-md font-semibold text-green-800 flex items-center">
+            <CheckCircle className="w-5 h-5 mr-2" />
+            Results
+            {executionTime && (
+              <span className="ml-2 text-sm font-normal text-green-600">
+                (completed in {executionTime.toFixed(2)}s)
+              </span>
+            )}
+          </h4>
+          
+          {/* Export all results button */}
+          <button
+            onClick={exportAllResults}
+            className="text-xs bg-green-100 hover:bg-green-200 text-green-800 font-medium py-1 px-3 rounded transition-colors flex items-center"
+          >
+            <Download className="w-3 h-3 mr-1" />
+            Export All
+          </button>
+        </div>
+        
         <div className="space-y-4">
           {Object.entries(results).map(([key, result]) => {
             const output = result.output;
             const type = result.type;
+            const nodeId = result.node_id || '';
+            const nodeName = result.node_name || key.replace('output_', 'Output ');
+            
+            // Get node from the flow for additional context
+            const node = nodeId ? nodesMap[nodeId] : null;
             
             return (
-              <div key={`result-${key}`} className="space-y-2">
-                <h5 className="text-sm font-medium text-green-800">
-                  {key.replace('output_', 'Output ')}
-                </h5>
-                
-                {type === 'Image' ? (
-                  <div className="w-full aspect-video bg-white rounded border overflow-hidden">
-                    <img src={output} alt="Result" className="w-full h-full object-contain" />
+              <div key={`result-${key}`} className="bg-white rounded-lg border border-green-100 overflow-hidden">
+                {/* Result header with metadata */}
+                <div className="bg-green-50 px-3 py-2 border-b border-green-100 flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <h5 className="text-sm font-medium text-green-800">
+                      {nodeName}
+                    </h5>
+                    <span className="text-xs text-green-600 px-2 py-0.5 bg-green-100 rounded-full">
+                      {type}
+                    </span>
                   </div>
-                ) : type === 'Audio' ? (
-                  <audio controls className="w-full">
-                    <source src={output} />
-                  </audio>
-                ) : type === 'JSON' ? (
-                  <pre className="bg-white p-3 rounded border text-xs overflow-auto max-h-[200px] text-black">
-                    {typeof output === 'object' ? JSON.stringify(output, null, 2) : output}
-                  </pre>
-                ) : (
-                  <div className="bg-white p-3 rounded border text-sm overflow-auto max-h-[300px] whitespace-pre-wrap text-black">
-                    {output}
-                  </div>
-                )}
-                
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(
-                        typeof output === 'object' ? JSON.stringify(output) : String(output)
-                      );
-                      toast.success('Copied to clipboard');
-                    }}
-                    className="text-xs text-green-600 hover:text-green-800"
-                  >
-                    Copy
-                  </button>
                   
-                  {type !== 'Image' && type !== 'Audio' && (
+                  <div className="flex items-center space-x-2">
+                    {/* Copy button */}
                     <button
                       onClick={() => {
-                        const content = typeof output === 'object' ? JSON.stringify(output, null, 2) : String(output);
-                        const blob = new Blob([content], { type: 'text/plain' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${key.replace('output_', 'output-')}.txt`;
-                        a.click();
-                        URL.revokeObjectURL(url);
+                        navigator.clipboard.writeText(
+                          typeof output === 'object' ? JSON.stringify(output) : String(output)
+                        );
+                        toast.success('Copied to clipboard');
                       }}
-                      className="text-xs text-green-600 hover:text-green-800 ml-4"
+                      className="text-xs text-green-600 hover:text-green-800"
+                      title="Copy to clipboard"
                     >
-                      Download
+                      Copy
                     </button>
+                    
+                    {/* Download button for non-visual outputs */}
+                    {type !== 'Image' && type !== 'Audio' && (
+                      <button
+                        onClick={() => downloadOutput(key, output, type)}
+                        className="text-xs text-green-600 hover:text-green-800"
+                        title="Download output"
+                      >
+                        Download
+                      </button>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Result content */}
+                <div className="p-3">
+                  {type === 'Image' ? (
+                    <div className="w-full aspect-video bg-white rounded border overflow-hidden">
+                      <img src={output} alt="Result" className="w-full h-full object-contain" />
+                    </div>
+                  ) : type === 'Audio' ? (
+                    <audio controls className="w-full">
+                      <source src={output} />
+                    </audio>
+                  ) : type === 'JSON' ? (
+                    <pre className="bg-gray-50 p-3 rounded border text-xs overflow-auto max-h-[200px] text-black">
+                      {typeof output === 'object' ? JSON.stringify(output, null, 2) : output}
+                    </pre>
+                  ) : (
+                    <div className="bg-gray-50 p-3 rounded border text-sm overflow-auto max-h-[300px] whitespace-pre-wrap text-black">
+                      {output}
+                    </div>
                   )}
                 </div>
               </div>
@@ -508,27 +680,116 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
     );
   };
 
+  // Helper function to export all results as a single ZIP file
+  const exportAllResults = () => {
+    // Create a download trigger for all results
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    
+    // For a simple implementation, we'll create separate files
+    Object.entries(results).forEach(([key, result]) => {
+      const output = result.output;
+      const type = result.type;
+      downloadOutput(key, output, type);
+    });
+    
+    toast.success('All results exported');
+  };
+
+  // Helper function to download a specific output
+  const downloadOutput = (key: string, output: any, type: string) => {
+    try {
+      let content = '';
+      let extension = 'txt';
+      let mimeType = 'text/plain';
+      
+      // Format content based on type
+      if (typeof output === 'object') {
+        content = JSON.stringify(output, null, 2);
+        extension = 'json';
+        mimeType = 'application/json';
+      } else {
+        content = String(output);
+        
+        // Set appropriate extension based on content type
+        if (type === 'JSON') {
+          extension = 'json';
+          mimeType = 'application/json';
+        } else if (type === 'Formatted Text' && content.includes('<')) {
+          extension = 'html';
+          mimeType = 'text/html';
+        }
+      }
+      
+      // Create the download
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${key.replace('output_', 'output-')}.${extension}`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+    } catch (error) {
+      console.error('Error downloading output:', error);
+      toast.error('Failed to download output');
+    }
+  };
+
   // Enhanced error display with more details and suggestions
   const renderError = () => {
     if (!error) return null;
+
+    // Categorize errors for better user guidance
+    let errorTitle = 'Error';
+    let errorIcon = <AlertTriangle className="w-5 h-5 text-red-500" />;
+    let errorCategory = 'generic';
     
+    // Check for common error patterns
+    if (error.includes('API key') || error.includes('authentication')) {
+      errorTitle = 'Authentication Error';
+      errorCategory = 'auth';
+    } else if (error.includes('timeout') || error.includes('timed out')) {
+      errorTitle = 'Timeout Error';
+      errorCategory = 'timeout';
+    } else if (error.includes('model') || error.includes('OpenAI') || error.includes('Anthropic')) {
+      errorTitle = 'AI Model Error';
+      errorCategory = 'model';
+    } else if (error.includes('parameter') || error.includes('required field') || error.includes('JSON')) {
+      errorTitle = 'Input Error';
+      errorCategory = 'input';
+    }
+    
+    // Get helpful hints based on error category
+    const getHelpfulHint = () => {
+      switch (errorCategory) {
+        case 'auth':
+          return 'Check that your API keys are correct and have sufficient permissions.';
+        case 'timeout':
+          return 'Try simplifying your workflow or breaking it into smaller parts.';
+        case 'model':
+          return 'The AI service may be experiencing issues. Check their status page or try a different model.';
+        case 'input':
+          return 'Check that all required inputs are provided and in the correct format.';
+        default:
+          return 'Try rerunning the workflow or check the workflow configuration.';
+      }
+    };
+
     return (
-      <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+      <div className="mt-4 border border-red-200 rounded-lg p-4 bg-red-50">
         <div className="flex items-start">
-          <AlertTriangle className="w-5 h-5 text-red-600 mr-2 mt-0.5" />
-          <div className="space-y-2">
-            <h4 className="text-md font-semibold text-red-800">Execution Failed</h4>
-            <p className="text-sm text-red-700">{error}</p>
-            
-            <div className="text-sm text-red-600">
-              <p className="font-medium">Possible solutions:</p>
-              <ul className="list-disc pl-5 mt-1">
-                <li>Check if all your inputs are valid</li>
-                <li>Ensure your workflow is properly connected</li>
-                <li>Verify API keys for external services if used</li>
-                <li>Try simplifying your workflow and test individual nodes</li>
-              </ul>
-            </div>
+          {errorIcon}
+          <div className="ml-3">
+            <h4 className="text-sm font-medium text-red-800">{errorTitle}</h4>
+            <p className="mt-1 text-sm text-red-700 whitespace-pre-wrap">{error}</p>
+            <p className="mt-2 text-xs text-red-600">{getHelpfulHint()}</p>
+            <button
+              onClick={runWorkflow}
+              disabled={isRunning || !isReadyToRun}
+              className="mt-3 text-xs text-red-700 hover:text-red-800 bg-red-100 hover:bg-red-200 py-1 px-2 rounded flex items-center"
+            >
+              <Play className="w-3 h-3 mr-1" /> Try Again
+            </button>
           </div>
         </div>
       </div>
@@ -704,11 +965,10 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId: 
               const isRequired = node.data?.params?.required === true;
               const inputName = node.data?.params?.nodeName || `Input ${nodeIndex}`;
               
-              // Create a truly unique key using array index + node ID
-              // This ensures uniqueness even with duplicate node IDs, without changing on every render
+              // Create a truly unique key using array index and node ID
               const uniqueKey = `input-node-${index}-${node.id}`;
               
-              console.log('Creating input node with key:', uniqueKey, 'ID:', node.id, 'Index:', index);
+              console.log('Rendering input node with key:', uniqueKey, 'ID:', node.id, 'Index:', index);
               
               return (
                 <div key={uniqueKey} className="space-y-2">
