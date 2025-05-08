@@ -10,6 +10,7 @@ import workflowService from '../../lib/workflowService';
 import { Workflow } from '../../types/workflow';
 import { useTheme } from '../../utils/themeProvider';
 import { useFlowStore } from '../../store/flowStore';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Helper function to convert backend node data to FlowNode format
 const mapToFlowNode = (node: any): FlowNode => {
@@ -39,6 +40,9 @@ const mapToFlowEdge = (edge: any): FlowEdge => {
   };
 };
 
+// Event name for sidebar toggle communication
+const TOGGLE_SIDEBAR_EVENT = 'toggle-workflow-sidebar';
+
 export const WorkflowBuilder = () => {
   const { id } = useParams(); // Get workflow ID from URL param
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,6 +52,7 @@ export const WorkflowBuilder = () => {
   const [flowEdges, setFlowEdges] = useState<FlowEdge[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sidebarVisible, setSidebarVisible] = useState(true);
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const clearWorkflow = useFlowStore(state => state.clearWorkflow);
@@ -64,6 +69,26 @@ export const WorkflowBuilder = () => {
     'Workflow Rules': 'logic',
     'AI Tools & SparkLayer': 'ai-tools'
   };
+
+  // Toggle sidebar visibility
+  const toggleSidebar = () => {
+    const newState = !sidebarVisible;
+    setSidebarVisible(newState);
+    // Dispatch event to notify FlowCanvas component
+    document.dispatchEvent(new CustomEvent(TOGGLE_SIDEBAR_EVENT, { detail: { visible: newState } }));
+  };
+
+  // Listen for sidebar toggle events from FlowCanvas
+  useEffect(() => {
+    const handleSidebarToggle = (event: any) => {
+      setSidebarVisible(event.detail.visible);
+    };
+    
+    document.addEventListener(TOGGLE_SIDEBAR_EVENT, handleSidebarToggle);
+    return () => {
+      document.removeEventListener(TOGGLE_SIDEBAR_EVENT, handleSidebarToggle);
+    };
+  }, []);
 
   // Load workflow data when component mounts or ID changes
   useEffect(() => {
@@ -206,12 +231,15 @@ export const WorkflowBuilder = () => {
         workflowName={workflowData?.name || 'New Workflow'}
         workflowId={id}
       />
-      <div className="flex h-[calc(100vh-132px)]">
-        <div className={`w-64 border-r ${
-          isLight 
-            ? 'border-theme-light bg-theme-light/70 backdrop-blur-sm'
-            : 'border-theme-medium-dark/30 bg-theme-dark/80 backdrop-blur-sm'
-        } overflow-y-auto`}>
+      <div className="flex h-[calc(100vh-132px)] relative">
+        {/* Sidebar */}
+        <div 
+          className={`${sidebarVisible ? 'w-64' : 'w-0'} border-r overflow-hidden transition-all duration-300 ${
+            isLight 
+              ? 'border-theme-light bg-theme-light/70 backdrop-blur-sm'
+              : 'border-theme-medium-dark/30 bg-theme-dark/80 backdrop-blur-sm'
+          }`}
+        >
           <ErrorBoundary>
             <NodePanel
               category={activeCategory}
@@ -223,6 +251,25 @@ export const WorkflowBuilder = () => {
             />
           </ErrorBoundary>
         </div>
+        
+        {/* Sidebar toggle button */}
+        <button 
+          onClick={toggleSidebar}
+          className={`absolute left-0 top-1/2 transform -translate-y-1/2 z-10 ${
+            sidebarVisible ? 'ml-64' : 'ml-0'
+          } transition-all duration-300 ${
+            isLight 
+              ? 'bg-theme-light hover:bg-theme-medium/20 text-theme-medium-dark'
+              : 'bg-theme-medium-dark/30 hover:bg-theme-medium-dark/50 text-theme-light'
+          } p-1.5 rounded-r-md border border-l-0 ${
+            isLight ? 'border-theme-light' : 'border-theme-medium-dark/30'
+          } flex items-center justify-center shadow-md`}
+          title={sidebarVisible ? "Hide Components Panel" : "Show Components Panel"}
+        >
+          {sidebarVisible ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+        </button>
+        
+        {/* Canvas */}
         <div className="flex-1">
           <FlowCanvas 
             workflowId={id} 

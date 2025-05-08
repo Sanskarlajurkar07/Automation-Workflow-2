@@ -90,29 +90,30 @@ export const workflowService = {
   // Execute a workflow
   executeWorkflow: async (id: string, inputs: Record<string, any>, mode: string = 'standard'): Promise<any> => {
     try {
-      // Format inputs to match the API specification
+      console.log('Executing workflow with inputs:', inputs);
+      
+      // Format inputs for API
       const formattedInputs: Record<string, any> = {};
+      let hasFiles = false;
       
-      for (const [key, value] of Object.entries(inputs)) {
-        // If it's already in the right format, use it as is
-        if (value && typeof value === 'object' && 'value' in value && 'type' in value) {
-          formattedInputs[key] = value;
-        } else {
-          // Otherwise, create the proper format
-          formattedInputs[key] = {
-            value: value,
-            type: typeof value === 'string' ? 'Text' : 
-                 typeof value === 'object' && value instanceof File ? 'File' : 'Text'
-          };
+      for (const [key, inputValue] of Object.entries(inputs)) {
+        // Check if we're dealing with a file
+        if (inputValue.value instanceof File) {
+          hasFiles = true;
         }
+        
+        // Store formatted input
+        formattedInputs[key] = {
+          value: inputValue.value,
+          type: inputValue.type || 'Text'
+        };
+        
+        // Debug log to help identify input value issues
+        console.log(`Formatted input ${key}: type=${inputValue.type}, value=`, 
+          typeof inputValue.value === 'string' && inputValue.value.length > 100 
+            ? `${inputValue.value.substring(0, 100)}...` 
+            : inputValue.value);
       }
-      
-      console.log(`Executing workflow ${id} with inputs:`, formattedInputs);
-      
-      // For file uploads, use FormData
-      const hasFiles = Object.values(formattedInputs).some(
-        input => input.value instanceof File
-      );
       
       let response;
       

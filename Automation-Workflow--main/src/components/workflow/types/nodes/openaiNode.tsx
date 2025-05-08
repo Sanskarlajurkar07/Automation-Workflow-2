@@ -79,9 +79,10 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
   const [showApiKey, setShowApiKey] = useState(false);
   const [variablePosition, setVariablePosition] = useState<{ x: number, y: number } | null>(null);
   const [expandedSections, setExpandedSections] = useState({
-    prompt: true,
-    system: false,
     model: true,
+    templates: false,
+    system: false,
+    prompt: true,
     advanced: false
   });
   const [showTemplates, setShowTemplates] = useState(false);
@@ -430,21 +431,62 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
           
           {expandedSections.system && (
             <div className="pt-2 space-y-2">
-              <div className="relative">
-                <AutocompleteInput
-                  value={data.params?.system || ''}
-                  onChange={(value) => updateNodeData(id, { system: value })}
-                  placeholder="Define the AI's behavior and knowledge context..."
-                  multiline={true}
-                  rows={4}
-                />
-              </div>
-              
-              {data.params?.system && (
-                <div className="p-2 bg-blue-50 border border-blue-100 rounded-md text-xs text-blue-700">
-                  <p>System prompts influence the AI's behavior and knowledge without appearing in the conversation.</p>
+              <div className="relative bg-gradient-to-br from-blue-50 to-emerald-50 p-3 rounded-md border border-blue-200">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium text-blue-700">System Instructions</label>
+                  
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-blue-600 font-medium">
+                      {data.params?.system ? `${data.params.system.length || 0} chars` : ''}
+                    </span>
+                    
+                    <button
+                      type="button"
+                      onClick={() => updateNodeData(id, { system: '' })}
+                      className="p-1 rounded hover:bg-blue-100 text-blue-500"
+                      title="Clear system prompt"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                        className="w-3.5 h-3.5">
+                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                        <path d="m9 12 6 0"></path>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-              )}
+                
+                <div className="relative rounded-md overflow-hidden mb-2 transition-all duration-200 border-2 border-blue-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/30">
+                  <AutocompleteInput
+                    value={data.params?.system || ''}
+                    onChange={(value) => updateNodeData(id, { system: value })}
+                    placeholder="Define the AI's behavior and knowledge context..."
+                    multiline={true}
+                    rows={4}
+                    className="bg-white border-none shadow-none text-gray-800 focus:ring-0 resize-none"
+                  />
+                </div>
+                
+                {data.params?.system && data.params.system.includes('{{') && (
+                  <div className="mt-2 p-2 bg-white/90 border border-blue-200 rounded-md">
+                    <div className="flex items-center mb-1">
+                      <Eye className="w-3.5 h-3.5 mr-1 text-blue-600" />
+                      <label className="text-xs font-medium text-blue-700">System Preview</label>
+                    </div>
+                    <VariableHighlighter 
+                      text={data.params.system} 
+                      className="text-sm text-gray-700 bg-white/50 p-2 rounded border border-gray-100"
+                    />
+                  </div>
+                )}
+                
+                {data.params?.system && (
+                  <div className="p-2 mt-2 bg-blue-50 border border-blue-100 rounded-md text-xs text-blue-700 flex items-center">
+                    <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-blue-600" />
+                    <span>System prompts influence the AI's behavior without appearing in the conversation.</span>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -465,28 +507,139 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
           </div>
           
           {expandedSections.prompt && (
-            <div className="pt-2 space-y-2">
+            <div className="pt-2 space-y-3">
+              {/* Enhanced prompt field with improved styling and accessibility */}
               <div className="relative">
-                <AutocompleteInput
-                  value={data.params?.prompt || ''}
-                  onChange={(value) => updateNodeData(id, { prompt: value })}
-                  placeholder="Enter your prompt here... Use variables from other nodes"
-                  multiline={true}
-                  rows={5}
-                />
-              </div>
-              
-              {variableError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                  <div className="flex items-start">
-                    <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 mr-2 flex-shrink-0" />
+                <div className="bg-gradient-to-br from-emerald-50 to-blue-50 p-4 rounded-md border border-emerald-200 shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-emerald-700 flex items-center">
+                      <MessageSquare className="w-4 h-4 mr-1.5 text-emerald-600" />
+                      <span>Craft your prompt</span>
+                    </label>
+                    
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-emerald-600 font-medium">
+                        {data.params?.prompt ? `${data.params.prompt.length || 0} chars` : ''}
+                      </span>
+                      
+                      <button
+                        type="button"
+                        onClick={() => updateNodeData(id, { prompt: '' })}
+                        className="p-1 rounded hover:bg-emerald-100 text-emerald-500"
+                        title="Clear prompt"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                          className="w-3.5 h-3.5">
+                          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                          <path d="m9 12 6 0"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="relative rounded-md overflow-hidden mb-3 transition-all duration-200 border-2 border-emerald-300 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/30">
+                    <AutocompleteInput
+                      value={data.params?.prompt || ''}
+                      onChange={(value) => updateNodeData(id, { prompt: value })}
+                      placeholder="Enter your prompt here... Use {{variables}} from connected nodes"
+                      multiline={true}
+                      rows={7}
+                      className="bg-white border-none shadow-none text-gray-800 focus:ring-0 resize-none"
+                    />
+                  </div>
+                  
+                  {/* Variable info callout */}
+                  <div className="flex items-start p-2.5 mb-3 bg-blue-50 border border-blue-100 rounded-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
+                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                      className="w-4 h-4 text-blue-600 mt-0.5 mr-2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 16v-4"></path>
+                      <path d="M12 8h.01"></path>
+                    </svg>
                     <div>
-                      <p className="text-sm font-medium text-red-800">{variableError.error}</p>
-                      <p className="text-xs text-red-700 mt-1">{variableError.message}</p>
+                      <p className="text-xs text-blue-700 font-medium">Dynamic Content</p>
+                      <p className="text-xs text-blue-600">
+                        Type <code className="px-1 py-0.5 bg-blue-100 rounded font-mono">&#123;&#123;</code> or click 
+                        the Variables button to insert dynamic values from connected nodes.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Improved variable preview with clearer styling */}
+                  {data.params?.prompt && data.params.prompt.includes('{{') && (
+                    <div className="mb-3 p-3 bg-white/90 border border-emerald-200 rounded-md">
+                      <div className="flex items-center mb-1.5">
+                        <Eye className="w-4 h-4 mr-1.5 text-emerald-600" />
+                        <label className="text-sm font-medium text-emerald-700">Prompt Preview</label>
+                      </div>
+                      <VariableHighlighter 
+                        text={data.params.prompt} 
+                        className="text-sm text-gray-700 bg-white/50 p-2.5 rounded border border-gray-100"
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Quick suggestions/templates */}
+                  <div className="border-t border-emerald-200 pt-2.5">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-medium text-emerald-700">Prompt Suggestions</span>
+                      <button 
+                        className="text-xs text-emerald-600 hover:text-emerald-800 flex items-center"
+                        onClick={() => setShowTemplates(!showTemplates)}
+                      >
+                        {showTemplates ? 'Hide' : 'Browse templates'}
+                        <ChevronDown className={`ml-0.5 w-3 h-3 ${showTemplates ? 'rotate-180' : ''} transition-transform`} />
+                      </button>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        className="text-xs px-2 py-1.5 bg-white border border-emerald-200 rounded-md hover:bg-emerald-50 flex items-center transition-colors"
+                        onClick={() => {
+                          const currentPrompt = data.params?.prompt || '';
+                          updateNodeData(id, { 
+                            prompt: currentPrompt + (currentPrompt ? '\n\n' : '') + 'Summarize the following content:'
+                          });
+                        }}
+                      >
+                        <Sparkles className="w-3 h-3 mr-1 text-emerald-500" />
+                        Summarize
+                      </button>
+                      
+                      <button
+                        type="button"
+                        className="text-xs px-2 py-1.5 bg-white border border-emerald-200 rounded-md hover:bg-emerald-50 flex items-center transition-colors"
+                        onClick={() => {
+                          const currentPrompt = data.params?.prompt || '';
+                          updateNodeData(id, { 
+                            prompt: currentPrompt + (currentPrompt ? '\n\n' : '') + 'Analyze the sentiment of the following:'
+                          });
+                        }}
+                      >
+                        <Sparkles className="w-3 h-3 mr-1 text-emerald-500" />
+                        Sentiment
+                      </button>
+                      
+                      <button
+                        type="button"
+                        className="text-xs px-2 py-1.5 bg-white border border-emerald-200 rounded-md hover:bg-emerald-50 flex items-center transition-colors"
+                        onClick={() => {
+                          const currentPrompt = data.params?.prompt || '';
+                          updateNodeData(id, { 
+                            prompt: currentPrompt + (currentPrompt ? '\n\n' : '') + 'Extract key information from:'
+                          });
+                        }}
+                      >
+                        <Sparkles className="w-3 h-3 mr-1 text-emerald-500" />
+                        Extract
+                      </button>
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           )}
         </div>

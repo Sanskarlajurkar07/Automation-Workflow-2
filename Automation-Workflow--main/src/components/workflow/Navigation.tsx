@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Moon, 
   Sun, 
@@ -8,7 +8,9 @@ import {
   ChevronDown,
   Download,
   AlertCircle,
-  Save
+  Save,
+  Edit2,
+  Check
 } from 'lucide-react';
 import { NodeCategory } from '../../types/flow';
 import { useTheme } from '../../utils/themeProvider';
@@ -53,7 +55,88 @@ export const Navigation: React.FC<NavigationProps> = ({
     isDeployed: false,
     hasChanges: true
   });
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState(workflowName);
+  const nameInputRef = useRef<HTMLInputElement>(null);
   const isLight = theme === 'light';
+
+  const setWorkflowName = useFlowStore(state => state.setWorkflowName);
+
+  // Update edited name when workflowName prop changes
+  useEffect(() => {
+    setEditedName(workflowName);
+  }, [workflowName]);
+
+  // Focus input when editing starts
+  useEffect(() => {
+    if (isEditingName && nameInputRef.current) {
+      nameInputRef.current.focus();
+      nameInputRef.current.select();
+    }
+  }, [isEditingName]);
+
+  // Handle click outside to cancel editing
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isEditingName && nameInputRef.current && !nameInputRef.current.contains(event.target as Node)) {
+        setIsEditingName(false);
+        setEditedName(workflowName); // Reset to original name
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isEditingName, workflowName]);
+
+  // Handle name edit submission
+  const handleNameSubmit = async () => {
+    if (!workflowId || editedName === workflowName || editedName.trim() === '') {
+      setIsEditingName(false);
+      setEditedName(workflowName); // Reset if empty
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveSuccess(false);
+    setSaveError(null);
+
+    try {
+      // Get current workflow data
+      const { nodes, edges } = useFlowStore.getState();
+      
+      // Prepare workflow update with new name
+      const workflowUpdate = {
+        name: editedName.trim(),
+        nodes,
+        edges,
+        status: 'draft'
+      };
+      
+      // Update the workflow
+      await workflowService.updateWorkflow(workflowId, workflowUpdate);
+      
+      // Update name in store and document title
+      setWorkflowName(editedName.trim());
+      document.title = editedName.trim();
+      
+      // Show success message
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+      
+      // Exit editing mode
+      setIsEditingName(false);
+    } catch (error) {
+      logApiError('Error updating workflow name', error);
+      setSaveError('Failed to update workflow name');
+      setTimeout(() => setSaveError(null), 3000);
+      
+      // Stay in editing mode if there's an error
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Add these functions
   const handleExport = () => {
@@ -138,11 +221,44 @@ export const Navigation: React.FC<NavigationProps> = ({
 
             <div className={`px-3 mx-3 h-6 ${isLight ? 'border-l border-theme-light' : 'border-l border-theme-medium-dark/50'}`}></div>
 
-            {/* Workflow Name Display */}
-            <div className={`flex items-center ${isLight ? 'bg-theme-light/60 text-theme-dark rounded-md px-3 py-1.5 border border-theme-light/70' : 'bg-theme-medium-dark/20 text-theme-white rounded-md px-3 py-1.5 border border-theme-medium-dark/40'}`}>
-              <span className={`text-xs ${isLight ? 'text-theme-medium-dark' : 'text-theme-light'} mr-2`}>Workflow:</span>
-              <span className={`text-sm font-medium ${isLight ? 'text-theme-dark' : 'text-theme-white'}`}>{workflowName}</span>
-            </div>
+            {/* Editable Workflow Name */}
+            {isEditingName ? (
+              <div className={`flex items-center ${isLight ? 'bg-theme-light/60 text-theme-dark rounded-md px-3 py-1 border border-theme-medium/40' : 'bg-theme-medium-dark/20 text-theme-white rounded-md px-3 py-1 border border-theme-medium/40'}`}>
+                <span className={`text-xs ${isLight ? 'text-theme-medium-dark' : 'text-theme-light'} mr-2`}>Workflow:</span>
+                <input 
+                  ref={nameInputRef}
+                  type="text" 
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleNameSubmit();
+                    } else if (e.key === 'Escape') {
+                      setIsEditingName(false);
+                      setEditedName(workflowName);
+                    }
+                  }}
+                  className={`text-sm font-medium ${isLight ? 'text-theme-dark bg-transparent' : 'text-theme-white bg-transparent'} focus:outline-none w-full max-w-xs`}
+                />
+                <button 
+                  onClick={handleNameSubmit}
+                  className={`ml-2 p-1 ${isLight ? 'text-theme-medium hover:text-theme-medium-dark' : 'text-theme-medium hover:text-theme-light'} rounded-md transition-colors`}
+                  title="Save Name"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <div 
+                onClick={() => setIsEditingName(true)} 
+                className={`flex items-center cursor-pointer group ${isLight ? 'bg-theme-light/60 hover:bg-theme-light text-theme-dark rounded-md px-3 py-1.5 border border-theme-light/70 hover:border-theme-medium/30' : 'bg-theme-medium-dark/20 hover:bg-theme-medium-dark/30 text-theme-white rounded-md px-3 py-1.5 border border-theme-medium-dark/40 hover:border-theme-medium/30'} transition-colors`}
+                title="Click to edit workflow name"
+              >
+                <span className={`text-xs ${isLight ? 'text-theme-medium-dark' : 'text-theme-light'} mr-2`}>Workflow:</span>
+                <span className={`text-sm font-medium ${isLight ? 'text-theme-dark group-hover:text-theme-medium' : 'text-theme-white group-hover:text-theme-medium'} transition-colors mr-2`}>{workflowName}</span>
+                <Edit2 className={`w-3 h-3 ${isLight ? 'text-theme-medium-dark opacity-40 group-hover:opacity-100' : 'text-theme-light opacity-40 group-hover:opacity-100'} transition-opacity`} />
+              </div>
+            )}
             
             {/* Save status indicators */}
             {isSaving && (

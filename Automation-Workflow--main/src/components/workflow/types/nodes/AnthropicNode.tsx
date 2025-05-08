@@ -219,29 +219,116 @@ const AnthropicNode: React.FC<AnthropicNodeProps> = ({ id, data, selected }) => 
           )}
         </div>
 
-        {/* Prompt */}
-        <div className="space-y-2 relative">
-          <label className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">Prompt</span>
-          </label>
-          <AutocompleteInput
-            value={data.params?.prompt || data.prompt || ''}
-            onChange={(value) => updateNodeData(id, { prompt: value })}
-            placeholder="Type your prompt here... Use variables from other nodes"
-            multiline={true}
-            rows={4}
-          />
-          
-          {/* Add this block to show the highlighted variables preview */}
-          {data.params?.prompt && data.params.prompt.includes('{{') && (
-            <div className="mt-2 p-2 bg-gray-50 border border-gray-200 rounded-md">
-              <label className="text-xs font-medium text-gray-500 mb-1 block">Preview with variables:</label>
-              <VariableHighlighter 
-                text={data.params.prompt} 
-                className="text-sm text-gray-700"
+        {/* Main Prompt Area - Enhanced UI */}
+        <div className="space-y-2 relative mt-4">
+          <div className="bg-gradient-to-br from-purple-50 to-indigo-50 p-4 rounded-md border border-purple-200 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium text-purple-700 flex items-center">
+                <Zap className="w-4 h-4 mr-1.5 text-purple-600" />
+                <span>Craft your prompt</span>
+              </label>
+              
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-purple-600 font-medium">
+                  {(data.params?.prompt || data.prompt) ? `${(data.params?.prompt || data.prompt || '').length} chars` : ''}
+                </span>
+                
+                <button
+                  type="button"
+                  onClick={() => updateNodeData(id, { prompt: '' })}
+                  className="p-1 rounded hover:bg-purple-100 text-purple-500"
+                  title="Clear prompt"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                    className="w-3.5 h-3.5">
+                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                    <path d="m9 12 6 0"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <div className="relative rounded-md overflow-hidden mb-3 transition-all duration-200 border-2 border-purple-300 focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-500/30">
+              <AutocompleteInput
+                value={data.params?.prompt || data.prompt || ''}
+                onChange={(value) => updateNodeData(id, { prompt: value })}
+                placeholder="Type your prompt here... Use variables from other nodes"
+                multiline={true}
+                rows={6}
+                className="bg-white border-none shadow-none text-gray-800 focus:ring-0 resize-none"
               />
             </div>
-          )}
+            
+            {/* Variable info callout */}
+            <div className="flex items-start p-2.5 mb-3 bg-indigo-50 border border-indigo-100 rounded-md">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                className="w-4 h-4 text-indigo-600 mt-0.5 mr-2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4"></path>
+                <path d="M12 8h.01"></path>
+              </svg>
+              <div>
+                <p className="text-xs text-indigo-700 font-medium">Dynamic Content</p>
+                <p className="text-xs text-indigo-600">
+                  Type <code className="px-1 py-0.5 bg-indigo-100 rounded font-mono">&#123;&#123;</code> or click 
+                  the Variables button to insert dynamic values from connected nodes.
+                </p>
+              </div>
+            </div>
+            
+            {/* Variable Preview Section */}
+            {(data.params?.prompt || data.prompt) && (data.params?.prompt || data.prompt).includes('{{') && (
+              <div className="mb-3 p-3 bg-white/90 border border-purple-200 rounded-md">
+                <div className="flex items-center mb-1.5">
+                  <Eye className="w-4 h-4 mr-1.5 text-purple-600" />
+                  <label className="text-sm font-medium text-purple-700">Preview with Variables</label>
+                </div>
+                <VariableHighlighter 
+                  text={data.params?.prompt || data.prompt || ''} 
+                  className="text-sm text-gray-700 bg-white/50 p-2.5 rounded border border-gray-100"
+                />
+              </div>
+            )}
+            
+            {/* Prompt Tips */}
+            <div className="border-t border-purple-200 pt-3 mt-3">
+              <div className="flex items-center text-xs text-purple-700 mb-2">
+                <MessageSquare className="w-3.5 h-3.5 mr-1 text-purple-500" />
+                <span className="font-medium">Prompt Suggestions</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className="text-xs px-2 py-1.5 bg-white border border-purple-200 rounded-md hover:bg-purple-50 flex items-center transition-colors"
+                  onClick={() => {
+                    const currentPrompt = data.params?.prompt || data.prompt || '';
+                    updateNodeData(id, { 
+                      prompt: currentPrompt + (currentPrompt ? '\n\n' : '') + 'Summarize the following content:'
+                    });
+                  }}
+                >
+                  <Sparkles className="w-3 h-3 mr-1 text-purple-500" />
+                  Summarize
+                </button>
+                
+                <button
+                  type="button"
+                  className="text-xs px-2 py-1.5 bg-white border border-purple-200 rounded-md hover:bg-purple-50 flex items-center transition-colors"
+                  onClick={() => {
+                    const currentPrompt = data.params?.prompt || data.prompt || '';
+                    updateNodeData(id, { 
+                      prompt: currentPrompt + (currentPrompt ? '\n\n' : '') + 'Answer based on this information:'
+                    });
+                  }}
+                >
+                  <Sparkles className="w-3 h-3 mr-1 text-purple-500" />
+                  Q&A
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Model Selection */}

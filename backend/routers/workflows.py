@@ -510,20 +510,23 @@ def get_node_inputs(node_id, edges, node_outputs, initial_inputs, nodes):
             
             if output_field in output:
                 inputs[input_field] = output[output_field]
-                
-                # DISABLED: Special mapping for nodeName.text pattern for backward compatibility
-                # This was causing unintended synchronization between input fields
-                # source_node = next((n for n in nodes if n["id"] == source_id), None)
-                # if source_node and source_node.get("type") == "input" and edge.get("id"):
-                #     node_name = source_node.get("data", {}).get("params", {}).get("nodeName", source_id)
-                #     inputs[f"{node_name}.text"] = output[output_field]
     
     # For input nodes, use the initial inputs
     if not inputs and node_id.startswith("input"):
-        input_key = f"input_{node_id.split('-')[1] if '-' in node_id else '0'}"
+        # Extract the node index from the id (input_0, input_1, etc.)
+        node_parts = node_id.split('-')
+        node_index = node_parts[1] if len(node_parts) > 1 else '0'
+        
+        # Create a unique input key based on node ID
+        input_key = f"input_{node_index}"
+        
+        # Only use the input if it specifically exists in the initial inputs
         if input_key in initial_inputs:
             # Ensure we're getting the value correctly
             input_value = initial_inputs[input_key]
+            
+            # Log the input being used
+            print(f"Using input value for {node_id}: {input_key}")
             
             # Handle the InputValue model or direct value
             if hasattr(input_value, 'value'):

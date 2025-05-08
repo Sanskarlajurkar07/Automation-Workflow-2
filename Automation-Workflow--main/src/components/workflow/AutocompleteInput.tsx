@@ -255,6 +255,37 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       return () => clearTimeout(timer);
     }
   }, [isFocused, showSuggestions]);
+
+  // Handle variable button click - Enhanced to ensure suggestion box appears
+  const handleVariableButtonClick = () => {
+    if (!inputRef.current) return;
+    
+    // Focus the input first
+    inputRef.current.focus();
+    
+    // Get current cursor position
+    const currentPos = inputRef.current.selectionStart || 0;
+    
+    // Insert {{ at current position
+    const newValue = value.slice(0, currentPos) + '{{ ' + value.slice(currentPos);
+    onChange(newValue);
+    
+    // Update cursor position
+    const newCursorPos = currentPos + 3; // +3 for {{ and space
+    setCursorPosition(newCursorPos);
+    
+    // Force show suggestions
+    setShowSuggestions(true);
+    setSuggestionFilter('');
+    
+    // Set cursor position after {{ with a slight delay to ensure React updates
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        (inputRef.current as HTMLInputElement).setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 10);
+  };
   
   // Render the input (textarea or input based on multiline prop)
   const renderInput = () => {
@@ -265,11 +296,21 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       onKeyDown: handleKeyDown,
       onFocus: () => setIsFocused(true),
       onBlur: () => setIsFocused(false),
+      onClick: (e: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setCursorPosition(e.currentTarget.selectionStart || 0);
+        
+        // Check if we're in a variable context
+        const currentToken = getCurrentToken(value, e.currentTarget.selectionStart || 0);
+        if (currentToken.length > 0) {
+          setShowSuggestions(true);
+          setSuggestionFilter(currentToken);
+        }
+      },
       placeholder,
       className: `w-full rounded-md px-3 py-2 ${
         isLight 
           ? 'bg-white border-gray-300 text-gray-900 focus:border-blue-500' 
-          : 'bg-slate-900 border-slate-700 text-slate-100 focus:border-blue-500'
+          : 'bg-slate-800 border-slate-600 text-white focus:border-blue-500'
       } border focus:ring-1 focus:ring-blue-500 outline-none ${className}`
     };
     
@@ -305,70 +346,109 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
         </div>
       )}
       
-      {/* Variable suggestion button - with improved styling */}
+      {/* Enhanced Variable suggestion button with more obvious styling */}
       <button
         type="button"
-        onClick={() => {
-          // When clicking this button, insert {{ to trigger suggestion
-          const newValue = value.slice(0, cursorPosition) + '{{ ' + value.slice(cursorPosition);
-          onChange(newValue);
-          setShowSuggestions(true);
-          
-          // Focus the input and place cursor after {{ 
-          setTimeout(() => {
-            if (inputRef.current) {
-              inputRef.current.focus();
-              const newCursorPos = cursorPosition + 3; // +3 for {{ and space
-              (inputRef.current as HTMLInputElement).setSelectionRange(newCursorPos, newCursorPos);
-              setCursorPosition(newCursorPos);
-            }
-          }, 0);
-        }}
+        onClick={handleVariableButtonClick}
         className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md ${
           isLight 
-            ? 'bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200' 
-            : 'bg-blue-900/20 text-blue-400 hover:bg-blue-900/30 border border-blue-800/30'
-        } flex items-center group`}
+            ? 'bg-blue-100 text-blue-600 hover:bg-blue-200 border border-blue-200 hover:shadow-md' 
+            : 'bg-blue-900/30 text-blue-400 hover:bg-blue-900/40 border border-blue-800/30 hover:shadow-md'
+        } flex items-center group transition-all duration-150`}
         title="Insert variable"
       >
-        <Variable className="h-4 w-4 mr-1" />
-        <span className="text-xs">Variables</span>
-        <ChevronDown className="h-3 w-3 ml-1 group-hover:animate-bounce" />
+        <Variable className="h-4 w-4 mr-1 group-hover:animate-pulse" />
+        <span className="text-xs font-medium">Variables</span>
+        <ChevronDown className="h-3 w-3 ml-1 group-hover:translate-y-0.5 transition-transform duration-200" />
       </button>
       
-      {/* Suggestions dropdown */}
-      {showSuggestions && filteredSuggestions.length > 0 && (
+      {/* Suggestions dropdown - improved styling and categorization */}
+      {showSuggestions && (
         <div 
           ref={suggestionsRef}
-          className={`absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md py-1 ${
+          className={`absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-md py-1 ${
             isLight 
               ? 'bg-white text-gray-900 shadow-lg border border-gray-200' 
-              : 'bg-slate-900 text-slate-100 shadow-lg border border-slate-700'
+              : 'bg-slate-800 text-white shadow-lg border border-slate-700'
           }`}
         >
-          <div className={`px-3 py-2 text-xs font-medium ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>
-            Available variables {filteredSuggestions.length > 0 && `(${filteredSuggestions.length})`}
+          <div className={`sticky top-0 px-3 py-2 text-xs font-medium ${
+            isLight ? 'bg-gray-50 border-b border-gray-200' : 'bg-slate-700/50 border-b border-slate-600'
+          }`}>
+            <div className="flex items-center justify-between">
+              <span>Available variables</span>
+              <span className="px-1.5 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800">
+                {filteredSuggestions.length}
+              </span>
+            </div>
           </div>
           
-          {filteredSuggestions.map((variable, index) => (
-            <div
-              key={`${variable.nodeId}.${variable.field}`}
-              data-index={index}
-              className={`px-3 py-2 cursor-pointer ${
-                index === activeSuggestion 
-                  ? (isLight ? 'bg-blue-100' : 'bg-blue-900/30') 
-                  : 'hover:bg-gray-100 dark:hover:bg-slate-700'
-              }`}
-              onClick={() => insertVariable(variable)}
-            >
-              <div className="font-medium">
-                {variable.nodeId}.{variable.field}
-              </div>
-              <div className={`text-xs ${isLight ? 'text-gray-500' : 'text-slate-400'}`}>
-                {variable.description}
-              </div>
+          {filteredSuggestions.length > 0 ? (
+            /* Group variables by node type */
+            (() => {
+              // Group variables by node type for better organization
+              const groups: Record<string, Variable[]> = {};
+              
+              filteredSuggestions.forEach(variable => {
+                const nodeType = variable.nodeId.split('_')[0];
+                if (!groups[nodeType]) groups[nodeType] = [];
+                groups[nodeType].push(variable);
+              });
+              
+              return Object.entries(groups).map(([nodeType, variables]) => (
+                <div key={nodeType} className="py-1">
+                  <div className={`px-3 py-1 text-xs font-semibold uppercase ${
+                    isLight ? 'text-gray-500 bg-gray-50' : 'text-gray-400 bg-slate-700/30'
+                  }`}>
+                    {nodeType}
+                  </div>
+                  
+                  {variables.map((variable, index) => {
+                    const globalIndex = filteredSuggestions.findIndex(
+                      v => v.nodeId === variable.nodeId && v.field === variable.field
+                    );
+                    
+                    return (
+                      <div
+                        key={`${variable.nodeId}.${variable.field}`}
+                        data-index={globalIndex}
+                        className={`px-3 py-2 cursor-pointer ${
+                          globalIndex === activeSuggestion 
+                            ? (isLight ? 'bg-blue-100' : 'bg-blue-900/30') 
+                            : 'hover:bg-gray-100 dark:hover:bg-slate-700'
+                        } flex items-center`}
+                        onClick={() => insertVariable(variable)}
+                      >
+                        <div className="flex-1">
+                          <div className="font-medium flex items-center">
+                            {/* Show a preview of how the variable will look */}
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 mr-2">
+                              {variable.nodeId}
+                              <span className="mx-0.5 text-blue-500">.</span>
+                              <span className="font-semibold">{variable.field}</span>
+                            </span>
+                            <span className="text-xs opacity-70">{variable.label}</span>
+                          </div>
+                          <div className={`text-xs ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>
+                            {variable.description}
+                          </div>
+                        </div>
+                        <div className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
+                          isLight ? 'bg-gray-100 text-gray-700' : 'bg-slate-700 text-gray-300'
+                        }`}>
+                          Insert
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ));
+            })()
+          ) : (
+            <div className="px-3 py-4 text-center text-sm text-gray-500">
+              No variables available. Connect some nodes to use their outputs.
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>

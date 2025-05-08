@@ -49,7 +49,6 @@ export type NodeType =
   // LLMs
   | 'openai'
   | 'anthropic'
-  | 'claude35'
   | 'gemini'
   | 'cohere'
   | 'perplexity'

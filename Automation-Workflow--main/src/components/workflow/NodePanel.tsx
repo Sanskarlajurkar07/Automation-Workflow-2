@@ -3,151 +3,6 @@ import { NodeCategory, NodeType } from '../../types/flow';
 import { Database, Github, Table2, FileText as NotionIcon, Building2, Mail, MessageSquare, FolderOpen, FileEdit, Webhook, Slack as SlackIcon, MessageSquare as TeamsIcon, FileText, Send, Globe, Youtube, FileSearch, Search, Download, Upload, Save, StickyNote, Tractor, Zap, FileInput, GitBranch, Merge, Brain, BookOpen, Upload as KBLoader, Search as KBSearch, RefreshCw, File, Apple as Api, FileSpreadsheet, Link, BookOpen as Wiki, Newspaper, Music, Camera, MessageCircle, Database as DataCollector, FileText as FileReader, Bell, Users, FileJson, FileCode, Cog, MailCheck, MailWarning, Clock, Share2, Cloud } from 'lucide-react';
 import { useTheme } from '../../utils/themeProvider';
 
-// Custom logo components for AI models
-const OpenAILogo: React.FC<any> = (props) => (
-  <div className="w-5 h-5 relative flex items-center justify-center">
-    <img 
-      src="/logos/openai.png" 
-      alt="OpenAI" 
-      className="w-full h-full object-contain"
-      onError={(e) => {
-        const target = e.target as HTMLImageElement;
-        target.src = "https://openai.com/favicon.ico"; 
-        target.onerror = null;
-      }}
-      {...props}
-    />
-  </div>
-);
-
-const AnthropicLogo: React.FC<any> = (props) => (
-  <div className="w-5 h-5 relative flex items-center justify-center">
-    <img 
-      src="/logos/anthropic.png" 
-      alt="Anthropic" 
-      className="w-full h-full object-contain"
-      onError={(e) => {
-        const target = e.target as HTMLImageElement;
-        target.src = "https://www.anthropic.com/images/favicon.svg"; 
-        target.onerror = null;
-      }}
-      {...props}
-    />
-  </div>
-);
-
-const GeminiLogo: React.FC<any> = (props) => (
-  <div className="w-5 h-5 relative flex items-center justify-center">
-    <img 
-      src="/logos/gemini.png" 
-      alt="Gemini" 
-      className="w-full h-full object-contain"
-      onError={(e) => {
-        const target = e.target as HTMLImageElement;
-        target.src = "https://www.gstatic.com/lamda/images/favicon_v1_70x70.png"; 
-        target.onerror = null;
-      }}
-      {...props}
-    />
-  </div>
-);
-
-const CohereLogo: React.FC<any> = (props) => (
-  <div className="w-5 h-5 relative flex items-center justify-center">
-    <img 
-      src="/logos/cohere.png" 
-      alt="Cohere" 
-      className="w-full h-full object-contain"
-      onError={(e) => {
-        const target = e.target as HTMLImageElement;
-        target.src = "https://cohere.com/favicon.ico"; 
-        target.onerror = null;
-      }}
-      {...props}
-    />
-  </div>
-);
-
-const PerplexityLogo: React.FC<any> = (props) => (
-  <div className="w-5 h-5 relative flex items-center justify-center">
-    <img 
-      src="/logos/perplexity.png" 
-      alt="Perplexity" 
-      className="w-full h-full object-contain"
-      onError={(e) => {
-        const target = e.target as HTMLImageElement;
-        target.src = "https://www.perplexity.ai/favicon.ico"; 
-        target.onerror = null;
-      }}
-      {...props}
-    />
-  </div>
-);
-
-const XAILogo: React.FC<any> = (props) => (
-  <div className="w-5 h-5 relative flex items-center justify-center">
-    <img 
-      src="/logos/xai.png" 
-      alt="X.AI" 
-      className="w-full h-full object-contain"
-      onError={(e) => {
-        const target = e.target as HTMLImageElement;
-        target.src = "https://x.ai/favicon.ico"; 
-        target.onerror = null;
-      }}
-      {...props}
-    />
-  </div>
-);
-
-const AWSLogo: React.FC<any> = (props) => (
-  <div className="w-5 h-5 relative flex items-center justify-center">
-    <img 
-      src="/logos/aws-bedrock.png" 
-      alt="AWS Bedrock" 
-      className="w-full h-full object-contain"
-      onError={(e) => {
-        const target = e.target as HTMLImageElement;
-        target.src = "https://a0.awsstatic.com/libra-css/images/site/fav/favicon.ico"; 
-        target.onerror = null;
-      }}
-      {...props}
-    />
-  </div>
-);
-
-const AzureLogo: React.FC<any> = (props) => (
-  <div className="w-5 h-5 relative flex items-center justify-center">
-    <img 
-      src="/logos/azure-openai.png" 
-      alt="Azure OpenAI" 
-      className="w-full h-full object-contain"
-      onError={(e) => {
-        const target = e.target as HTMLImageElement;
-        target.src = "https://learn.microsoft.com/en-us/azure/ai-services/openai/media/azure-openai-icon.png"; 
-        target.onerror = null;
-      }}
-      {...props}
-    />
-  </div>
-);
-
-const Claude35Logo: React.FC<any> = (props) => (
-  <div className="w-5 h-5 relative flex items-center justify-center">
-    <img 
-      src="/logos/claude35.png" 
-      alt="Claude 3.5" 
-      className="w-full h-full object-contain"
-      onError={(e) => {
-        const target = e.target as HTMLImageElement;
-        target.src = "https://www.anthropic.com/images/favicon.svg"; 
-        target.onerror = null;
-      }}
-      {...props}
-    />
-  </div>
-);
-
 interface NodeInfo {
   type: NodeType;
   label: string;
@@ -173,15 +28,14 @@ const nodeCategories: Record<NodeCategory, NodeInfo[]> = {
     { type: 'share', label: 'Share', icon: Share2, description: 'Share workflows with others' }, // Add Share node
   ],
   llms: [
-    { type: 'openai', label: 'OpenAI', icon: OpenAILogo, description: 'OpenAI GPT models' },
-    { type: 'anthropic', label: 'Anthropic', icon: AnthropicLogo, description: 'Claude models' },
-    { type: 'claude35', label: 'Claude 3.5', icon: Claude35Logo, description: 'Claude 3.5 Sonnet model' },
-    { type: 'gemini', label: 'Gemini', icon: GeminiLogo, description: 'Google Gemini models' },
-    { type: 'cohere', label: 'Cohere', icon: CohereLogo, description: 'Cohere Command models' },
-    { type: 'perplexity', label: 'Perplexity', icon: PerplexityLogo, description: 'Perplexity AI models with online search' },
-    { type: 'xai', label: 'X.AI', icon: XAILogo, description: 'X.AI Grok models' },
-    { type: 'aws', label: 'AWS Bedrock', icon: AWSLogo, description: 'AWS Bedrock AI services' },
-    { type: 'azure', label: 'Azure OpenAI', icon: AzureLogo, description: 'Azure OpenAI services' },
+    { type: 'openai', label: 'OpenAI', icon: Zap, description: 'OpenAI language model integration' },
+    { type: 'anthropic', label: 'Anthropic', icon: Brain, description: 'Anthropic language model integration' },
+    { type: 'gemini', label: 'Gemini', icon: Zap, description: 'Google Gemini model integration' },
+    { type: 'cohere', label: 'Cohere', icon: Brain, description: 'Cohere language model integration' },
+    { type: 'perplexity', label: 'Perplexity', icon: Brain, description: 'Perplexity language model integration' },
+    { type: 'xai', label: 'XAI', icon: Brain, description: 'Explainable AI model integration' }, // Added xAI Node
+    { type: 'aws', label: 'AWS', icon: Cloud, description: 'AWS AI services integration' }, // Added AWS Node
+    { type: 'azure', label: 'Azure', icon: Cloud, description: 'Azure AI services integration' }, // Added Azure Node
   ],
   'knowledge-base': [
     { type: 'kb-reader', label: 'Query Knowledge', icon: BookOpen, description: 'Query and retrieve information from knowledge base' },

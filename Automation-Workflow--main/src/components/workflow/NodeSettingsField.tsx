@@ -30,34 +30,37 @@ export const NodeSettingsField: React.FC<NodeSettingsFieldProps> = ({
   variableSupport = false,
   copyButton = false,
   onCopy,
-  className = ''
+  className = '',
 }) => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
-  
+
   return (
     <div className={`mb-4 ${className}`}>
-      <div className="flex justify-between mb-1">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          {label}{required && <span className="text-red-500 ml-1">*</span>}
+      <div className="flex justify-between items-center mb-1">
+        <label className={`block text-sm font-medium ${isLight ? 'text-gray-700' : 'text-gray-300'}`}>
+          {label} {required && <span className="text-red-500">*</span>}
         </label>
-        
-        {description && (
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {description}
-          </span>
-        )}
         
         {copyButton && (
           <button
-            type="button"
             onClick={onCopy}
-            className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+            className={`p-1 rounded-md text-xs flex items-center ${
+              isLight ? 'text-gray-500 hover:bg-gray-100' : 'text-gray-400 hover:bg-gray-800'
+            }`}
+            title="Copy to clipboard"
           >
-            <Copy className="h-4 w-4" />
+            <Copy className="w-3 h-3 mr-1" />
+            <span>Copy</span>
           </button>
         )}
       </div>
+      
+      {description && (
+        <p className={`text-xs mb-2 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>
+          {description}
+        </p>
+      )}
       
       {variableSupport ? (
         <AutocompleteInput
@@ -66,7 +69,7 @@ export const NodeSettingsField: React.FC<NodeSettingsFieldProps> = ({
           placeholder={placeholder}
           multiline={multiline}
           rows={rows}
-          className={`${isLight ? 'bg-white' : 'bg-slate-900'}`}
+          className={`${isLight ? 'bg-white' : 'bg-slate-800'}`}
         />
       ) : (
         <>
@@ -78,7 +81,7 @@ export const NodeSettingsField: React.FC<NodeSettingsFieldProps> = ({
               className={`w-full px-3 py-2 border ${
                 isLight 
                   ? 'bg-white border-gray-300 text-gray-900' 
-                  : 'bg-slate-900 border-slate-700 text-slate-100'
+                  : 'bg-slate-800 border-slate-600 text-white'
               } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
               placeholder={placeholder}
             />
@@ -90,7 +93,7 @@ export const NodeSettingsField: React.FC<NodeSettingsFieldProps> = ({
               className={`w-full px-3 py-2 border ${
                 isLight 
                   ? 'bg-white border-gray-300 text-gray-900' 
-                  : 'bg-slate-900 border-slate-700 text-slate-100'
+                  : 'bg-slate-800 border-slate-600 text-white'
               } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
               placeholder={placeholder}
             />
