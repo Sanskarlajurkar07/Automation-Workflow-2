@@ -1,5 +1,5 @@
 /**
- * Utility functions for resolving variables in workflow execution
+ * Enhanced variable resolution utilities for frontend
  */
 
 export interface NodeOutput {
@@ -9,6 +9,14 @@ export interface NodeOutput {
 export interface VariableContext {
   nodeOutputs: Record<string, NodeOutput>;
   nodeNameMap: Record<string, string>;
+}
+
+export interface VariableValidationResult {
+  variable: string;
+  isValid: boolean;
+  suggestion?: string;
+  nodeExists?: boolean;
+  fieldExists?: boolean;
 }
 
 /**
@@ -212,14 +220,14 @@ export function createNodeNameMap(nodes: any[]): Record<string, string> {
 export function validateVariables(
   text: string, 
   context: VariableContext
-): Array<{variable: string, isValid: boolean, suggestion?: string}> {
+): VariableValidationResult[] {
   if (!text || typeof text !== 'string') {
     return [];
   }
 
   const pattern = /\{\{\s*([^}]+)\s*\}\}/g;
   const matches = [...text.matchAll(pattern)];
-  const validationResults = [];
+  const validationResults: VariableValidationResult[] = [];
   
   for (const match of matches) {
     const variable = match[1].trim();
@@ -227,12 +235,18 @@ export function validateVariables(
       ? variable.split('.', 2) 
       : [variable, 'output'];
     
-    // Check if this variable can be resolved
+    // Check if node exists
     const nodeOutput = findNodeOutput(nodeName.trim(), context);
-    const isValid = nodeOutput && (
-      field.trim() in nodeOutput || 
-      getFieldAlternatives(field.trim()).some(alt => alt in nodeOutput)
-    );
+    const nodeExists = nodeOutput !== null;
+    
+    // Check if field exists
+    let fieldExists = false;
+    if (nodeOutput && typeof nodeOutput === 'object') {
+      fieldExists = field.trim() in nodeOutput || 
+        getFieldAlternatives(field.trim()).some(alt => alt in nodeOutput);
+    }
+    
+    const isValid = nodeExists && fieldExists;
     
     let suggestion = undefined;
     if (!isValid && nodeOutput) {
@@ -245,17 +259,100 @@ export function validateVariables(
     
     validationResults.push({
       variable,
-      isValid: !!isValid,
-      suggestion
+      isValid,
+      suggestion,
+      nodeExists,
+      fieldExists
     });
   }
   
   return validationResults;
 }
 
+/**
+ * Get available variables from nodes
+ */
+export function getAvailableVariables(nodes: any[]): Array<{
+  nodeId: string;
+  nodeName: string;
+  nodeType: string;
+  fields: Array<{name: string, type: string, description: string}>;
+}> {
+  return nodes.map(node => {
+    const nodeId = node.id;
+    const nodeName = node.data?.params?.nodeName || nodeId;
+    const nodeType = node.type;
+    
+    // Define fields based on node type
+    let fields: Array<{name: string, type: string, description: string}> = [];
+    
+    switch (nodeType) {
+      case 'input':
+        fields = [
+          { name: 'output', type: 'Text', description: 'User input text' },
+          { name: 'text', type: 'Text', description: 'User input text (legacy)' }
+        ];
+        break;
+      
+      case 'openai':
+      case 'anthropic':
+      case 'claude35':
+      case 'gemini':
+      case 'cohere':
+      case 'perplexity':
+      case 'xai':
+      case 'aws':
+      case 'azure':
+        fields = [
+          { name: 'response', type: 'Text', description: 'AI model response' },
+          { name: 'output', type: 'Text', description: 'AI model output' },
+          { name: 'model', type: 'Text', description: 'Model name used' },
+          { name: 'input_tokens', type: 'Number', description: 'Input tokens consumed' },
+          { name: 'output_tokens', type: 'Number', description: 'Output tokens generated' }
+        ];
+        break;
+      
+      case 'transform':
+      case 'scripts':
+        fields = [
+          { name: 'output', type: 'Text', description: 'Transformed text' },
+          { name: 'transformed_text', type: 'Text', description: 'Transformed text (legacy)' }
+        ];
+        break;
+      
+      case 'document-to-text':
+        fields = [
+          { name: 'output', type: 'Text', description: 'Extracted text from document' }
+        ];
+        break;
+      
+      case 'kb-search':
+        fields = [
+          { name: 'results', type: 'Array', description: 'Search results' },
+          { name: 'output', type: 'Text', description: 'Formatted results' },
+          { name: 'metadata', type: 'Object', description: 'Search metadata' }
+        ];
+        break;
+      
+      default:
+        fields = [
+          { name: 'output', type: 'Text', description: 'Node output' }
+        ];
+    }
+    
+    return {
+      nodeId,
+      nodeName,
+      nodeType,
+      fields
+    };
+  });
+}
+
 export default {
   resolveVariables,
   standardizeNodeOutput,
   createNodeNameMap,
-  validateVariables
+  validateVariables,
+  getAvailableVariables
 };

@@ -3,6 +3,7 @@ import { useFlowStore } from '../../store/flowStore';
 import { Play, Square, RotateCcw, Download, AlertCircle, CheckCircle, Clock, Zap } from 'lucide-react';
 import workflowService from '../../lib/workflowService';
 import { useTheme } from '../../utils/themeProvider';
+import { createNodeNameMap } from '../../utils/variableResolver';
 
 interface ExecuteWorkflowProps {
   onClose: () => void;
@@ -40,9 +41,11 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId }
   // Extract input nodes and create input fields
   useEffect(() => {
     const inputNodes = nodes.filter(node => node.type === 'input');
+    const nodeNameMap = createNodeNameMap(nodes);
+    
     const fields: InputField[] = inputNodes.map(node => {
       const params = node.data?.params || {};
-      const nodeName = params.nodeName || node.id;
+      const nodeName = nodeNameMap[node.id] || params.nodeName || node.id;
       const nodeType = params.type || 'Text';
       
       return {
@@ -129,10 +132,11 @@ const ExecuteWorkflow: React.FC<ExecuteWorkflowProps> = ({ onClose, workflowId }
     try {
       // Prepare inputs for execution
       const inputs: Record<string, any> = {};
+      const nodeNameMap = createNodeNameMap(nodes);
       
       inputFields.forEach(field => {
-        // Use the node name as the key for better variable resolution
-        const inputKey = field.nodeName;
+        // Use the standardized node name from the map
+        const inputKey = nodeNameMap[field.nodeId] || field.nodeName;
         inputs[inputKey] = {
           value: field.value,
           type: field.type

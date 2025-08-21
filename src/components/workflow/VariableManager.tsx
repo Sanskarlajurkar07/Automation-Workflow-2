@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Clipboard, Copy, Search, ChevronDown, ChevronUp, RefreshCw, Check, AlertTriangle, Info } from 'lucide-react';
 import { useTheme } from '../../utils/themeProvider';
 import { useFlowStore } from '../../store/flowStore';
+import { getAvailableVariables } from '../../utils/variableResolver';
 
 interface Variable {
   id: string;
@@ -34,134 +35,21 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ isOpen, onClos
   
   // Generate variables from nodes with enhanced field detection
   const variables = useMemo(() => {
-    const vars: Variable[] = [];
+    // Use centralized variable detection
+    const availableVars = getAvailableVariables(nodes);
     
-    nodes.forEach(node => {
-      const nodeId = node.id;
-      const nodeName = node.data?.params?.nodeName || nodeId;
-      const nodeType = node.type;
+    return availableVars.map(nodeVar => {
+      const isConnected = edges.some(edge => edge.source === nodeVar.nodeId);
       
-      // Check if this node is connected (has outgoing edges)
-      const isConnected = edges.some(edge => edge.source === nodeId);
-      
-      // Define output fields based on node type with types and descriptions
-      let fields: Array<{name: string, type: string, description: string}> = [];
-      let description = 'Node output';
-      
-      switch (nodeType) {
-        case 'input':
-          fields = [
-            { name: 'output', type: 'Text', description: 'User input text' },
-            { name: 'text', type: 'Text', description: 'User input text (legacy)' }
-          ];
-          description = 'Text input from user';
-          break;
-        
-        case 'openai':
-        case 'anthropic':
-        case 'claude35':
-        case 'gemini':
-        case 'cohere':
-        case 'perplexity':
-        case 'xai':
-        case 'aws':
-        case 'azure':
-          fields = [
-            { name: 'response', type: 'Text', description: 'AI model response text' },
-            { name: 'output', type: 'Text', description: 'AI model output (same as response)' },
-            { name: 'model', type: 'Text', description: 'Model name that was used' },
-            { name: 'input_tokens', type: 'Number', description: 'Number of input tokens consumed' },
-            { name: 'output_tokens', type: 'Number', description: 'Number of output tokens generated' }
-          ];
-          description = 'AI language model response';
-          break;
-        
-        case 'transform':
-        case 'scripts':
-          fields = [
-            { name: 'output', type: 'Text', description: 'Transformed text result' },
-            { name: 'transformed_text', type: 'Text', description: 'Transformed text (legacy)' }
-          ];
-          description = 'Text transformation result';
-          break;
-        
-        case 'document-to-text':
-          fields = [
-            { name: 'output', type: 'Text', description: 'Extracted text from document' }
-          ];
-          description = 'Document text extraction result';
-          break;
-        
-        case 'kb-search':
-          fields = [
-            { name: 'results', type: 'Array', description: 'Array of search results' },
-            { name: 'output', type: 'Text', description: 'Formatted search results as text' },
-            { name: 'metadata', type: 'Object', description: 'Search metadata and scores' }
-          ];
-          description = 'Knowledge base search results';
-          break;
-        
-        case 'kb-reader':
-          fields = [
-            { name: 'output', type: 'Text', description: 'Knowledge base query results' },
-            { name: 'documents', type: 'Array', description: 'Retrieved document chunks' }
-          ];
-          description = 'Knowledge base query results';
-          break;
-        
-        case 'condition':
-          fields = [
-            { name: 'output', type: 'Boolean', description: 'Condition evaluation result (true/false)' },
-            { name: 'path', type: 'Text', description: 'Name of the selected execution path' }
-          ];
-          description = 'Conditional logic evaluation';
-          break;
-        
-        case 'time':
-          fields = [
-            { name: 'output', type: 'Text', description: 'Current date and time as text' },
-            { name: 'timestamp', type: 'Number', description: 'Unix timestamp' },
-            { name: 'formatted', type: 'Text', description: 'Formatted date/time string' }
-          ];
-          description = 'Current time information';
-          break;
-        
-        case 'file-save':
-          fields = [
-            { name: 'output', type: 'Text', description: 'File save confirmation message' },
-            { name: 'filename', type: 'Text', description: 'Name of the saved file' },
-            { name: 'path', type: 'Text', description: 'File path where saved' }
-          ];
-          description = 'File save operation result';
-          break;
-        
-        default:
-          fields = [
-            { name: 'output', type: 'Text', description: 'Default node output' }
-          ];
-          description = 'Generic node output';
-      }
-      
-      // Override with custom output fields if provided
-      if (node.data?.outputFields) {
-        fields = node.data.outputFields.map(fieldName => ({
-          name: fieldName,
-          type: 'Text',
-          description: `Custom output field: ${fieldName}`
-        }));
-      }
-      
-      vars.push({
-        id: nodeId,
-        name: nodeName,
-        nodeType,
-        fields,
-        description,
+      return {
+        id: nodeVar.nodeId,
+        name: nodeVar.nodeName,
+        nodeType: nodeVar.nodeType,
+        fields: nodeVar.fields,
+        description: getNodeDescription(nodeVar.nodeType),
         isConnected
-      });
+      };
     });
-    
-    return vars;
   }, [nodes, edges]);
   
   // Group variables by type with better categorization
@@ -528,6 +416,32 @@ function getTypeColor(type: string, isLight: boolean): string {
   };
   
   return colors[type as keyof typeof colors] || (isLight ? 'bg-gray-100 text-gray-800' : 'bg-gray-700 text-gray-300');
+}
+
+// Helper function to get node descriptions
+function getNodeDescription(nodeType: string): string {
+  const descriptions: Record<string, string> = {
+    'input': 'Text input from user',
+    'output': 'Workflow output result',
+    'openai': 'OpenAI language model response',
+    'anthropic': 'Anthropic Claude model response',
+    'claude35': 'Claude 3.5 model response',
+    'gemini': 'Google Gemini model response',
+    'cohere': 'Cohere language model response',
+    'perplexity': 'Perplexity AI model response',
+    'xai': 'X.AI Grok model response',
+    'aws': 'AWS Bedrock model response',
+    'azure': 'Azure OpenAI model response',
+    'transform': 'Text transformation result',
+    'scripts': 'Script execution result',
+    'document-to-text': 'Document text extraction',
+    'kb-search': 'Knowledge base search results',
+    'kb-reader': 'Knowledge base query results',
+    'condition': 'Conditional logic evaluation',
+    'time': 'Current time information'
+  };
+  
+  return descriptions[nodeType] || 'Node output';
 }
 
 export default VariableManager;

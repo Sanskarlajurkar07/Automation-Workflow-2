@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useFlowStore } from '../../store/flowStore';
 import { ChevronDown, Variable, Check, AlertCircle } from 'lucide-react';
 import { useTheme } from '../../utils/themeProvider';
+import { validateVariables, getAvailableVariables } from '../../utils/variableResolver';
 
 interface Variable {
   nodeId: string;
@@ -69,86 +70,17 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
         case 'anthropic':
         case 'claude35':
         case 'gemini':
-        case 'cohere':
-        case 'perplexity':
-        case 'xai':
-        case 'aws':
-        case 'azure':
-          fields = [
-            { name: 'response', type: 'Text', description: 'AI model response' },
-            { name: 'output', type: 'Text', description: 'AI model output' },
-            { name: 'model', type: 'Text', description: 'Model name used' },
-            { name: 'input_tokens', type: 'Number', description: 'Input token count' },
-            { name: 'output_tokens', type: 'Number', description: 'Output token count' }
-          ];
-          break;
-        
-        case 'transform':
-        case 'scripts':
-          fields = [
-            { name: 'output', type: 'Text', description: 'Transformed text output' },
-            { name: 'transformed_text', type: 'Text', description: 'Transformed text' }
-          ];
-          break;
-        
-        case 'document-to-text':
-          fields = [
-            { name: 'output', type: 'Text', description: 'Extracted text from document' }
-          ];
-          break;
-        
-        case 'kb-search':
-          fields = [
-            { name: 'results', type: 'Array', description: 'Search results from knowledge base' },
-            { name: 'output', type: 'Text', description: 'Formatted search results' },
-            { name: 'metadata', type: 'Object', description: 'Search metadata' }
-          ];
-          break;
-        
-        case 'kb-reader':
-          fields = [
-            { name: 'output', type: 'Text', description: 'Knowledge base query results' },
-            { name: 'documents', type: 'Array', description: 'Retrieved documents' }
-          ];
-          break;
-        
-        case 'condition':
-          fields = [
-            { name: 'output', type: 'Boolean', description: 'Condition evaluation result' },
-            { name: 'path', type: 'Text', description: 'Selected execution path' }
-          ];
-          break;
-        
-        case 'time':
-          fields = [
-            { name: 'output', type: 'Text', description: 'Current timestamp' },
-            { name: 'timestamp', type: 'Number', description: 'Unix timestamp' },
-            { name: 'formatted', type: 'Text', description: 'Formatted date/time' }
-          ];
-          break;
-        
-        default:
-          fields = [
-            { name: 'output', type: 'Text', description: 'Node output' }
-          ];
-      }
-      
-      // Override with custom output fields if provided
-      if (node.data?.outputFields) {
-        fields = node.data.outputFields.map(field => ({
-          name: field,
-          type: 'Text',
-          description: `Custom output field: ${field}`
-        }));
-      }
-      
-      // Create variables for each field
-      fields.forEach(field => {
+    // Use the centralized variable detection system
+    const availableVars = getAvailableVariables(nodes);
+    const vars: Variable[] = [];
+    
+    availableVars.forEach(nodeVar => {
+      nodeVar.fields.forEach(field => {
         vars.push({
-          nodeId,
-          nodeName,
+          nodeId: nodeVar.nodeId,
+          nodeName: nodeVar.nodeName,
           field: field.name,
-          label: `${nodeName} (${field.name})`,
+          label: `${nodeVar.nodeName} (${field.name})`,
           description: field.description,
           type: field.type
         });
@@ -359,39 +291,21 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   
   // Validate variables in the current text
   const validateVariables = (text: string): Array<{variable: string, isValid: boolean, suggestion?: string}> => {
-    const variablePattern = /\{\{\s*([^}]+)\s*\}\}/g;
-    const matches = [...text.matchAll(variablePattern)];
-    const validationResults = [];
+    // Create context for validation
+    const nodeNameMap = {};
+    const nodeOutputs = {};
     
-    for (const match of matches) {
-      const variable = match[1].trim();
-      const [nodeName, field] = variable.includes('.') ? variable.split('.', 2) : [variable, 'output'];
+    nodes.forEach(node => {
+      const nodeName = node.data?.params?.nodeName || node.id;
+      nodeNameMap[node.id] = nodeName;
+      nodeNameMap[nodeName] = node.id;
       
-      // Check if this variable exists
-      const exists = variables.some(v => 
-        v.nodeName === nodeName && v.field === field
-      );
-      
-      let suggestion = undefined;
-      if (!exists) {
-        // Try to find a close match
-        const closeMatch = variables.find(v => 
-          v.nodeName.toLowerCase() === nodeName.toLowerCase() ||
-          v.nodeId === nodeName
-        );
-        if (closeMatch) {
-          suggestion = `${closeMatch.nodeName}.${closeMatch.field}`;
-        }
-      }
-      
-      validationResults.push({
-        variable,
-        isValid: exists,
-        suggestion
-      });
-    }
+      // Create mock outputs for validation
+      nodeOutputs[nodeName] = { output: 'sample', response: 'sample', text: 'sample' };
+    });
     
-    return validationResults;
+    const context = { nodeOutputs, nodeNameMap };
+    return validateVariables(text, context);
   };
   
   const validationResults = validateVariables(value);
