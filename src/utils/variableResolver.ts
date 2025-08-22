@@ -280,7 +280,14 @@ export function getAvailableVariables(nodes: any[]): Array<{
 }> {
   return nodes.map(node => {
     const nodeId = node.id;
-    const nodeName = node.data?.params?.nodeName || nodeId;
+    // Generate consistent node names
+    let nodeName = node.data?.params?.nodeName;
+    if (!nodeName) {
+      // Extract index from node ID and create proper name
+      const parts = nodeId.split('-');
+      const index = parts.length > 1 ? parts[parts.length - 1] : '0';
+      nodeName = `${node.type}_${index}`;
+    }
     const nodeType = node.type;
     
     // Define fields based on node type
@@ -289,8 +296,8 @@ export function getAvailableVariables(nodes: any[]): Array<{
     switch (nodeType) {
       case 'input':
         fields = [
-          { name: 'output', type: 'Text', description: 'User input text' },
-          { name: 'text', type: 'Text', description: 'User input text (legacy)' }
+          { name: 'text', type: 'Text', description: 'User input text' },
+          { name: 'output', type: 'Text', description: 'User input text (alias)' }
         ];
         break;
       
@@ -316,7 +323,7 @@ export function getAvailableVariables(nodes: any[]): Array<{
       case 'scripts':
         fields = [
           { name: 'output', type: 'Text', description: 'Transformed text' },
-          { name: 'transformed_text', type: 'Text', description: 'Transformed text (legacy)' }
+          { name: 'result', type: 'Text', description: 'Transformation result' }
         ];
         break;
       
