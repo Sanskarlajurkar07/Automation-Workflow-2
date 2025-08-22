@@ -35,18 +35,59 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ isOpen, onClos
   
   // Generate variables from nodes with enhanced field detection
   const variables = useMemo(() => {
-    // Use centralized variable detection
-    const availableVars = getAvailableVariables(nodes);
-    
-    return availableVars.map(nodeVar => {
-      const isConnected = edges.some(edge => edge.source === nodeVar.nodeId);
+    return nodes.map(node => {
+      // Generate consistent node name
+      let nodeName = node.data?.params?.nodeName;
+      if (!nodeName) {
+        const parts = node.id.split('-');
+        const index = parts.length > 1 ? parts[parts.length - 1] : '0';
+        nodeName = `${node.type}_${index}`;
+      }
+      
+      // Get fields based on node type
+      let fields: Array<{name: string, type: string, description: string}> = [];
+      
+      switch (node.type) {
+        case 'input':
+          fields = [
+            { name: 'text', type: 'Text', description: 'User input text' },
+            { name: 'output', type: 'Text', description: 'User input text (alias)' }
+          ];
+          break;
+        case 'openai':
+        case 'anthropic':
+        case 'claude35':
+        case 'gemini':
+        case 'cohere':
+        case 'perplexity':
+        case 'xai':
+        case 'aws':
+        case 'azure':
+          fields = [
+            { name: 'response', type: 'Text', description: 'AI model response' },
+            { name: 'output', type: 'Text', description: 'AI model output' }
+          ];
+          break;
+        case 'transform':
+        case 'scripts':
+          fields = [
+            { name: 'output', type: 'Text', description: 'Transformed text' }
+          ];
+          break;
+        default:
+          fields = [
+            { name: 'output', type: 'Text', description: 'Node output' }
+          ];
+      }
+      
+      const isConnected = edges.some(edge => edge.source === node.id);
       
       return {
-        id: nodeVar.nodeId,
-        name: nodeVar.nodeName,
-        nodeType: nodeVar.nodeType,
-        fields: nodeVar.fields,
-        description: getNodeDescription(nodeVar.nodeType),
+        id: node.id,
+        name: nodeName,
+        nodeType: node.type,
+        fields,
+        description: getNodeDescription(node.type),
         isConnected
       };
     });
