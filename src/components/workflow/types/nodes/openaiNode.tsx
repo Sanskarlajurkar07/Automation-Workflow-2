@@ -335,10 +335,33 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
           {expandedSections.system && (
             <div className="pt-2 space-y-2">
               <div className="relative bg-gradient-to-br from-blue-50 to-emerald-50 p-3 rounded-md border border-blue-200">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium text-blue-700">System Instructions</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const connectedNodes = getConnectedNodes();
+                      if (connectedNodes.length > 0) {
+                        const firstNode = connectedNodes[0] as any;
+                        const parts = firstNode.id.split('-');
+                        const index = parts.length > 1 ? parts[parts.length - 1] : '0';
+                        const nodeName = firstNode.data.params?.nodeName || `${firstNode.type}_${index}`;
+                        const fieldName = firstNode.type === 'input' ? 'text' : 'response';
+                        const currentSystem = data.params?.system || '';
+                        updateNodeData(id, { 
+                          system: currentSystem + (currentSystem ? ' ' : '') + `{{ ${nodeName}.${fieldName} }}`
+                        });
+                      }
+                    }}
+                    className="px-2 py-1 bg-blue-500 text-white text-xs font-medium rounded hover:bg-blue-600 transition-colors"
+                  >
+                    Insert Variable
+                  </button>
+                </div>
                 <AutocompleteInput
                   value={data.params?.system || ''}
                   onChange={(value) => updateNodeData(id, { system: value })}
-                  placeholder="Define the AI's behavior and knowledge context..."
+                  placeholder="Answer the Question based on Context in a professional manner."
                   multiline={true}
                   rows={4}
                   className="bg-white border-none shadow-none text-gray-800 focus:ring-0 resize-none"
@@ -378,6 +401,36 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
           
           {expandedSections.prompt && (
             <div className="pt-2 space-y-3">
+              {/* Connected Input Nodes Warning/Info */}
+              {getConnectedNodes().length > 0 && (
+                <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                  <div className="flex items-start">
+                    <AlertTriangle className="w-4 h-4 text-orange-500 mt-0.5 mr-2 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-orange-800">You are not using any of the connected input nodes:</p>
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {getConnectedNodes().map((node: any) => {
+                          const parts = node.id.split('-');
+                          const index = parts.length > 1 ? parts[parts.length - 1] : '0';
+                          const nodeName = node.data.params?.nodeName || `${node.type}_${index}`;
+                          return (
+                            <span key={node.id} className="inline-flex items-center px-2 py-1 bg-orange-100 text-orange-700 rounded-md text-xs">
+                              {nodeName} ×
+                            </span>
+                          );
+                        })}
+                      </div>
+                      <div className="mt-2 text-xs text-orange-700">
+                        <span className="font-medium">Drag a variable field</span> from the above into input area or type <span className="font-mono bg-orange-100 px-1 rounded">"&#123;&#123;"</span>
+                      </div>
+                      <div className="mt-1 text-xs text-orange-600">
+                        <span className="font-medium">Suggested Action:</span> Disconnect unused nodes
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="bg-gradient-to-br from-emerald-50 to-blue-50 p-4 rounded-md border border-emerald-200 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium text-emerald-700 flex items-center">
@@ -385,7 +438,29 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
                     <span>Craft your prompt</span>
                   </label>
                   
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // Show variable insertion modal or dropdown
+                        const connectedNodes = getConnectedNodes();
+                        if (connectedNodes.length > 0) {
+                          // Insert first available variable as example
+                          const firstNode = connectedNodes[0] as any;
+                          const parts = firstNode.id.split('-');
+                          const index = parts.length > 1 ? parts[parts.length - 1] : '0';
+                          const nodeName = firstNode.data.params?.nodeName || `${firstNode.type}_${index}`;
+                          const fieldName = firstNode.type === 'input' ? 'text' : 'response';
+                          const currentPrompt = data.params?.prompt || '';
+                          updateNodeData(id, { 
+                            prompt: currentPrompt + (currentPrompt ? ' ' : '') + `{{ ${nodeName}.${fieldName} }}`
+                          });
+                        }
+                      }}
+                      className="px-3 py-1.5 bg-blue-500 text-white text-xs font-medium rounded-md hover:bg-blue-600 transition-colors flex items-center"
+                    >
+                      Insert Variable
+                    </button>
                     <span className="text-xs text-emerald-600 font-medium">
                       {data.params?.prompt ? `${data.params.prompt.length || 0} chars` : ''}
                     </span>
@@ -410,7 +485,7 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
                   <AutocompleteInput
                     value={data.params?.prompt || ''}
                     onChange={(value) => updateNodeData(id, { prompt: value })}
-                    placeholder="Enter your prompt here... Use {{variables}} from connected nodes"
+                    placeholder="Type your prompt here... Use {{ input_0.text }} or {{ openai_0.response }} format"
                     multiline={true}
                     rows={7}
                     className="bg-white border-none shadow-none text-gray-800 focus:ring-0 resize-none"
@@ -429,8 +504,8 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
                   <div>
                     <p className="text-xs text-blue-700 font-medium">Dynamic Content</p>
                     <p className="text-xs text-blue-600">
-                      Type <code className="px-1 py-0.5 bg-blue-100 rounded font-mono">&#123;&#123;</code> or click 
-                      the Variables button to insert dynamic values from connected nodes.
+                      Use variables like <code className="px-1 py-0.5 bg-blue-100 rounded font-mono">&#123;&#123; input_0.text &#125;&#125;</code> or click 
+                      the "Insert Variable" button to add dynamic values from connected nodes.
                     </p>
                   </div>
                 </div>
