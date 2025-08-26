@@ -335,33 +335,10 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
           {expandedSections.system && (
             <div className="pt-2 space-y-2">
               <div className="relative bg-gradient-to-br from-blue-50 to-emerald-50 p-3 rounded-md border border-blue-200">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-blue-700">System Instructions</label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const connectedNodes = getConnectedNodes();
-                      if (connectedNodes.length > 0) {
-                        const firstNode = connectedNodes[0] as any;
-                        const parts = firstNode.id.split('-');
-                        const index = parts.length > 1 ? parts[parts.length - 1] : '0';
-                        const nodeName = firstNode.data.params?.nodeName || `${firstNode.type}_${index}`;
-                        const fieldName = firstNode.type === 'input' ? 'text' : 'response';
-                        const currentSystem = data.params?.system || '';
-                        updateNodeData(id, { 
-                          system: currentSystem + (currentSystem ? ' ' : '') + `{{ ${nodeName}.${fieldName} }}`
-                        });
-                      }
-                    }}
-                    className="px-2 py-1 bg-blue-500 text-white text-xs font-medium rounded hover:bg-blue-600 transition-colors"
-                  >
-                    Insert Variable
-                  </button>
-                </div>
                 <AutocompleteInput
                   value={data.params?.system || ''}
                   onChange={(value) => updateNodeData(id, { system: value })}
-                  placeholder="Answer the Question based on Context in a professional manner."
+                  placeholder="Define the AI's behavior and knowledge context..."
                   multiline={true}
                   rows={4}
                   className="bg-white border-none shadow-none text-gray-800 focus:ring-0 resize-none"
@@ -505,7 +482,7 @@ const OpenAINode: React.FC<OpenAINodeProps> = ({ id, data, selected }) => {
                     <p className="text-xs text-blue-700 font-medium">Dynamic Content</p>
                     <p className="text-xs text-blue-600">
                       Use variables like <code className="px-1 py-0.5 bg-blue-100 rounded font-mono">&#123;&#123; input_0.text &#125;&#125;</code> or click 
-                      the "Insert Variable" button to add dynamic values from connected nodes.
+                      the "Insert Variable\" button to add dynamic values from connected nodes.
                     </p>
                   </div>
                 </div>
